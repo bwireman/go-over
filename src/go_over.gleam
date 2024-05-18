@@ -1,11 +1,12 @@
 import gleam/io
+import gleam/list
 import go_over/advisories
+import shellout
 
 pub fn main() {
-  // let assert Ok(_) = advisories.clone()
-  // advisories.read_manifest("./manifest.toml")
-  // |> io.debug
+  let args = shellout.arguments()
+  let pull = list.any(args, fn(arg) { arg == "--skip" })
 
-  advisories.go("./manifest.toml")
+  advisories.check_for_advisories("./manifest.toml", !pull)
   |> io.debug
 }

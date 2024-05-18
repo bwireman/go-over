@@ -22,35 +22,18 @@ fn first_patched_versions(y: YamlADV) -> List(String)
 @external(javascript, "./../yaml.mjs", "vulnerable_version_ranges")
 fn vulnerable_version_ranges(y: YamlADV) -> List(String)
 
-pub type ADV {
+type ADV {
   ADV(
     name: String,
     first_patched_versions: List(String),
     vulnerable_version_ranges: List(String),
+    file: String,
   )
 }
 
-pub fn path() -> String {
+fn path() -> String {
   let assert Ok(curr) = simplifile.current_directory()
   filepath.join(curr, ".go-over")
-}
-
-pub fn clone() {
-  let assert Ok(Nil) = simplifile.create_directory_all(path())
-
-  let assert Ok(_) =
-    shellout.command(
-      run: "git",
-      with: [
-        "clone",
-        "https://github.com/mirego/elixir-security-advisories.git",
-        path(),
-      ],
-      in: ".",
-      opt: [],
-    )
-
-  Nil
 }
 
 type Package {
@@ -84,10 +67,11 @@ fn read_adv(path: String) {
     name(parsed),
     first_patched_versions(parsed),
     vulnerable_version_ranges(parsed),
+    path,
   )
 }
 
-pub fn read_all_adv() {
+fn read_all_adv() {
   let packages_path = filepath.join(path(), "packages")
 
   let assert Ok(packages) = simplifile.read_directory(packages_path)
@@ -101,25 +85,65 @@ pub fn read_all_adv() {
   })
 }
 
-fn is_vulnerable(p: Package, advs: List(ADV)) -> Bool {
-  list.any(advs, fn(adv) {
-    adv.name == p.name
-    && {
-      list.any(adv.vulnerable_version_ranges, fn(vulnsemver) {
-        let comp = comparisons.get_comparator(vulnsemver)
-        let parsedvulnsemver = comparisons.parse(vulnsemver)
-        io.debug(parsedvulnsemver)
-        io.debug(p.version)
+fn is_vulnerable(p: Package, advs: List(ADV)) -> List(String) {
+  list.map(advs, fn(adv) {
+    case adv.name == p.name {
+      False -> option.None
+      True -> {
+        case
+          {
+            list.any(adv.vulnerable_version_ranges, fn(vulnsemver) {
+              let comp = comparisons.get_comparator(vulnsemver)
+              let parsedvulnsemver = comparisons.parse(vulnsemver)
 
-        comp(p.version, parsedvulnsemver)
-      })
+              comp(p.version, parsedvulnsemver)
+            })
+          }
+        {
+          False -> option.None
+          True -> option.Some(adv.file)
+        }
+      }
     }
   })
+  |> option.values
 }
 
-pub fn go(path: String) {
-  let packages = read_manifest(path)
+fn clone() {
+  let assert Ok(Nil) = simplifile.create_directory_all(path())
+
+  let assert Ok(_) =
+    shellout.command(
+      run: "git",
+      with: [
+        "clone",
+        "https://github.com/mirego/elixir-security-advisories.git",
+        path(),
+      ],
+      in: ".",
+      opt: [],
+    )
+
+  Nil
+}
+
+pub fn check_for_advisories(manifest_path: String, pull: Bool) {
+  case pull {
+    True -> {
+      let assert _ = simplifile.delete(path())
+      clone()
+    }
+
+    False -> Nil
+  }
+
+  let packages = read_manifest(manifest_path)
   let advs = read_all_adv()
 
-  list.any(packages, fn(p) { is_vulnerable(p, advs) })
+  list.flat_map(packages, fn(p) {
+    case is_vulnerable(p, advs) {
+      [] -> []
+      vulns -> vulns
+    }
+  })
 }
