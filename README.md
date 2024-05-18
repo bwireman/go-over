@@ -16,10 +16,7 @@ pub fn main() {
 
 Further documentation can be found at <https://hexdocs.pm/go_over>.
 
-## Development
+UNDER CONSTRUCTION!!
+uses https://github.com/mirego/elixir-security-advisories which is licensed with `BSD-3-Clause license` and uses data inside the packages directory is pulled from GitHub API, it is licensed under the terms of the CC-BY 4.0 open source license. See GitHub documentation for the full terms.
 
-```sh
-gleam run   # Run the project
-gleam test  # Run the tests
-gleam shell # Run an Erlang shell
-```
+Code original to this repo is Licensed under MIT
