@@ -1,5 +1,4 @@
 import filepath
-import gleam/io
 import gleam/list
 import gleam/option
 import go_over/comparisons
@@ -146,4 +145,10 @@ pub fn check_for_advisories(manifest_path: String, pull: Bool) {
       vulns -> vulns
     }
   })
+}
+
+pub fn print_adv(adv_path: String) {
+  let assert Ok(contents) = simplifile.read(adv_path)
+
+  shellout.style(contents, with: shellout.display(["bold", "italic", "tubular"]), custom: [])
 }
