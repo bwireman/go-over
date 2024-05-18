@@ -35,41 +35,37 @@ fn do_get_comparator(ver: String) {
     |> list.first
 
   let semver = parse(ver)
-  map_to_comp(op)(semver)
-}
-
-pub fn map_to_comp(op: String) {
   case op {
-    "<" -> lt
-    "<=" -> lte
-    ">" -> gt
-    ">=" -> gte
-    "==" -> eq
-    "=" -> eq
-    _ -> eq
+    "<" -> lt(semver)
+    "<=" -> lte(semver)
+    ">" -> gt(semver)
+    ">=" -> gte(semver)
+    "==" -> eq(semver)
+    "=" -> eq(semver)
+    _ -> eq(semver)
   }
 }
 
-pub fn eq(r: Version) {
+fn eq(r: Version) {
   fn(l) { version.compare(l, r) == order.Eq }
 }
 
-pub fn lt(r: Version) {
+fn lt(r: Version) {
   fn(l) { version.compare(l, r) == order.Lt }
 }
 
-pub fn lte(r: Version) {
+fn lte(r: Version) {
   fn(l) { eq(r)(l) || lt(r)(l) }
 }
 
-pub fn gt(r: Version) {
+fn gt(r: Version) {
   fn(l) { version.compare(l, r) == order.Gt }
 }
 
-pub fn gte(r: Version) {
+fn gte(r: Version) {
   fn(l) { eq(r)(l) || gt(r)(l) }
 }
 
-pub fn all_good() {
+fn all_good() {
   fn(_: Version) { False }
 }
