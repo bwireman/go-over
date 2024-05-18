@@ -4,3 +4,4 @@
 erl_crash.dump
 /.go-over
 node_modules/
+.vscode

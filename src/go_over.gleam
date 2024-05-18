@@ -19,9 +19,9 @@ pub fn main() {
       let warnings =
         vulns
         |> list.map(advisories.print_adv)
-        |> string.join("--- \n\n")
+        |> string.join("\n")
 
-      shellout.style(warnings, with: shellout.color(["brightred"]), custom: [])
+      shellout.style(warnings, with: shellout.color(["red"]), custom: [])
     }
   }
   |> io.print

@@ -1,6 +1,7 @@
 import filepath
 import gleam/list
 import gleam/option
+import gleam/string
 import go_over/comparisons
 import shellout
 import simplifile
@@ -21,7 +22,7 @@ fn first_patched_versions(y: YamlADV) -> List(String)
 @external(javascript, "./../yaml.mjs", "vulnerable_version_ranges")
 fn vulnerable_version_ranges(y: YamlADV) -> List(String)
 
-type ADV {
+pub type ADV {
   ADV(
     name: String,
     first_patched_versions: List(String),
@@ -84,7 +85,7 @@ fn read_all_adv() {
   })
 }
 
-fn is_vulnerable(p: Package, advs: List(ADV)) -> List(String) {
+fn is_vulnerable(p: Package, advs: List(ADV)) -> List(ADV) {
   list.map(advs, fn(adv) {
     case adv.name == p.name {
       False -> option.None
@@ -93,14 +94,13 @@ fn is_vulnerable(p: Package, advs: List(ADV)) -> List(String) {
           {
             list.any(adv.vulnerable_version_ranges, fn(vulnsemver) {
               let comp = comparisons.get_comparator(vulnsemver)
-              let parsedvulnsemver = comparisons.parse(vulnsemver)
 
-              comp(p.version, parsedvulnsemver)
+              comp(p.version)
             })
           }
         {
           False -> option.None
-          True -> option.Some(adv.file)
+          True -> option.Some(adv)
         }
       }
     }
@@ -147,8 +147,8 @@ pub fn check_for_advisories(manifest_path: String, pull: Bool) {
   })
 }
 
-pub fn print_adv(adv_path: String) {
-  let assert Ok(contents) = simplifile.read(adv_path)
+pub fn print_adv(adv: ADV) {
+  let assert Ok(contents) = simplifile.read(adv.file)
 
-  shellout.style(contents, with: shellout.display(["bold", "italic", "tubular"]), custom: [])
+  string.append(adv.name, string.append("\n\n", contents))
 }
