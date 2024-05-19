@@ -3,32 +3,14 @@ import gleam/list
 import gleam/option
 import gleam/string
 import go_over/comparisons
+import go_over/yaml
 import shellout
 import simplifile
 import stoiridh/version.{type Version}
 import tom
 
-type YamlADV
-
-@external(javascript, "./../yaml.mjs", "readADV")
-fn parse(path: String) -> YamlADV
-
-@external(javascript, "./../yaml.mjs", "name")
-fn name(y: YamlADV) -> String
-
-@external(javascript, "./../yaml.mjs", "first_patched_versions")
-fn first_patched_versions(y: YamlADV) -> List(String)
-
-@external(javascript, "./../yaml.mjs", "vulnerable_version_ranges")
-fn vulnerable_version_ranges(y: YamlADV) -> List(String)
-
 pub type ADV {
-  ADV(
-    name: String,
-    first_patched_versions: List(String),
-    vulnerable_version_ranges: List(String),
-    file: String,
-  )
+  ADV(name: String, vulnerable_version_ranges: List(String), file: String)
 }
 
 fn path() -> String {
@@ -61,14 +43,8 @@ fn read_manifest(path: String) {
 }
 
 fn read_adv(path: String) {
-  let assert Ok(contents) = simplifile.read(path)
-  let parsed = parse(contents)
-  ADV(
-    name(parsed),
-    first_patched_versions(parsed),
-    vulnerable_version_ranges(parsed),
-    path,
-  )
+  let #(name, vulnerable_version_ranges) = yaml.parse(path)
+  ADV(name, vulnerable_version_ranges, path)
 }
 
 fn read_all_adv() {

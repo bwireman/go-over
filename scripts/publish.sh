@@ -29,7 +29,6 @@ function publish {
     git push origin "$VER"
     echo "Publishing to Hex" "$VER"
     HEX_API_KEY=$(cat key._) gleam publish
-    yarn publish
     echo "🚀"
 }
 
