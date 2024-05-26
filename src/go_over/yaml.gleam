@@ -7,6 +7,3 @@ pub fn start() {
 
 @external(erlang, "yamll", "parse")
 pub fn parse(path: String) -> #(String, List(String))
-
-
-

@@ -3,11 +3,10 @@ import gleam/list
 import gleam/option
 import gleam/string
 import go_over/comparisons
+import go_over/packages
 import go_over/yaml
 import shellout
 import simplifile
-import stoiridh/version.{type Version}
-import tom
 
 pub type ADV {
   ADV(name: String, vulnerable_version_ranges: List(String), file: String)
@@ -16,30 +15,6 @@ pub type ADV {
 fn path() -> String {
   let assert Ok(curr) = simplifile.current_directory()
   filepath.join(curr, ".go-over")
-}
-
-type Package {
-  Package(name: String, version: Version)
-}
-
-fn read_manifest(path: String) {
-  let assert Ok(res) = simplifile.read(path)
-  let assert Ok(manifest) = tom.parse(res)
-  let assert Ok(packages) = tom.get_array(manifest, ["packages"])
-  list.map(packages, fn(p) {
-    case p {
-      tom.InlineTable(x) -> {
-        let assert Ok(name) = tom.get_string(x, ["name"])
-        let assert Ok(ver) = tom.get_string(x, ["version"])
-        let assert Ok(semver) = version.parse(ver)
-
-        option.Some(Package(name, semver))
-      }
-
-      _ -> option.None
-    }
-  })
-  |> option.values
 }
 
 fn read_adv(path: String) {
@@ -61,7 +36,7 @@ fn read_all_adv() {
   })
 }
 
-fn is_vulnerable(p: Package, advs: List(ADV)) -> List(ADV) {
+fn is_vulnerable(p: packages.Package, advs: List(ADV)) -> List(ADV) {
   list.map(advs, fn(adv) {
     case adv.name == p.name {
       False -> option.None
@@ -102,7 +77,7 @@ fn clone() {
   Nil
 }
 
-pub fn check_for_advisories(manifest_path: String, pull: Bool) {
+pub fn check_for_advisories(packages: List(packages.Package), pull: Bool) {
   case pull {
     True -> {
       let assert _ = simplifile.delete(path())
@@ -112,15 +87,15 @@ pub fn check_for_advisories(manifest_path: String, pull: Bool) {
     False -> Nil
   }
 
-  let packages = read_manifest(manifest_path)
   let advs = read_all_adv()
 
-  list.flat_map(packages, fn(p) {
-    case is_vulnerable(p, advs) {
-      [] -> []
-      vulns -> vulns
+  list.map(packages, fn(pkg) {
+    case is_vulnerable(pkg, advs) {
+      [] -> option.None
+      vulns -> option.Some(#(pkg, vulns))
     }
   })
+  |> option.values
 }
 
 pub fn print_adv(adv: ADV) {

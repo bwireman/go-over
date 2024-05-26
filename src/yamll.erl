@@ -4,7 +4,6 @@
     parse/1
 ]).
 
-
 parse(Path) -> 
     [Content] = yamerl:decode_file(Path),
     Name = lists:keyfind("package", 1, Content),
