@@ -56,13 +56,13 @@ pub fn retired_to_warning(pkg: Package, ret: ReleaseRetirement) {
 
 pub fn print(w: Warning) {
   [
-    "PACKAGE: ",
+    "Package: ",
     w.package,
-    "VERSION: ",
+    "Version: ",
     w.version,
-    "REASON: ",
+    "Reason: ",
     w.reason,
-    "warningReasonCode: ",
+    "WarningReason: ",
     warning_reason_code_as_string(w.warning_reason_code),
     "Dep: ",
     dep_code_as_string(w.dep),
