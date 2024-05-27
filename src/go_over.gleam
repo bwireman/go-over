@@ -6,35 +6,40 @@ import go_over/advisories
 import go_over/packages
 import go_over/retired
 import go_over/warning
+import go_over/yaml
 import shellout
 
 pub fn main() {
+  let assert Ok(_) = yaml.start()
   let args = shellout.arguments()
-  let pull = list.any(args, fn(arg) { arg == "--skip" })
+  let skip = list.any(args, fn(arg) { arg == "--skip" })
   let pkgs = packages.read_manifest("./manifest.toml")
 
   let vulnerable_packages =
-    advisories.check_for_advisories(pkgs, !pull)
+    advisories.check_for_advisories(pkgs, !skip)
     |> list.map(fn(p) {
       case p {
         #(pkg, adv) -> warning.adv_to_warning(pkg, adv)
       }
     })
 
-  let retired_packages =
-    pkgs
-    |> list.map(fn(pkg) {
-      case retired.check_retired(pkg) {
-        option.Some(ret) -> option.Some(#(pkg, ret))
-        option.None -> option.None
-      }
-    })
-    |> option.values
-    |> list.map(fn(p) {
-      case p {
-        #(pkg, ret) -> warning.retired_to_warning(pkg, ret)
-      }
-    })
+  let retired_packages = case skip {
+    True -> []
+    _ ->
+      pkgs
+      |> list.map(fn(pkg) {
+        case retired.check_retired(pkg) {
+          option.Some(ret) -> option.Some(#(pkg, ret))
+          option.None -> option.None
+        }
+      })
+      |> option.values
+      |> list.map(fn(p) {
+        case p {
+          #(pkg, ret) -> warning.retired_to_warning(pkg, ret)
+        }
+      })
+  }
 
   case list.append(retired_packages, vulnerable_packages) {
     [] ->
