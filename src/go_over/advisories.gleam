@@ -80,7 +80,8 @@ fn clone() {
 pub fn check_for_advisories(packages: List(packages.Package), pull: Bool) {
   case pull {
     True -> {
-      let assert Ok(Nil) = simplifile.delete(path())
+      // ? File may or may not exist
+      let _ = simplifile.delete(path())
       clone()
     }
 
