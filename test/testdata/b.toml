@@ -1,0 +1,7 @@
+packages = [
+  { name = "a", version = "0.8.1", build_tools = ["gleam"], requirements = ["b"], otp_app = "a", source = "hex", outer_checksum = "DEADBEEF" },
+  { name = "b", version = "2.2.123", build_tools = ["gleam"], requirements = [], otp_app = "b", source = "hex", outer_checksum = "DEADBEEF" },
+]
+
+[requirements]
+a = { version = ">= 0.10.0 and < 1.0.0" }

@@ -19,13 +19,13 @@ fn warning_reason_code_as_string(w: WarningReasonCode) {
 
 pub type Dep {
   Direct
-  Indirect(of: String)
+  Indirect
 }
 
 fn dep_code_as_string(d: Dep) {
   case d {
     Direct -> "Direct"
-    Indirect(p) -> "Indirect dependency of " <> p
+    Indirect -> "Indirect dependency"
   }
 }
 

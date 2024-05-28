@@ -80,7 +80,7 @@ fn clone() {
 pub fn check_for_advisories(packages: List(packages.Package), pull: Bool) {
   case pull {
     True -> {
-      let assert _ = simplifile.delete(path())
+      let assert Ok(Nil) = simplifile.delete(path())
       clone()
     }
 
