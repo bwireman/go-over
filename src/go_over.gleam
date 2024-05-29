@@ -1,3 +1,4 @@
+import gleam/int
 import gleam/io
 import gleam/list
 import gleam/option
@@ -44,16 +45,28 @@ pub fn main() {
   case list.append(retired_packages, vulnerable_packages) {
     [] ->
       shellout.style(
-        "All good!",
+        "✅ All good! ✨",
         with: shellout.color(["brightgreen"]),
         custom: [],
       )
+      |> io.print
+
     vulns -> {
+      let len = list.length(vulns)
+      {
+        "⛔ "
+        <> int.to_string(len)
+        <> " WARNING(s) FOUND!\n-----------------------------------------------\n"
+      }
+      |> io.print
+
       vulns
-      |> list.map(warning.print)
-      |> string.join("\n")
-      |> shellout.style(with: shellout.color(["red"]), custom: [])
+      |> list.map(fn(w) {
+        warning.print(w)
+        |> shellout.style(with: shellout.color(["red"]), custom: [])
+      })
+      |> string.join("\n-----------------------------------------------\n")
+      |> io.print
     }
   }
-  |> io.print
 }

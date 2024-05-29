@@ -1,7 +1,6 @@
 import filepath
 import gleam/list
 import gleam/option
-import gleam/string
 import go_over/comparisons
 import go_over/packages
 import go_over/yaml
@@ -97,10 +96,4 @@ pub fn check_for_advisories(packages: List(packages.Package), pull: Bool) {
     }
   })
   |> option.values
-}
-
-pub fn print_adv(adv: ADV) {
-  let assert Ok(contents) = simplifile.read(adv.file)
-
-  string.append(adv.name, string.append("\n\n", contents))
 }
