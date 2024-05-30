@@ -19,7 +19,7 @@ fn path(pkg: packages.Package) -> String {
 fn filname(pkg) -> String {
   pkg
   |> path
-  |> filepath.join("resp")
+  |> filepath.join("resp.json")
 }
 
 fn pull_retired(pkg: packages.Package) {
