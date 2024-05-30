@@ -3,7 +3,7 @@
 [![Package Version](https://img.shields.io/hexpm/v/go_over)](https://hex.pm/packages/go_over)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/go_over/)
 
-A tool to check for Erlang & Elixir dependency advisories as well as retired hex packages, to make sure you gleam projects really sparkle! ✨
+A tool to check for Erlang & Elixir dependency advisories as well as retired hex packages, to make sure your gleam projects really sparkle! ✨
 
 🚨 _**NOTE**_: security advisories are _NOT_ currently monitored for gleam dependencies. The language, while excellent, is far too new and niche
 
@@ -13,7 +13,8 @@ A tool to check for Erlang & Elixir dependency advisories as well as retired hex
 gleam add --dev go_over
 ```
 
-and add `.go-over/` to your `.gitignore`
+- add `.go-over/` to your `.gitignore`
+- make sure `git` is installed
 
 # Usage
 
