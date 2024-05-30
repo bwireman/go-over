@@ -10,7 +10,7 @@ A tool to check for Erlang & Elixir dependency advisories as well as retired hex
 # Install
 
 ```sh
-gleam add go_over
+gleam add --dev go_over
 ```
 
 and add `.go-over/` to your `.gitignore`
