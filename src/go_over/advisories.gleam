@@ -1,7 +1,9 @@
 import filepath
 import gleam/list
 import gleam/option
+import go_over/cache
 import go_over/comparisons
+import go_over/constants.{go_over_path, six_hours}
 import go_over/packages
 import go_over/yaml
 import shellout
@@ -11,9 +13,9 @@ pub type ADV {
   ADV(name: String, vulnerable_version_ranges: List(String), file: String)
 }
 
-fn path() -> String {
-  let assert Ok(curr) = simplifile.current_directory()
-  filepath.join(curr, ".go-over")
+fn path() {
+  go_over_path()
+  |> filepath.join("mirego-elixir-security-advisories")
 }
 
 fn read_adv(path: String) {
@@ -59,7 +61,9 @@ fn is_vulnerable(p: packages.Package, advs: List(ADV)) -> List(ADV) {
 }
 
 fn clone() {
-  let assert Ok(Nil) = simplifile.create_directory_all(path())
+  let assert Ok(Nil) =
+    path()
+    |> simplifile.create_directory_all()
 
   let assert Ok(_) =
     shellout.command(
@@ -76,14 +80,20 @@ fn clone() {
   Nil
 }
 
+fn delete_and_clone() {
+  // ? File may or may not exist
+  let p = path()
+
+  let _ = simplifile.delete(p)
+  clone()
+  let assert Ok(Nil) = simplifile.delete(filepath.join(p, ".git"))
+
+  Nil
+}
+
 pub fn check_for_advisories(packages: List(packages.Package), pull: Bool) {
   case pull {
-    True -> {
-      // ? File may or may not exist
-      let _ = simplifile.delete(path())
-      clone()
-    }
-
+    True -> cache.pull_if_not_cached(path(), six_hours, delete_and_clone)
     False -> Nil
   }
 

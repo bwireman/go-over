@@ -1,11 +1,28 @@
+import filepath
 import gleam/hackney
 import gleam/hexpm
 import gleam/http/request
 import gleam/json
 import gleam/option
+import go_over/cache
+import go_over/constants
 import go_over/packages
+import simplifile
 
-pub fn check_retired(pkg: packages.Package) {
+fn path(pkg: packages.Package) -> String {
+  constants.go_over_path()
+  |> filepath.join("deps")
+  |> filepath.join(pkg.name)
+  |> filepath.join(pkg.version_raw)
+}
+
+fn filname(pkg) -> String {
+  pkg
+  |> path
+  |> filepath.join("resp")
+}
+
+fn pull_retired(pkg: packages.Package) {
   // Prepare a HTTP request record
   let assert Ok(request) =
     request.to(
@@ -21,8 +38,29 @@ pub fn check_retired(pkg: packages.Package) {
     |> request.prepend_header("accept", "application/json")
     |> hackney.send
 
-  let assert Ok(release) = json.decode(resp.body, hexpm.decode_release)
+  let assert Ok(_) = simplifile.create_directory_all(path(pkg))
 
+  let assert Ok(_) =
+    pkg
+    |> filname
+    |> simplifile.write(resp.body)
+  Nil
+}
+
+pub fn check_retired(pkg: packages.Package) {
+  pkg
+  |> path()
+  |> cache.pull_if_not_cached(constants.hour, fn() {
+    let _ = simplifile.delete(path(pkg))
+    pull_retired(pkg)
+  })
+
+  let assert Ok(resp) =
+    pkg
+    |> filname
+    |> simplifile.read()
+
+  let assert Ok(release) = json.decode(resp, hexpm.decode_release)
   release.retirement
 }
 

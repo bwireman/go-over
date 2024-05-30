@@ -3,6 +3,7 @@ version = "0.1.0"
 licences = ["MIT"]
 repository = { type = "github", user = "bwireman", repo = "go-over" }
 description = "Auditor for erlang and elixir dependencies in gleam projects"
+gleam = ">= 0.32.0"
 
 # Fill out these fields if you intend to generate HTML documentation or publish
 # your project to the Hex package manager.
@@ -28,6 +29,7 @@ gleam_hexpm = ">= 1.0.0 and < 2.0.0"
 gleam_hackney = ">= 1.2.0 and < 2.0.0"
 gleam_http = ">= 3.6.0 and < 4.0.0"
 gleam_json = ">= 1.0.1 and < 2.0.0"
+birl = ">= 1.7.0 and < 2.0.0"
 
 [dev-dependencies]
 gleeunit = ">= 1.0.0 and < 2.0.0"
