@@ -7,6 +7,7 @@ import go_over/advisories
 import go_over/constants
 import go_over/packages
 import go_over/retired
+import go_over/util.{iff, throwaway}
 import go_over/warning
 import go_over/yaml
 import shellout
@@ -19,8 +20,9 @@ pub fn main() {
   let force = list.any(args, fn(arg) { arg == "--force" })
   let pkgs = packages.read_manifest("./manifest.toml")
 
-  case force && skip {
-    True -> {
+  iff(
+    force && skip,
+    fn() {
       shellout.style(
         "Cannot specify both `--skip` & `--force`",
         with: shellout.color(["red"]),
@@ -28,14 +30,11 @@ pub fn main() {
       )
       |> io.print
       shellout.exit(1)
-    }
-    _ -> Nil
-  }
+    },
+    Nil,
+  )
 
-  let _ = case force {
-    True -> simplifile.delete(constants.go_over_path())
-    _ -> Ok(Nil)
-  }
+  throwaway(force, fn() { simplifile.delete(constants.go_over_path()) })
 
   let vulnerable_packages =
     advisories.check_for_advisories(pkgs, !skip)
@@ -45,22 +44,19 @@ pub fn main() {
       }
     })
 
-  let retired_packages = case skip {
-    True -> []
-    _ ->
-      pkgs
-      |> list.map(fn(pkg) {
-        case retired.check_retired(pkg, !skip) {
-          option.Some(ret) -> option.Some(#(pkg, ret))
-          option.None -> option.None
-        }
-      })
-      |> option.values
-      |> list.map(fn(p) {
-        let #(pkg, ret) = p
-        warning.retired_to_warning(pkg, ret)
-      })
-  }
+  let retired_packages =
+    pkgs
+    |> list.map(fn(pkg) {
+      case retired.check_retired(pkg, !skip) {
+        option.Some(ret) -> option.Some(#(pkg, ret))
+        option.None -> option.None
+      }
+    })
+    |> option.values
+    |> list.map(fn(p) {
+      let #(pkg, ret) = p
+      warning.retired_to_warning(pkg, ret)
+    })
 
   case list.append(retired_packages, vulnerable_packages) {
     [] ->

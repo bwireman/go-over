@@ -13,6 +13,8 @@ A tool to check for Erlang & Elixir dependency advisories as well as retired hex
 gleam add --dev go_over
 ```
 
+## 📣 Also!
+
 - add `.go-over/` to your `.gitignore`
 - make sure `git` is installed
 
@@ -22,20 +24,21 @@ gleam add --dev go_over
 gleam run -m go_over
 ```
 
-## Obligatory Asciinema
+### 🎥 Obligatory Asciinema
+
 ![demo](./images/demo.gif)
-## 🏴 Flags
+
+### 🏴 Flags
 
 - `--skip`: will skip checking the cache and used the stored data no matter what
-- `--force`: will force pulling new data even if the cached data is still valid 
+- `--force`: will force pulling new data even if the cached data is still valid
 
-
-## Caching
+### Caching
 
 - Security advisory data is cached for six hours
 - hex.pm retired package data is cached for one hour
 
-# Other Art
+# 🖌️ Other Art
 
 - As I'm sure is no surprise this tool is inspired by (and all around worse than) [mirego/mix_audit](https://github.com/mirego/mix_audit). Please check it out!
 - It also draws inspiration from [mix hex.audit](https://hexdocs.pm/hex/Mix.Tasks.Hex.Audit.html)
