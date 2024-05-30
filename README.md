@@ -22,6 +22,8 @@ gleam add --dev go_over
 gleam run -m go_over
 ```
 
+## Obligatory Asciinema
+![demo](./images/demo.gif)
 ## 🏴 Flags
 
 - `--skip`: will skip checking the cache and used the stored data no matter what
