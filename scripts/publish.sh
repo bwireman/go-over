@@ -15,6 +15,8 @@ if [ "$BRANCH" != "main" ]; then
     echo "Branch must be 'main'"
     exit 1
 fi
+gleam format
+gleam update
 
 if [ ! -z "$(git status --porcelain)" ]; then
     echo "Working dir mush be clean"
@@ -23,7 +25,6 @@ fi
 
 function publish {
     gleam clean
-    ./scripts/update.sh
     echo "Tagging" "$VER"
     git tag "$VER"
     git push origin "$VER"
