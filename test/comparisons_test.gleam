@@ -1,49 +1,49 @@
+import gleamsver.{parse}
 import gleeunit/should
-import go_over/comparisons.{get_comparator, parse}
-import stoiridh/version.{new}
+import go_over/comparisons
 
 pub fn parse_test() {
-  parse(" 1.1.1")
-  parse(" 0.1.0")
-  parse(" 2.1.0-beta")
-  parse("2.54.0")
+  comparisons.parse(" 1.1.1")
+  comparisons.parse(" 0.1.0")
+  comparisons.parse(" 2.1.0-beta")
+  comparisons.parse("2.54.0")
 }
 
 pub fn get_comparator_test() {
-  let assert Ok(v) = new(1, 1, 1)
-  get_comparator("<= 1.1.1")(v)
+  let assert Ok(v) = parse("1.1.1")
+  comparisons.get_comparator("<= 1.1.1")(v)
   |> should.be_true
 
-  get_comparator("< 1.1.1")(v)
+  comparisons.get_comparator("< 1.1.1")(v)
   |> should.be_false
 
-  get_comparator("> 1.1.1")(v)
+  comparisons.get_comparator("> 1.1.1")(v)
   |> should.be_false
 
-  get_comparator(">= 1.1.1")(v)
+  comparisons.get_comparator(">= 1.1.1")(v)
   |> should.be_true
 
-  get_comparator("== 1.1.1")(v)
+  comparisons.get_comparator("== 1.1.1")(v)
   |> should.be_true
 
-  get_comparator("= 1.1.1")(v)
+  comparisons.get_comparator("= 1.1.1")(v)
   |> should.be_true
 
-  get_comparator("1.1.1")(v)
+  comparisons.get_comparator("1.1.1")(v)
   |> should.be_true
 
-  get_comparator("<= 1.1.1, > 1.0.0")(v)
+  comparisons.get_comparator("<= 1.1.1, > 1.0.0")(v)
   |> should.be_true
 
-  get_comparator("> 1.0.0, <= 1.1.1")(v)
+  comparisons.get_comparator("> 1.0.0, <= 1.1.1")(v)
   |> should.be_true
 
-  get_comparator("< 1.1.1, > 1.0.0")(v)
+  comparisons.get_comparator("< 1.1.1, > 1.0.0")(v)
   |> should.be_false
 
-  get_comparator("> 1.0.0, < 1.1.1")(v)
+  comparisons.get_comparator("> 1.0.0, < 1.1.1")(v)
   |> should.be_false
 
-  get_comparator("> 1.1.1, < 1.0.0")(v)
+  comparisons.get_comparator("> 1.1.1, < 1.0.0")(v)
   |> should.be_false
 }

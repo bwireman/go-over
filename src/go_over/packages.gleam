@@ -1,12 +1,12 @@
 import gleam/dict
 import gleam/list
 import gleam/option
+import gleamsver.{type SemVer}
 import simplifile
-import stoiridh/version.{type Version}
 import tom
 
 pub type Package {
-  Package(name: String, version: Version, version_raw: String, direct: Bool)
+  Package(name: String, version: SemVer, version_raw: String, direct: Bool)
 }
 
 pub fn read_manifest(path: String) -> List(Package) {
@@ -21,7 +21,7 @@ pub fn read_manifest(path: String) -> List(Package) {
       tom.InlineTable(x) -> {
         let assert Ok(name) = tom.get_string(x, ["name"])
         let assert Ok(ver) = tom.get_string(x, ["version"])
-        let assert Ok(semver) = version.parse(ver)
+        let assert Ok(semver) = gleamsver.parse(ver)
 
         option.Some(Package(
           name,

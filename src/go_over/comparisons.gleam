@@ -1,14 +1,14 @@
 import gleam/list
 import gleam/order
 import gleam/string
-import stoiridh/version.{type Version}
+import gleamsver.{type SemVer}
 
 pub fn parse(ver: String) {
   let assert Ok(v) =
     string.split(ver, " ")
     |> list.last
 
-  let assert Ok(x) = version.parse(v)
+  let assert Ok(x) = gleamsver.parse(v)
   x
 }
 
@@ -46,26 +46,26 @@ fn do_get_comparator(ver: String) {
   }
 }
 
-fn eq(r: Version) {
-  fn(l) { version.compare(l, r) == order.Eq }
+fn eq(r: SemVer) {
+  fn(l) { gleamsver.compare(l, r) == order.Eq }
 }
 
-fn lt(r: Version) {
-  fn(l) { version.compare(l, r) == order.Lt }
+fn lt(r: SemVer) {
+  fn(l) { gleamsver.compare(l, r) == order.Lt }
 }
 
-fn lte(r: Version) {
+fn lte(r: SemVer) {
   fn(l) { eq(r)(l) || lt(r)(l) }
 }
 
-fn gt(r: Version) {
-  fn(l) { version.compare(l, r) == order.Gt }
+fn gt(r: SemVer) {
+  fn(l) { gleamsver.compare(l, r) == order.Gt }
 }
 
-fn gte(r: Version) {
+fn gte(r: SemVer) {
   fn(l) { eq(r)(l) || gt(r)(l) }
 }
 
 fn all_good() {
-  fn(_: Version) { False }
+  fn(_: SemVer) { False }
 }
