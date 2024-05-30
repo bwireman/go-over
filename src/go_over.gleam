@@ -4,17 +4,34 @@ import gleam/list
 import gleam/option
 import gleam/string
 import go_over/advisories
+import go_over/constants
 import go_over/packages
 import go_over/retired
 import go_over/warning
 import go_over/yaml
 import shellout
+import simplifile
 
 pub fn main() {
   let assert Ok(_) = yaml.start()
   let args = shellout.arguments()
   let skip = list.any(args, fn(arg) { arg == "--skip" })
+  let force = list.any(args, fn(arg) { arg == "--force" })
   let pkgs = packages.read_manifest("./manifest.toml")
+
+  case force && skip {
+    True -> {
+      shellout.style("Cannot specify both `--skip` & `--force`", with: shellout.color(["red"]), custom: [])
+      |> io.print
+      shellout.exit(1)
+    }
+    _ -> Nil
+  }
+
+  let _ = case force {
+    True -> simplifile.delete(constants.go_over_path())
+    _ -> Ok(Nil)
+  }
 
   let vulnerable_packages =
     advisories.check_for_advisories(pkgs, !skip)
@@ -29,16 +46,15 @@ pub fn main() {
     _ ->
       pkgs
       |> list.map(fn(pkg) {
-        case retired.check_retired(pkg) {
+        case retired.check_retired(pkg, !skip) {
           option.Some(ret) -> option.Some(#(pkg, ret))
           option.None -> option.None
         }
       })
       |> option.values
       |> list.map(fn(p) {
-        case p {
-          #(pkg, ret) -> warning.retired_to_warning(pkg, ret)
-        }
+        let #(pkg, ret) = p
+        warning.retired_to_warning(pkg, ret)
       })
   }
 
