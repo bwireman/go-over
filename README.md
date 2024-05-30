@@ -21,6 +21,12 @@ and add `.go-over/` to your `.gitignore`
 gleam run -m go_over
 ```
 
+## 🏴 Flags
+
+- `--skip`: will skip checking the cache and used the stored data no matter what
+- `--force`: will force pulling new data even if the cached data is still valid 
+
+
 ## Caching
 
 - Security advisory data is cached for six hours

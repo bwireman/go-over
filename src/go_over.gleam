@@ -21,7 +21,11 @@ pub fn main() {
 
   case force && skip {
     True -> {
-      shellout.style("Cannot specify both `--skip` & `--force`", with: shellout.color(["red"]), custom: [])
+      shellout.style(
+        "Cannot specify both `--skip` & `--force`",
+        with: shellout.color(["red"]),
+        custom: [],
+      )
       |> io.print
       shellout.exit(1)
     }
