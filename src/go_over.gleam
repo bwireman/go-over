@@ -45,7 +45,7 @@ pub fn main() {
   case list.append(retired_packages, vulnerable_packages) {
     [] ->
       shellout.style(
-        "✅ All good! ✨",
+        "✅ All good! ✨\n\n",
         with: shellout.color(["brightgreen"]),
         custom: [],
       )
@@ -67,6 +67,8 @@ pub fn main() {
       })
       |> string.join("\n-----------------------------------------------\n")
       |> io.print
+
+      shellout.exit(1)
     }
   }
 }
