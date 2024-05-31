@@ -1,9 +1,13 @@
 name = "go_over"
-version = "0.1.0"
+version = "0.2.0"
 licences = ["MIT"]
 repository = { type = "github", user = "bwireman", repo = "go-over" }
 description = "Auditor for erlang and elixir dependencies in gleam projects"
-gleam = ">= 0.32.0"
+gleam = ">= 1.2.0"
+
+internal_modules = [
+  "go_over/*",
+]
 
 # Fill out these fields if you intend to generate HTML documentation or publish
 # your project to the Hex package manager.

@@ -7,7 +7,7 @@ import gleam/option
 import go_over/cache
 import go_over/constants
 import go_over/packages
-import go_over/util.{iff}
+import go_over/util.{iffnil}
 import simplifile
 
 fn path(pkg: packages.Package) -> String {
@@ -49,18 +49,14 @@ fn pull_retired(pkg: packages.Package) {
 }
 
 pub fn check_retired(pkg: packages.Package, pull: Bool) {
-  iff(
-    pull,
-    fn() {
-      pkg
-      |> path()
-      |> cache.pull_if_not_cached(constants.hour, fn() {
-        let _ = simplifile.delete(path(pkg))
-        pull_retired(pkg)
-      })
-    },
-    Nil,
-  )
+  iffnil(pull, fn() {
+    pkg
+    |> path()
+    |> cache.pull_if_not_cached(constants.hour, fn() {
+      let _ = simplifile.delete(path(pkg))
+      pull_retired(pkg)
+    })
+  })
 
   let assert Ok(resp) =
     pkg
