@@ -11,7 +11,7 @@ pub type WarningReasonCode {
   Vulnerable
 }
 
-fn warning_reason_code_as_string(w: WarningReasonCode) {
+fn warning_reason_code_as_string(w: WarningReasonCode) -> String {
   case w {
     Retired -> "Retired"
     Vulnerable -> "Vulnerable"
@@ -23,7 +23,7 @@ pub type Dep {
   Indirect
 }
 
-fn dep_code_as_string(d: Dep) {
+fn dep_code_as_string(d: Dep) -> String {
   case d {
     Direct -> "Direct"
     Indirect -> "Indirect dependency"
@@ -40,13 +40,13 @@ pub type Warning {
   )
 }
 
-fn print_adv(adv: ADV) {
+fn print_adv(adv: ADV) -> String {
   let assert Ok(contents) = simplifile.read(adv.file)
 
   "\n" <> contents
 }
 
-pub fn adv_to_warning(pkg: Package, adv: List(ADV)) {
+pub fn adv_to_warning(pkg: Package, adv: List(ADV)) -> Warning {
   Warning(
     pkg.name,
     pkg.version_raw,
@@ -58,11 +58,11 @@ pub fn adv_to_warning(pkg: Package, adv: List(ADV)) {
   )
 }
 
-pub fn retired_to_warning(pkg: Package, ret: ReleaseRetirement) {
+pub fn retired_to_warning(pkg: Package, ret: ReleaseRetirement) -> Warning {
   Warning(pkg.name, pkg.version_raw, retired.print_ret(ret), Retired, Direct)
 }
 
-pub fn print(w: Warning) {
+pub fn print(w: Warning) -> String {
   [
     "Package: " <> w.package,
     "Version: " <> w.version,

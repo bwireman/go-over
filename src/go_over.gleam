@@ -40,7 +40,10 @@ fn spin_up() -> Flags {
   flags
 }
 
-fn get_vulnerable_packages(pkgs: List(packages.Package), flags: Flags) {
+fn get_vulnerable_packages(
+  pkgs: List(packages.Package),
+  flags: Flags,
+) -> List(Warning) {
   advisories.check_for_advisories(pkgs, !flags.skip)
   |> list.map(fn(p) {
     let #(pkg, adv) = p
@@ -49,7 +52,10 @@ fn get_vulnerable_packages(pkgs: List(packages.Package), flags: Flags) {
   })
 }
 
-fn get_retired_packges(pkgs: List(packages.Package), flags: Flags) {
+fn get_retired_packges(
+  pkgs: List(packages.Package),
+  flags: Flags,
+) -> List(Warning) {
   pkgs
   |> list.map(fn(pkg) {
     case retired.check_retired(pkg, !flags.skip) {
@@ -64,7 +70,7 @@ fn get_retired_packges(pkgs: List(packages.Package), flags: Flags) {
   })
 }
 
-fn print_warnings(vulns: List(Warning)) {
+fn print_warnings(vulns: List(Warning)) -> Nil {
   let len = list.length(vulns)
   {
     "⛔ "

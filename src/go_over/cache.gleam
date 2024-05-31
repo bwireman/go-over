@@ -9,7 +9,7 @@ fn cache_name(path: String) -> String {
   filepath.join(path, ".go-over-cache")
 }
 
-fn file_cached(path: String, max_age_seconds: Int) {
+fn file_cached(path: String, max_age_seconds: Int) -> Result(Bool, Nil) {
   path
   |> cache_name()
   |> simplifile.read()

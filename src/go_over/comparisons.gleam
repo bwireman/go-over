@@ -3,7 +3,7 @@ import gleam/order
 import gleam/string
 import gleamsver.{type SemVer}
 
-pub fn parse(ver: String) {
+pub fn parse(ver: String) -> SemVer {
   let assert Ok(parsed) =
     string.split(ver, " ")
     |> list.last
@@ -12,7 +12,7 @@ pub fn parse(ver: String) {
   semver
 }
 
-pub fn get_comparator(ver: String) {
+pub fn get_comparator(ver: String) -> fn(SemVer) -> Bool {
   let cleaned =
     ver
     |> string.split(",")
@@ -29,7 +29,7 @@ pub fn get_comparator(ver: String) {
   }
 }
 
-fn do_get_comparator(ver: String) {
+fn do_get_comparator(ver: String) -> fn(SemVer) -> Bool {
   let assert Ok(op) =
     string.split(ver, " ")
     |> list.first
@@ -46,26 +46,26 @@ fn do_get_comparator(ver: String) {
   }
 }
 
-fn eq(r: SemVer) {
-  fn(l) { gleamsver.compare(l, r) == order.Eq }
+fn eq(r: SemVer) -> fn(SemVer) -> Bool {
+  fn(l: SemVer) { gleamsver.compare(l, r) == order.Eq }
 }
 
-fn lt(r: SemVer) {
-  fn(l) { gleamsver.compare(l, r) == order.Lt }
+fn lt(r: SemVer) -> fn(SemVer) -> Bool {
+  fn(l: SemVer) { gleamsver.compare(l, r) == order.Lt }
 }
 
-fn lte(r: SemVer) {
-  fn(l) { eq(r)(l) || lt(r)(l) }
+fn lte(r: SemVer) -> fn(SemVer) -> Bool {
+  fn(l: SemVer) { eq(r)(l) || lt(r)(l) }
 }
 
-fn gt(r: SemVer) {
-  fn(l) { gleamsver.compare(l, r) == order.Gt }
+fn gt(r: SemVer) -> fn(SemVer) -> Bool {
+  fn(l: SemVer) { gleamsver.compare(l, r) == order.Gt }
 }
 
-fn gte(r: SemVer) {
-  fn(l) { eq(r)(l) || gt(r)(l) }
+fn gte(r: SemVer) -> fn(SemVer) -> Bool {
+  fn(l: SemVer) { eq(r)(l) || gt(r)(l) }
 }
 
-fn all_good() {
+fn all_good() -> fn(SemVer) -> Bool {
   fn(_: SemVer) { False }
 }

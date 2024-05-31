@@ -1,9 +1,9 @@
 import filepath
 import gleam/hackney
-import gleam/hexpm
+import gleam/hexpm.{type ReleaseRetirement}
 import gleam/http/request
 import gleam/json
-import gleam/option
+import gleam/option.{type Option}
 import go_over/cache
 import go_over/constants
 import go_over/packages
@@ -23,7 +23,7 @@ fn filname(pkg) -> String {
   |> filepath.join("resp.json")
 }
 
-fn pull_retired(pkg: packages.Package) {
+fn pull_retired(pkg: packages.Package) -> Nil {
   // Prepare a HTTP request record
   let assert Ok(request) =
     request.to(
@@ -48,7 +48,10 @@ fn pull_retired(pkg: packages.Package) {
   Nil
 }
 
-pub fn check_retired(pkg: packages.Package, pull: Bool) {
+pub fn check_retired(
+  pkg: packages.Package,
+  pull: Bool,
+) -> Option(ReleaseRetirement) {
   iffnil(pull, fn() {
     pkg
     |> path()
