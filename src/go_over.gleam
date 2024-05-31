@@ -67,21 +67,16 @@ fn get_retired_packges(
 }
 
 fn print_warnings(vulns: List(Warning)) -> Nil {
-  let len = list.length(vulns)
   {
     "⛔ "
-    <> int.to_string(len)
+    <> int.to_string(list.length(vulns))
     <> " WARNING(s) FOUND!"
     <> constants.long_ass_dashes
   }
   |> io.print
 
   vulns
-  |> list.map(fn(w) {
-    w
-    |> warning.format_as_string()
-    |> print.format_warning()
-  })
+  |> list.map(warning.format_as_string)
   |> string.join(constants.long_ass_dashes)
   |> io.print
   shellout.exit(1)
@@ -97,6 +92,23 @@ pub fn main() {
         "0.1.2",
         "Retired",
         warning.Retired,
+        "Critical",
+        warning.Direct,
+      ),
+      Warning(
+        "Fake Retired Package",
+        "0.1.2",
+        "Retired",
+        warning.Retired,
+        "High",
+        warning.Direct,
+      ),
+      Warning(
+        "Fake Retired Package",
+        "0.1.2",
+        "Retired",
+        warning.Retired,
+        "Moderate",
         warning.Direct,
       ),
       Warning(
@@ -104,6 +116,7 @@ pub fn main() {
         "1.2.3",
         "Vulnerabe",
         warning.Vulnerable,
+        "LOW",
         warning.Indirect,
       ),
     ])
@@ -115,7 +128,6 @@ pub fn main() {
 
   case list.append(retired_packages, vulnerable_packages) {
     [] -> print.success("✅ All good! ✨")
-
     vulns -> print_warnings(vulns)
   }
 }

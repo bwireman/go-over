@@ -7,5 +7,6 @@
 parse(Path) -> 
     [Content] = yamerl:decode_file(Path),
     {_, Name} = lists:keyfind("package", 1, Content),
+    {_, Severity} = lists:keyfind("severity", 1, Content),
     {_, Vulnerable_version_ranges} = lists:keyfind("vulnerable_version_ranges", 1, Content),
-    {Name, Vulnerable_version_ranges}.
+    {Name, Severity, Vulnerable_version_ranges}.
