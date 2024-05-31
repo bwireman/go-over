@@ -7,6 +7,7 @@ import gleam/option.{type Option}
 import go_over/cache
 import go_over/constants
 import go_over/packages
+import go_over/print
 import go_over/util.{iffnil}
 import simplifile
 
@@ -24,6 +25,8 @@ fn filname(pkg) -> String {
 }
 
 fn pull_retired(pkg: packages.Package) -> Nil {
+  print.progress("Checking: " <> pkg.name <> " From hex.pm")
+
   // Prepare a HTTP request record
   let assert Ok(request) =
     request.to(
@@ -55,10 +58,14 @@ pub fn check_retired(
   iffnil(pull, fn() {
     pkg
     |> path()
-    |> cache.pull_if_not_cached(constants.hour, fn() {
-      let _ = simplifile.delete(path(pkg))
-      pull_retired(pkg)
-    })
+    |> cache.pull_if_not_cached(
+      constants.hour,
+      fn() {
+        let _ = simplifile.delete(path(pkg))
+        pull_retired(pkg)
+      },
+      pkg.name <> ":" <> pkg.version_raw,
+    )
   })
 
   let assert Ok(resp) =

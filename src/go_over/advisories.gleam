@@ -5,6 +5,7 @@ import go_over/cache
 import go_over/comparisons
 import go_over/constants.{go_over_path, six_hours}
 import go_over/packages.{type Package}
+import go_over/print
 import go_over/util.{iffnil}
 import go_over/yaml
 import shellout
@@ -62,6 +63,8 @@ fn is_vulnerable(p: packages.Package, advs: List(ADV)) -> List(ADV) {
 }
 
 fn clone() -> Nil {
+  print.progress("Cloning mirego/elixir-security-advisories...")
+
   let assert Ok(Nil) =
     path()
     |> simplifile.create_directory_all()
@@ -97,7 +100,7 @@ pub fn check_for_advisories(
   pull: Bool,
 ) -> List(#(Package, List(ADV))) {
   iffnil(pull, fn() {
-    cache.pull_if_not_cached(path(), six_hours, delete_and_clone)
+    cache.pull_if_not_cached(path(), six_hours, delete_and_clone, "mirego/elixir-security-advisories")
   })
 
   let advs = read_all_adv()

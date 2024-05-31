@@ -3,6 +3,7 @@ import filepath
 import gleam/int
 import gleam/order
 import gleam/result
+import go_over/print
 import simplifile
 
 fn cache_name(path: String) -> String {
@@ -25,9 +26,19 @@ fn file_cached(path: String, max_age_seconds: Int) -> Result(Bool, Nil) {
   })
 }
 
-pub fn pull_if_not_cached(path: String, max_age: Int, pullfn: fn() -> Nil) {
+pub fn pull_if_not_cached(
+  path: String,
+  max_age: Int,
+  pullfn: fn() -> Nil,
+  cache_message: String,
+) -> Nil {
   case file_cached(path, max_age) {
-    Ok(True) -> Nil
+    Ok(True) -> {
+      print.progress("Cached: " <> cache_message)
+
+      Nil
+    }
+
     _ -> {
       pullfn()
 

@@ -62,7 +62,7 @@ pub fn retired_to_warning(pkg: Package, ret: ReleaseRetirement) -> Warning {
   Warning(pkg.name, pkg.version_raw, retired.print_ret(ret), Retired, Direct)
 }
 
-pub fn print(w: Warning) -> String {
+pub fn format_as_string(w: Warning) -> String {
   [
     "Package: " <> w.package,
     "Version: " <> w.version,

@@ -6,6 +6,7 @@ import gleam/string
 import go_over/advisories
 import go_over/constants
 import go_over/packages
+import go_over/print
 import go_over/retired
 import go_over/util.{iffnil, throwaway}
 import go_over/warning.{type Warning, Warning}
@@ -28,12 +29,7 @@ fn spin_up() -> Flags {
     )
 
   iffnil(flags.force && flags.skip, fn() {
-    shellout.style(
-      "Cannot specify both `--skip` & `--force`\n\n",
-      with: shellout.color(["red"]),
-      custom: [],
-    )
-    |> io.print
+    print.warning("Cannot specify both `--skip` & `--force`")
     shellout.exit(1)
   })
 
@@ -80,19 +76,14 @@ fn print_warnings(vulns: List(Warning)) -> Nil {
   }
   |> io.print
 
-  let warn =
-    vulns
-    |> list.map(fn(w) {
-      shellout.style(
-        warning.print(w),
-        with: shellout.color(["red"]),
-        custom: [],
-      )
-    })
-    |> string.join(constants.long_ass_dashes)
-
-  io.print_error(warn <> "\n\n")
-
+  vulns
+  |> list.map(fn(w) {
+    w
+    |> warning.format_as_string()
+    |> print.format_warning()
+  })
+  |> string.join(constants.long_ass_dashes)
+  |> io.print
   shellout.exit(1)
 }
 
@@ -123,13 +114,7 @@ pub fn main() {
   let retired_packages = get_retired_packges(pkgs, flags)
 
   case list.append(retired_packages, vulnerable_packages) {
-    [] ->
-      shellout.style(
-        "✅ All good! ✨\n\n",
-        with: shellout.color(["brightgreen"]),
-        custom: [],
-      )
-      |> io.print
+    [] -> print.success("✅ All good! ✨")
 
     vulns -> print_warnings(vulns)
   }
