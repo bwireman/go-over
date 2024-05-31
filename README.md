@@ -26,7 +26,7 @@ gleam run -m go_over
 
 ### 🎥 Obligatory Asciinema
 
-![demo](./images/demo.gif)
+![demo](https://raw.githubusercontent.com/bwireman/go-over/main/images/demo.gif)
 
 ### 🏴 Flags
 

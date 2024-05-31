@@ -7,56 +7,69 @@ import go_over/advisories
 import go_over/constants
 import go_over/packages
 import go_over/retired
-import go_over/util.{iff, throwaway}
+import go_over/util.{iffnil, throwaway}
 import go_over/warning
 import go_over/yaml
 import shellout
 import simplifile
 
-pub fn main() {
+type Flags {
+  Flags(skip: Bool, force: Bool)
+}
+
+fn spin_up() -> Flags {
   let assert Ok(_) = yaml.start()
   let args = shellout.arguments()
-  let skip = list.any(args, fn(arg) { arg == "--skip" })
-  let force = list.any(args, fn(arg) { arg == "--force" })
+  let flags =
+    Flags(
+      skip: list.any(args, fn(arg) { arg == "--skip" }),
+      force: list.any(args, fn(arg) { arg == "--force" }),
+    )
+
+  iffnil(flags.force && flags.skip, fn() {
+    shellout.style(
+      "Cannot specify both `--skip` & `--force`\n\n",
+      with: shellout.color(["red"]),
+      custom: [],
+    )
+    |> io.print
+    shellout.exit(1)
+  })
+
+  flags
+}
+
+fn get_vulnerable_packages(pkgs: List(packages.Package), flags: Flags) {
+  advisories.check_for_advisories(pkgs, !flags.skip)
+  |> list.map(fn(p) {
+    let #(pkg, adv) = p
+
+    warning.adv_to_warning(pkg, adv)
+  })
+}
+
+fn get_retired_packges(pkgs: List(packages.Package), flags: Flags) {
+  pkgs
+  |> list.map(fn(pkg) {
+    case retired.check_retired(pkg, !flags.skip) {
+      option.Some(ret) -> option.Some(#(pkg, ret))
+      option.None -> option.None
+    }
+  })
+  |> option.values
+  |> list.map(fn(p) {
+    let #(pkg, ret) = p
+    warning.retired_to_warning(pkg, ret)
+  })
+}
+
+pub fn main() {
+  let flags = spin_up()
+  throwaway(flags.force, fn() { simplifile.delete(constants.go_over_path()) })
+
   let pkgs = packages.read_manifest("./manifest.toml")
-
-  iff(
-    force && skip,
-    fn() {
-      shellout.style(
-        "Cannot specify both `--skip` & `--force`",
-        with: shellout.color(["red"]),
-        custom: [],
-      )
-      |> io.print
-      shellout.exit(1)
-    },
-    Nil,
-  )
-
-  throwaway(force, fn() { simplifile.delete(constants.go_over_path()) })
-
-  let vulnerable_packages =
-    advisories.check_for_advisories(pkgs, !skip)
-    |> list.map(fn(p) {
-      case p {
-        #(pkg, adv) -> warning.adv_to_warning(pkg, adv)
-      }
-    })
-
-  let retired_packages =
-    pkgs
-    |> list.map(fn(pkg) {
-      case retired.check_retired(pkg, !skip) {
-        option.Some(ret) -> option.Some(#(pkg, ret))
-        option.None -> option.None
-      }
-    })
-    |> option.values
-    |> list.map(fn(p) {
-      let #(pkg, ret) = p
-      warning.retired_to_warning(pkg, ret)
-    })
+  let vulnerable_packages = get_vulnerable_packages(pkgs, flags)
+  let retired_packages = get_retired_packges(pkgs, flags)
 
   case list.append(retired_packages, vulnerable_packages) {
     [] ->

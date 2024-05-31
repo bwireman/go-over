@@ -5,7 +5,7 @@ import go_over/cache
 import go_over/comparisons
 import go_over/constants.{go_over_path, six_hours}
 import go_over/packages
-import go_over/util.{iff}
+import go_over/util.{iffnil}
 import go_over/yaml
 import shellout
 import simplifile
@@ -93,11 +93,9 @@ fn delete_and_clone() {
 }
 
 pub fn check_for_advisories(packages: List(packages.Package), pull: Bool) {
-  iff(
-    pull,
-    fn() { cache.pull_if_not_cached(path(), six_hours, delete_and_clone) },
-    Nil,
-  )
+  iffnil(pull, fn() {
+    cache.pull_if_not_cached(path(), six_hours, delete_and_clone)
+  })
 
   let advs = read_all_adv()
 
