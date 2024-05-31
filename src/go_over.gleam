@@ -85,16 +85,20 @@ pub fn main() {
       {
         "⛔ "
         <> int.to_string(len)
-        <> " WARNING(s) FOUND!\n-----------------------------------------------\n"
+        <> " WARNING(s) FOUND!"
+        <> constants.long_ass_dashes
       }
       |> io.print
 
       vulns
       |> list.map(fn(w) {
-        warning.print(w)
-        |> shellout.style(with: shellout.color(["red"]), custom: [])
+        shellout.style(
+          warning.print(w),
+          with: shellout.color(["red"]),
+          custom: [],
+        )
       })
-      |> string.join("\n-----------------------------------------------\n")
+      |> string.join(constants.long_ass_dashes)
       |> io.print
 
       shellout.exit(1)
