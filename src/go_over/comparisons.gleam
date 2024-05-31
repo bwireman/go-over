@@ -4,12 +4,12 @@ import gleam/string
 import gleamsver.{type SemVer}
 
 pub fn parse(ver: String) {
-  let assert Ok(v) =
+  let assert Ok(parsed) =
     string.split(ver, " ")
     |> list.last
 
-  let assert Ok(x) = gleamsver.parse(v)
-  x
+  let assert Ok(semver) = gleamsver.parse(parsed)
+  semver
 }
 
 pub fn get_comparator(ver: String) {
@@ -23,7 +23,7 @@ pub fn get_comparator(ver: String) {
     [v] -> do_get_comparator(v)
     [first, ..tail] -> {
       list.fold(tail, do_get_comparator(first), fn(acc, v) {
-        fn(x) { acc(x) && do_get_comparator(v)(x) }
+        fn(semver) { acc(semver) && do_get_comparator(v)(semver) }
       })
     }
   }
