@@ -100,7 +100,12 @@ pub fn check_for_advisories(
   pull: Bool,
 ) -> List(#(Package, List(ADV))) {
   iffnil(pull, fn() {
-    cache.pull_if_not_cached(path(), six_hours, delete_and_clone, "mirego/elixir-security-advisories")
+    cache.pull_if_not_cached(
+      path(),
+      six_hours,
+      delete_and_clone,
+      "mirego/elixir-security-advisories",
+    )
   })
 
   let advs = read_all_adv()
