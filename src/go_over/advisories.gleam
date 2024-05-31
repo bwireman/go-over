@@ -12,7 +12,12 @@ import shellout
 import simplifile
 
 pub type ADV {
-  ADV(name: String, vulnerable_version_ranges: List(String), file: String)
+  ADV(
+    name: String,
+    severity: String,
+    vulnerable_version_ranges: List(String),
+    file: String,
+  )
 }
 
 fn path() -> String {
@@ -21,8 +26,13 @@ fn path() -> String {
 }
 
 fn read_adv(path: String) -> ADV {
-  let #(name, vulnerable_version_ranges) = yaml.parse(path)
-  ADV(name, vulnerable_version_ranges, path)
+  let #(name, severity, vulnerable_version_ranges) = yaml.parse(path)
+  ADV(
+    name: name,
+    severity: severity,
+    vulnerable_version_ranges: vulnerable_version_ranges,
+    file: path,
+  )
 }
 
 fn read_all_adv() -> List(ADV) {

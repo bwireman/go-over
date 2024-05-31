@@ -3,6 +3,7 @@ import gleam/list
 import gleam/string
 import go_over/advisories.{type ADV}
 import go_over/packages.{type Package}
+import go_over/print
 import go_over/retired
 import simplifile
 
@@ -36,6 +37,7 @@ pub type Warning {
     version: String,
     reason: String,
     warning_reason_code: WarningReasonCode,
+    severity: String,
     dep: Dep,
   )
 }
@@ -54,21 +56,41 @@ pub fn adv_to_warning(pkg: Package, adv: List(ADV)) -> Warning {
       |> list.map(print_adv)
       |> string.join("\n"),
     Vulnerable,
+    adv
+      |> list.map(fn(a) { a.severity })
+      |> string.join("\n"),
     Direct,
   )
 }
 
 pub fn retired_to_warning(pkg: Package, ret: ReleaseRetirement) -> Warning {
-  Warning(pkg.name, pkg.version_raw, retired.print_ret(ret), Retired, Direct)
+  Warning(
+    pkg.name,
+    pkg.version_raw,
+    retired.print_ret(ret),
+    Retired,
+    "Package Retired",
+    Direct,
+  )
 }
 
 pub fn format_as_string(w: Warning) -> String {
-  [
-    "Package: " <> w.package,
-    "Version: " <> w.version,
-    "WarningReason: " <> warning_reason_code_as_string(w.warning_reason_code),
-    "Dependency Type: " <> dep_code_as_string(w.dep),
-    "Reason: " <> w.reason,
-  ]
-  |> string.join("\n")
+  let str =
+    [
+      "Package: " <> w.package,
+      "Version: " <> w.version,
+      "WarningReason: " <> warning_reason_code_as_string(w.warning_reason_code),
+      "Dependency Type: " <> dep_code_as_string(w.dep),
+      "Severity: " <> w.severity,
+      "Reason: " <> w.reason,
+    ]
+    |> string.join("\n")
+
+  case string.lowercase(w.severity) {
+    "low" -> print.format_low(str)
+    "moderate" -> print.format_moderate(str)
+    "high" -> print.format_high(str)
+    "critical" -> print.format_critical(str)
+    _ -> print.format_warning(str)
+  }
 }
