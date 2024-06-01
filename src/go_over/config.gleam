@@ -1,6 +1,7 @@
 import gleam/dict
 import gleam/list
 import gleam/result.{unwrap}
+import gleam/string
 import go_over/advisories.{type Advisory}
 import go_over/packages.{type Package}
 import go_over/warning.{type Warning}
@@ -29,7 +30,6 @@ pub fn read_config(path: String) -> Config {
   let ignore =
     tom.get_table(go_over, ["ignore"])
     |> unwrap(dict.new())
-
   let packages =
     tom.get_array(ignore, ["packages"])
     |> unwrap([])
@@ -58,7 +58,7 @@ pub fn filter_advisory_ids(conf: Config, advs: List(Advisory)) -> List(Advisory)
 
 pub fn filter_severity(conf: Config, warnings: List(Warning)) -> List(Warning) {
   list.filter(warnings, fn(w) {
-    !list.contains(conf.ignore_severity, w.severity)
+    !list.contains(conf.ignore_severity, string.lowercase(w.severity))
   })
 }
 

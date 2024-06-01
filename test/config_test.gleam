@@ -59,10 +59,19 @@ pub fn filter_severity_test() {
   let a = Warning("", "", "", warning.Vulnerable, "a", warning.Direct)
   let b = Warning("", "", "", warning.Vulnerable, "b", warning.Direct)
   let c = Warning("", "", "", warning.Vulnerable, "c", warning.Direct)
+  let aa = Warning("", "", "", warning.Vulnerable, "A", warning.Direct)
+  let bb = Warning("", "", "", warning.Vulnerable, "B", warning.Direct)
+  let cc = Warning("", "", "", warning.Vulnerable, "C", warning.Direct)
 
   should.equal(filter_severity(full, []), [])
   should.equal(filter_severity(full, [a]), [])
   should.equal(filter_severity(full, [a, b]), [])
   should.equal(filter_severity(full, [b, c]), [c])
   should.equal(filter_severity(full, [a, b, c]), [c])
+
+  should.equal(filter_severity(full, []), [])
+  should.equal(filter_severity(full, [aa]), [])
+  should.equal(filter_severity(full, [aa, bb]), [])
+  should.equal(filter_severity(full, [bb, cc]), [cc])
+  should.equal(filter_severity(full, [aa, bb, cc]), [cc])
 }

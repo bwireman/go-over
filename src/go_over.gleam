@@ -98,9 +98,15 @@ fn print_warnings(vulns: List(Warning)) -> Nil {
 pub fn main() {
   let flags = spin_up()
   let conf = config.read_config("./gleam.toml")
+  iffnil(!conf.cache && flags.skip, fn() {
+    print.warning("Cannot specify both `--skip` & `cache=false`")
+    shellout.exit(1)
+  })
+
   throwaway(flags.force || !conf.cache, fn() {
     simplifile.delete(constants.go_over_path())
   })
+
   let pkgs =
     packages.read_manifest("./manifest.toml")
     |> config.filter_packages(conf, _)
