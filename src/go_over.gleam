@@ -85,46 +85,54 @@ fn print_warnings(vulns: List(Warning)) -> Nil {
 pub fn main() {
   let flags = spin_up()
   throwaway(flags.force, fn() { simplifile.delete(constants.go_over_path()) })
+  let pkgs = packages.read_manifest("./manifest.toml")
+  let vulnerable_packages = get_vulnerable_packages(pkgs, flags)
+  let retired_packages = get_retired_packges(pkgs, flags)
+
   iffnil(flags.fake, fn() {
     print_warnings([
       Warning(
-        "Fake Retired Package",
-        "0.1.2",
+        "fake",
+        "x.y.z",
         "Retired",
-        warning.Retired,
+        warning.Vulnerable,
         "Critical",
         warning.Direct,
       ),
       Warning(
-        "Fake Retired Package",
-        "0.1.2",
+        "another_fake",
+        "1.2.3",
         "Retired",
-        warning.Retired,
+        warning.Vulnerable,
         "High",
         warning.Direct,
       ),
       Warning(
-        "Fake Retired Package",
-        "0.1.2",
+        "and_another",
+        "4.5.6",
         "Retired",
-        warning.Retired,
+        warning.Vulnerable,
         "Moderate",
         warning.Direct,
       ),
       Warning(
-        "Fake Vulnerable Package",
-        "1.2.3",
+        "one_more",
+        "7.8.9",
         "Vulnerabe",
         warning.Vulnerable,
         "LOW",
         warning.Indirect,
       ),
+      Warning(
+        "retired_one",
+        "7.8.9",
+        "Vulnerabe",
+        warning.Retired,
+        "Package Retired",
+        warning.Indirect,
+      ),
     ])
   })
-
-  let pkgs = packages.read_manifest("./manifest.toml")
-  let vulnerable_packages = get_vulnerable_packages(pkgs, flags)
-  let retired_packages = get_retired_packges(pkgs, flags)
 
   case list.append(retired_packages, vulnerable_packages) {
     [] -> print.success("✅ All good! ✨")
