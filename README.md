@@ -33,10 +33,28 @@ gleam run -m go_over
 - `--skip`: will skip checking the cache and used the stored data no matter what
 - `--force`: will force pulling new data even if the cached data is still valid
 
-### Caching
+### ⚙️ Config
 
-- Security advisory data is cached for six hours
-- hex.pm retired package data is cached for one hour
+Optional settings that can be added to your project's gleam.toml
+
+```toml
+[go-over]
+# disables caching (default: true)
+cache = true
+
+[go-over.ignore]
+# list of package names to skip when checking for advisories & warnings (default: [])
+packages = ["example_package"]
+# list of warning severities to skip when checking for advisories & warnings (case insensitive) (default: [])
+severity = ["example_moderate"]
+# list of advisory IDs to skip when checking for advisories & warnings (default: [])
+ids = ["GHSA-xxxx-yyyy-zzzz"]
+```
+
+### ⌛ Caching
+
+- Security advisory data is cached for **_six_** hours
+- hex.pm retired package data is cached for **_one_** hour
 
 # 🖌️ Other Art
 
