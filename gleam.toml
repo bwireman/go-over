@@ -2,7 +2,7 @@ name = "go_over"
 version = "0.2.0"
 licences = ["MIT"]
 repository = { type = "github", user = "bwireman", repo = "go-over" }
-description = "Auditor for erlang and elixir dependencies in gleam projects"
+description = "A tool to audit Erlang & Elixir dependency advisories as well as retired hex packages, to make sure your gleam projects really sparkle! ✨"
 gleam = ">= 1.2.0"
 
 internal_modules = [
@@ -12,9 +12,6 @@ internal_modules = [
 # Fill out these fields if you intend to generate HTML documentation or publish
 # your project to the Hex package manager.
 #
-# description = ""
-# licences = ["Apache-2.0"]
-# repository = { type = "github", user = "username", repo = "project" }
 # links = [{ title = "Website", href = "https://gleam.run" }]
 #
 # For a full reference of all the available options, you can have a look at
