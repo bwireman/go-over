@@ -39,15 +39,19 @@ Optional settings that can be added to your project's gleam.toml
 
 ```toml
 [go-over]
-# disables caching (default: true)
+# disables caching if false (default: true)
 cache = true
 
 [go-over.ignore]
-# list of package names to skip when checking for advisories & warnings (default: [])
+# list of package names to skip when checking for advisories & warnings
+# default: []
 packages = ["example_package"]
-# list of warning severities to skip when checking for advisories & warnings (case insensitive) (default: [])
+# list of warning severities to skip when checking for advisories & warnings
+# default: []
+# (case insensitive)
 severity = ["example_moderate"]
-# list of advisory IDs to skip when checking for advisories & warnings (default: [])
+# list of advisory IDs to skip when checking for advisories & warnings
+# default: []
 ids = ["GHSA-xxxx-yyyy-zzzz"]
 ```
 
