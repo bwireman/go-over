@@ -1,0 +1,4 @@
+[go-over.ignore]
+packages = ["a", "b"]
+severity = ["a", "b"]
+ids = ["a", "b"]

@@ -1,0 +1,2 @@
+[go-over.ignore]
+packages = ["a", "b", "c"]

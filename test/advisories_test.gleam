@@ -4,7 +4,7 @@ import go_over/packages.{read_manifest}
 
 pub fn check_for_advisories_test() {
   let assert [#(pkg, [adv1, adv2])] =
-    read_manifest("test/testdata/known_vulnerable.toml")
+    read_manifest("test/testdata/manifest/known_vulnerable.toml")
     |> check_for_advisories(False)
 
   should.equal(pkg.name, "phoenix")

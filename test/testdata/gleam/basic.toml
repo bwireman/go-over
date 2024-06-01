@@ -1,0 +1,7 @@
+[go-over]
+cache = false
+
+[go-over.ignore]
+packages = ["a"]
+severity = ["b"]
+ids = ["c"]
