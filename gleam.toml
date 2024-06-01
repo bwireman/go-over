@@ -33,6 +33,6 @@ gleeunit = ">= 1.0.0 and < 2.0.0"
 cache = true
 
 [go-over.ignore]
-packages = ["implifile"]
-severity = ["ritical"]
-ids = ["GHSA4r2f-6fm9-2qgh"]
+packages = []
+severity = []
+ids = []
