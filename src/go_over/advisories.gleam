@@ -11,8 +11,8 @@ import go_over/yaml
 import shellout
 import simplifile
 
-pub type ADV {
-  ADV(
+pub type Advisory {
+  Advisory(
     name: String,
     severity: String,
     vulnerable_version_ranges: List(String),
@@ -25,9 +25,9 @@ fn path() -> String {
   |> filepath.join("mirego-elixir-security-advisories")
 }
 
-fn read_adv(path: String) -> ADV {
+fn read_adv(path: String) -> Advisory {
   let #(name, severity, desc, vulnerable_version_ranges) = yaml.parse(path)
-  ADV(
+  Advisory(
     name: name,
     severity: severity,
     vulnerable_version_ranges: vulnerable_version_ranges,
@@ -35,7 +35,7 @@ fn read_adv(path: String) -> ADV {
   )
 }
 
-fn read_all_adv() -> List(ADV) {
+fn read_all_adv() -> List(Advisory) {
   let packages_path = filepath.join(path(), "packages")
 
   let assert Ok(packages) = simplifile.read_directory(packages_path)
@@ -49,7 +49,7 @@ fn read_all_adv() -> List(ADV) {
   })
 }
 
-fn is_vulnerable(p: packages.Package, advs: List(ADV)) -> List(ADV) {
+fn is_vulnerable(p: packages.Package, advs: List(Advisory)) -> List(Advisory) {
   list.map(advs, fn(adv) {
     case adv.name == p.name {
       False -> option.None
@@ -108,7 +108,7 @@ fn delete_and_clone() -> Nil {
 pub fn check_for_advisories(
   packages: List(packages.Package),
   pull: Bool,
-) -> List(#(Package, List(ADV))) {
+) -> List(#(Package, List(Advisory))) {
   iffnil(pull, fn() {
     cache.pull_if_not_cached(
       path(),
