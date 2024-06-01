@@ -1,5 +1,5 @@
 name = "go_over"
-version = "0.3.0"
+version = "0.3.1"
 licences = ["MIT"]
 repository = { type = "github", user = "bwireman", repo = "go-over" }
 description = "A tool to audit Erlang & Elixir dependency advisories as well as retired hex packages, to make sure your gleam projects really sparkle! ✨"
@@ -9,7 +9,7 @@ internal_modules = [
   "go_over/*",
 ]
 
-# links = [{ title = "Website", href = "https://gleam.run" }]
+links = [{ title = "AdvisoriesSource", href = "https://github.com/mirego/elixir-security-advisories" }]
 
 [dependencies]
 gleam_stdlib = ">= 0.34.0 and < 2.0.0"
