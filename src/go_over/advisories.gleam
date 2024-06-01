@@ -42,11 +42,15 @@ fn read_adv(path: String) -> Advisory {
 fn read_all_adv() -> List(Advisory) {
   let packages_path = filepath.join(path(), "packages")
 
-  let packages = simplifile.read_directory(packages_path) |> unwrap([])
+  let packages =
+    simplifile.read_directory(packages_path)
+    |> unwrap([])
   list.flat_map(packages, fn(dir) {
     let dir_path = filepath.join(packages_path, dir)
 
-    let adv_names = simplifile.read_directory(dir_path) |> unwrap([])
+    let adv_names =
+      simplifile.read_directory(dir_path)
+      |> unwrap([])
     list.map(adv_names, fn(adv_name) {
       read_adv(filepath.join(dir_path, adv_name))
     })

@@ -20,13 +20,25 @@ pub fn read_config(path: String) -> Config {
   let assert Ok(res) = simplifile.read(path)
   let assert Ok(gleam) = tom.parse(res)
 
-  let go_over = tom.get_table(gleam, ["go-over"]) |> unwrap(dict.new())
-  let cache = tom.get_bool(go_over, ["cache"]) |> unwrap(True)
-  let ignore = tom.get_table(go_over, ["ignore"]) |> unwrap(dict.new())
+  let go_over =
+    tom.get_table(gleam, ["go-over"])
+    |> unwrap(dict.new())
+  let cache =
+    tom.get_bool(go_over, ["cache"])
+    |> unwrap(True)
+  let ignore =
+    tom.get_table(go_over, ["ignore"])
+    |> unwrap(dict.new())
 
-  let packages = tom.get_array(ignore, ["packages"]) |> unwrap([])
-  let severity = tom.get_array(ignore, ["severity"]) |> unwrap([])
-  let ids = tom.get_array(ignore, ["ids"]) |> unwrap([])
+  let packages =
+    tom.get_array(ignore, ["packages"])
+    |> unwrap([])
+  let severity =
+    tom.get_array(ignore, ["severity"])
+    |> unwrap([])
+  let ids =
+    tom.get_array(ignore, ["ids"])
+    |> unwrap([])
 
   Config(
     cache: cache,

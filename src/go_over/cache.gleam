@@ -42,7 +42,10 @@ pub fn pull_if_not_cached(
     _ -> {
       pullfn()
 
-      let now = birl.utc_now() |> birl.to_unix() |> int.to_string()
+      let now =
+        birl.utc_now()
+        |> birl.to_unix()
+        |> int.to_string()
       let assert Ok(_) =
         path
         |> cache_name()
