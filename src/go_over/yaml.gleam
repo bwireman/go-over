@@ -10,14 +10,20 @@ pub fn start() -> Result(List(Atom), EnsureAllStartedError) {
 @external(erlang, "yamll", "parse")
 fn read(
   path: String,
-) -> #(List(UtfCodepoint), List(UtfCodepoint), List(List(UtfCodepoint)))
+) -> #(
+  List(UtfCodepoint),
+  List(UtfCodepoint),
+  List(UtfCodepoint),
+  List(List(UtfCodepoint)),
+)
 
-pub fn parse(path: String) -> #(String, String, List(String)) {
-  let #(name, severity, versions) = read(path)
+pub fn parse(path: String) -> #(String, String, String, List(String)) {
+  let #(name, severity, desc, versions) = read(path)
 
   #(
     string.from_utf_codepoints(name),
     string.from_utf_codepoints(severity),
+    string.from_utf_codepoints(desc),
     list.map(versions, string.from_utf_codepoints),
   )
 }

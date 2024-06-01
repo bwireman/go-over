@@ -5,7 +5,6 @@ import go_over/advisories.{type ADV}
 import go_over/packages.{type Package}
 import go_over/print
 import go_over/retired
-import simplifile
 
 pub type WarningReasonCode {
   Retired
@@ -42,18 +41,12 @@ pub type Warning {
   )
 }
 
-fn print_adv(adv: ADV) -> String {
-  let assert Ok(contents) = simplifile.read(adv.file)
-
-  "\n" <> contents
-}
-
 pub fn adv_to_warning(pkg: Package, adv: List(ADV)) -> Warning {
   Warning(
     pkg.name,
     pkg.version_raw,
     adv
-      |> list.map(print_adv)
+      |> list.map(fn(a) { a.desciption })
       |> string.join("\n"),
     Vulnerable,
     adv

@@ -16,7 +16,7 @@ pub type ADV {
     name: String,
     severity: String,
     vulnerable_version_ranges: List(String),
-    file: String,
+    desciption: String,
   )
 }
 
@@ -26,12 +26,12 @@ fn path() -> String {
 }
 
 fn read_adv(path: String) -> ADV {
-  let #(name, severity, vulnerable_version_ranges) = yaml.parse(path)
+  let #(name, severity, desc, vulnerable_version_ranges) = yaml.parse(path)
   ADV(
     name: name,
     severity: severity,
     vulnerable_version_ranges: vulnerable_version_ranges,
-    file: path,
+    desciption: desc,
   )
 }
 
@@ -73,7 +73,7 @@ fn is_vulnerable(p: packages.Package, advs: List(ADV)) -> List(ADV) {
 }
 
 fn clone() -> Nil {
-  print.progress("Cloning mirego/elixir-security-advisories...")
+  print.progress("Cloning: " <> constants.advisories_repo <> "...")
 
   let assert Ok(Nil) =
     path()
@@ -84,7 +84,7 @@ fn clone() -> Nil {
       run: "git",
       with: [
         "clone",
-        "https://github.com/mirego/elixir-security-advisories.git",
+        "https://github.com/" <> constants.advisories_repo <> ".git",
         path(),
       ],
       in: ".",
@@ -114,7 +114,7 @@ pub fn check_for_advisories(
       path(),
       six_hours,
       delete_and_clone,
-      "mirego/elixir-security-advisories",
+      constants.advisories_repo,
     )
   })
 
