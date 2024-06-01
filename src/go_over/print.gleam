@@ -2,7 +2,7 @@ import gleam/io
 import shellout
 
 pub fn progress(msg: String) {
-  shellout.style(msg, with: shellout.color(["magenta"]), custom: [])
+  shellout.style(msg, with: shellout.color(["brightmagenta"]), custom: [])
   |> io.println
 }
 

@@ -81,16 +81,16 @@ pub fn format_as_string(w: Warning) -> String {
       "Version: " <> w.version,
       "WarningReason: " <> warning_reason_code_as_string(w.warning_reason_code),
       "Dependency Type: " <> dep_code_as_string(w.dep),
-      "Severity: " <> w.severity,
+      "Severity: " <> string.lowercase(w.severity),
       "Reason: " <> w.reason,
     ]
     |> string.join("\n")
 
   case string.lowercase(w.severity) {
-    "low" -> print.format_low(str)
-    "moderate" -> print.format_moderate(str)
-    "high" -> print.format_high(str)
     "critical" -> print.format_critical(str)
+    "high" -> print.format_high(str)
+    "moderate" -> print.format_moderate(str)
+    "low" -> print.format_low(str)
     _ -> print.format_warning(str)
   }
 }
