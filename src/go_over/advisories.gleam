@@ -80,7 +80,11 @@ fn is_vulnerable(p: packages.Package, advs: List(Advisory)) -> List(Advisory) {
   |> option.values
 }
 
-fn clone() -> Nil {
+fn delete_and_clone() -> Nil {
+  // ? File may or may not exist
+  let p = path()
+
+  let _ = simplifile.delete(p)
   print.progress("Cloning: " <> constants.advisories_repo <> "...")
 
   let assert Ok(Nil) =
@@ -99,18 +103,12 @@ fn clone() -> Nil {
       opt: [],
     )
 
-  Nil
-}
-
-fn delete_and_clone() -> Nil {
-  // ? File may or may not exist
-  let p = path()
-
-  let _ = simplifile.delete(p)
-  clone()
-  let assert Ok(Nil) = simplifile.delete(filepath.join(p, ".git"))
-
-  Nil
+  [
+    ".git", ".gitignore", ".github", "config", "lib", ".formatter.exs",
+    ".credo.exs", "Makefile", "mix.exs", "mix.lock",
+  ]
+  |> list.map(filepath.join(p, _))
+  |> list.each(simplifile.delete)
 }
 
 pub fn check_for_advisories(
