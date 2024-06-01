@@ -102,7 +102,7 @@ pub fn main() {
       Warning(
         "another_fake",
         "1.2.3",
-        "Retired",
+        "Vulnerabe",
         warning.Vulnerable,
         "High",
         warning.Direct,
@@ -110,7 +110,7 @@ pub fn main() {
       Warning(
         "and_another",
         "4.5.6",
-        "Retired",
+        "Vulnerabe",
         warning.Vulnerable,
         "Moderate",
         warning.Direct,
@@ -124,9 +124,9 @@ pub fn main() {
         warning.Indirect,
       ),
       Warning(
-        "retired_one",
-        "7.8.9",
-        "Vulnerabe",
+        "this_one_was_retired",
+        "10.11.12",
+        "Retired",
         warning.Retired,
         "Package Retired",
         warning.Indirect,
