@@ -1,6 +1,7 @@
 import filepath
 import gleam/list
 import gleam/option
+import gleam/result.{unwrap}
 import go_over/cache
 import go_over/comparisons
 import go_over/constants.{go_over_path, six_hours}
@@ -41,11 +42,11 @@ fn read_adv(path: String) -> Advisory {
 fn read_all_adv() -> List(Advisory) {
   let packages_path = filepath.join(path(), "packages")
 
-  let assert Ok(packages) = simplifile.read_directory(packages_path)
+  let packages = simplifile.read_directory(packages_path) |> unwrap([])
   list.flat_map(packages, fn(dir) {
     let dir_path = filepath.join(packages_path, dir)
 
-    let assert Ok(adv_names) = simplifile.read_directory(dir_path)
+    let adv_names = simplifile.read_directory(dir_path) |> unwrap([])
     list.map(adv_names, fn(adv_name) {
       read_adv(filepath.join(dir_path, adv_name))
     })
