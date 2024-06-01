@@ -9,13 +9,7 @@ internal_modules = [
   "go_over/*",
 ]
 
-# Fill out these fields if you intend to generate HTML documentation or publish
-# your project to the Hex package manager.
-#
 # links = [{ title = "Website", href = "https://gleam.run" }]
-#
-# For a full reference of all the available options, you can have a look at
-# https://gleam.run/writing-gleam/gleam-toml/.
 
 [dependencies]
 gleam_stdlib = ">= 0.34.0 and < 2.0.0"
@@ -34,3 +28,11 @@ gleamsver = ">= 1.0.0 and < 2.0.0"
 
 [dev-dependencies]
 gleeunit = ">= 1.0.0 and < 2.0.0"
+
+[go-over]
+cache = true
+
+[go-over.ignore]
+packages = ["implifile"]
+severity = ["ritical"]
+ids = ["GHSA4r2f-6fm9-2qgh"]

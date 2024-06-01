@@ -13,6 +13,7 @@ import simplifile
 
 pub type Advisory {
   Advisory(
+    id: String,
     name: String,
     severity: String,
     vulnerable_version_ranges: List(String),
@@ -26,8 +27,10 @@ fn path() -> String {
 }
 
 fn read_adv(path: String) -> Advisory {
-  let #(name, severity, desc, vulnerable_version_ranges) = yaml.parse(path)
+  let #(id, name, severity, desc, vulnerable_version_ranges) = yaml.parse(path)
+
   Advisory(
+    id: id,
     name: name,
     severity: severity,
     vulnerable_version_ranges: vulnerable_version_ranges,
