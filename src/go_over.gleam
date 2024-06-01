@@ -4,6 +4,7 @@ import gleam/list
 import gleam/option
 import gleam/string
 import go_over/advisories
+import go_over/config.{type Config}
 import go_over/constants
 import go_over/packages
 import go_over/print
@@ -38,9 +39,21 @@ fn spin_up() -> Flags {
 
 fn get_vulnerable_packages(
   pkgs: List(packages.Package),
+  conf: Config,
   flags: Flags,
 ) -> List(Warning) {
   advisories.check_for_advisories(pkgs, !flags.skip)
+  |> list.map(fn(p) {
+    let #(pkg, adv) = p
+
+    #(pkg, config.filter_advisory_ids(conf, adv))
+  })
+  |> list.filter(fn(p) {
+    case p {
+      #(_, []) -> False
+      _ -> True
+    }
+  })
   |> list.map(fn(p) {
     let #(pkg, adv) = p
 
@@ -84,9 +97,15 @@ fn print_warnings(vulns: List(Warning)) -> Nil {
 
 pub fn main() {
   let flags = spin_up()
-  throwaway(flags.force, fn() { simplifile.delete(constants.go_over_path()) })
-  let pkgs = packages.read_manifest("./manifest.toml")
-  let vulnerable_packages = get_vulnerable_packages(pkgs, flags)
+  let conf = config.read_config("./gleam.toml")
+  throwaway(flags.force || !conf.cache, fn() {
+    simplifile.delete(constants.go_over_path())
+  })
+  let pkgs =
+    packages.read_manifest("./manifest.toml")
+    |> config.filter_packages(conf, _)
+
+  let vulnerable_packages = get_vulnerable_packages(pkgs, conf, flags)
   let retired_packages = get_retired_packges(pkgs, flags)
 
   iffnil(flags.fake, fn() {
@@ -134,7 +153,11 @@ pub fn main() {
     ])
   })
 
-  case list.append(retired_packages, vulnerable_packages) {
+  let warnings =
+    list.append(retired_packages, vulnerable_packages)
+    |> config.filter_severity(conf, _)
+
+  case warnings {
     [] -> print.success("✅ All good! ✨")
     vulns -> print_warnings(vulns)
   }
