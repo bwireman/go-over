@@ -4,12 +4,13 @@ licences = ["MIT"]
 repository = { type = "github", user = "bwireman", repo = "go-over" }
 description = "A tool to audit Erlang & Elixir dependency advisories as well as retired hex packages, to make sure your gleam projects really sparkle! ✨"
 gleam = ">= 0.34.1"
+links = [{ title = "AdvisoriesSource", href = "https://github.com/mirego/elixir-security-advisories" }]
 
 internal_modules = [
   "go_over/*",
 ]
 
-links = [{ title = "AdvisoriesSource", href = "https://github.com/mirego/elixir-security-advisories" }]
+extra_applications = ["yamerl"]
 
 [dependencies]
 gleam_stdlib = ">= 0.34.0 and < 2.0.0"
@@ -18,7 +19,6 @@ simplifile = ">= 1.7.0 and < 2.0.0"
 filepath = ">= 1.0.0 and < 2.0.0"
 tom = ">= 1.0.0 and < 2.0.0"
 yamerl = ">= 0.10.0 and < 1.0.0"
-gleam_erlang = ">= 0.25.0 and < 1.0.0"
 gleam_hexpm = ">= 1.0.0 and < 2.0.0"
 gleam_hackney = ">= 1.2.0 and < 2.0.0"
 gleam_http = ">= 3.6.0 and < 4.0.0"
