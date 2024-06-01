@@ -1,11 +1,5 @@
-import gleam/erlang.{type EnsureAllStartedError}
-import gleam/erlang/atom.{type Atom}
 import gleam/list
 import gleam/string
-
-pub fn start() -> Result(List(Atom), EnsureAllStartedError) {
-  erlang.ensure_all_started(atom.create_from_string("yamerl"))
-}
 
 @external(erlang, "yamll", "parse")
 fn read(

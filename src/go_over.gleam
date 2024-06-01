@@ -11,7 +11,6 @@ import go_over/print
 import go_over/retired
 import go_over/util.{iffnil, throwaway}
 import go_over/warning.{type Warning, Warning}
-import go_over/yaml
 import shellout
 import simplifile
 
@@ -20,7 +19,6 @@ type Flags {
 }
 
 fn spin_up() -> Flags {
-  let assert Ok(_) = yaml.start()
   let args = shellout.arguments()
   let flags =
     Flags(
