@@ -18,7 +18,7 @@ pub type Advisory {
     name: String,
     severity: String,
     vulnerable_version_ranges: List(String),
-    desciption: String,
+    description: String,
   )
 }
 
@@ -46,7 +46,7 @@ fn read_adv(path: String) -> Advisory {
     name: string.from_utf_codepoints(name),
     severity: string.from_utf_codepoints(severity),
     vulnerable_version_ranges: list.map(versions, string.from_utf_codepoints),
-    desciption: string.from_utf_codepoints(desc),
+    description: string.from_utf_codepoints(desc),
   )
 }
 

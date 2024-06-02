@@ -52,7 +52,7 @@ fn get_vulnerable_packages(
       _ -> True
     }
   })
-  |> list.map(fn(p) {
+  |> list.flat_map(fn(p) {
     let #(pkg, adv) = p
 
     warning.adv_to_warning(pkg, adv)

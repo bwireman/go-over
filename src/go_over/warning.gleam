@@ -26,7 +26,7 @@ pub type Dep {
 fn dep_code_as_string(d: Dep) -> String {
   case d {
     Direct -> "Direct"
-    Indirect -> "Indirect dependency"
+    Indirect -> "Indirect"
   }
 }
 
@@ -41,19 +41,17 @@ pub type Warning {
   )
 }
 
-pub fn adv_to_warning(pkg: Package, adv: List(Advisory)) -> Warning {
-  Warning(
-    pkg.name,
-    pkg.version_raw,
-    adv
-      |> list.map(fn(a) { a.desciption })
-      |> string.join("\n"),
-    Vulnerable,
-    adv
-      |> list.map(fn(a) { a.severity })
-      |> string.join("\n"),
-    Direct,
-  )
+pub fn adv_to_warning(pkg: Package, advs: List(Advisory)) -> List(Warning) {
+  list.map(advs, fn(adv) {
+    Warning(
+      pkg.name,
+      pkg.version_raw,
+      adv.description,
+      Vulnerable,
+      adv.severity,
+      Direct,
+    )
+  })
 }
 
 pub fn retired_to_warning(pkg: Package, ret: ReleaseRetirement) -> Warning {
