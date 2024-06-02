@@ -7,7 +7,7 @@ A tool to audit Erlang & Elixir dependency advisories as well as retired hex pac
 
 🚨 _**NOTE**_: security advisories are _NOT_ currently monitored for gleam dependencies. The language, while excellent, is far too new and niche
 
-# Install
+# 🔽 Install
 
 ```sh
 gleam add --dev go_over
@@ -18,7 +18,7 @@ gleam add --dev go_over
 - add `.go-over/` to your `.gitignore`
 - make sure `git` is installed
 
-# Usage
+# ▶️ Usage
 
 ```sh
 gleam run -m go_over
@@ -35,11 +35,12 @@ gleam run -m go_over
 
 ### ⚙️ Config
 
-Optional settings that can be added to your project's gleam.toml
+Optional settings that can be added to your project's `gleam.toml`
 
 ```toml
 [go-over]
-# disables caching if false (default: true)
+# disables caching if false
+# default: true
 cache = true
 
 [go-over.ignore]
@@ -65,8 +66,12 @@ ids = ["GHSA-xxxx-yyyy-zzzz"]
 - As I'm sure is no surprise this tool is inspired by (and all around worse than) [mirego/mix_audit](https://github.com/mirego/mix_audit). Please check it out!
 - It also draws inspiration from [mix hex.audit](https://hexdocs.pm/hex/Mix.Tasks.Hex.Audit.html)
 
-# License
+# ⚖️ License
 
-This tool uses [mirego/elixir-security-advisories](https://github.com/mirego/elixir-security-advisories) which is it self licensed with `BSD-3-Clause license` and `CC-BY 4.0 open source license`. See their [#license section](https://github.com/mirego/elixir-security-advisories?tab=readme-ov-file#license)
+- This tool uses [mirego/elixir-security-advisories](https://github.com/mirego/elixir-security-advisories) which is it self licensed with
 
-Code original to this repo is Licensed under MIT
+  - `BSD-3-Clause license`
+  - `CC-BY 4.0 open source license`.
+  - See their [#license section](https://github.com/mirego/elixir-security-advisories?tab=readme-ov-file#license)
+
+- Code original to this repo is Licensed under `MIT`
