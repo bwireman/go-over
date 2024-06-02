@@ -1,12 +1,14 @@
 import gleam/list
 import gleam/order
+import gleam/result.{unwrap}
 import gleam/string
 import gleamsver.{type SemVer}
 
 pub fn parse(ver: String) -> SemVer {
-  let assert Ok(parsed) =
+  let parsed =
     string.split(ver, " ")
     |> list.last
+    |> unwrap("")
 
   let assert Ok(semver) = gleamsver.parse(parsed)
   semver
@@ -30,9 +32,10 @@ pub fn get_comparator(ver: String) -> fn(SemVer) -> Bool {
 }
 
 fn do_get_comparator(ver: String) -> fn(SemVer) -> Bool {
-  let assert Ok(op) =
+  let op =
     string.split(ver, " ")
     |> list.first
+    |> unwrap("")
 
   let semver = parse(ver)
   case op {
