@@ -51,7 +51,7 @@ pub fn adv_to_warning(pkg: Package, advs: List(Advisory)) -> List(Warning) {
       pkg.version_raw,
       adv.description,
       Vulnerable,
-      adv.severity,
+      string.lowercase(adv.severity),
       Direct,
     )
   })
@@ -70,18 +70,27 @@ pub fn retired_to_warning(pkg: Package, ret: ReleaseRetirement) -> Warning {
 }
 
 pub fn format_as_string(w: Warning) -> String {
-  let str =
-    [
-      "ID: " <> option.unwrap(w.advisory_id, "N/A"),
-      "Package: " <> w.package,
-      "Version: " <> w.version,
-      "WarningReason: " <> warning_reason_code_as_string(w.warning_reason_code),
-      "Dependency Type: " <> dep_code_as_string(w.dep),
-      "Severity: " <> string.lowercase(w.severity),
-      "Reason: " <> w.reason,
-    ]
-    |> string.join("\n")
+  [
+    "ID: " <> option.unwrap(w.advisory_id, "N/A"),
+    "Package: " <> w.package,
+    "Version: " <> w.version,
+    "WarningReason: " <> warning_reason_code_as_string(w.warning_reason_code),
+    "Dependency Type: " <> dep_code_as_string(w.dep),
+    "Severity: " <> string.lowercase(w.severity),
+    "Reason: " <> w.reason,
+  ]
+  |> string.join("\n")
+  |> color(w, _)
+}
 
+pub fn format_as_string_small(w: Warning) -> String {
+  color(
+    w,
+    w.package <> "-" <> w.version <> ": " <> string.lowercase(w.severity),
+  )
+}
+
+fn color(w: Warning, str: String) {
   case string.lowercase(w.severity) {
     "critical" -> print.format_critical(str)
     "high" -> print.format_high(str)

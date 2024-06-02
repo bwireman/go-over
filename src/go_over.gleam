@@ -77,7 +77,7 @@ fn get_retired_packges(
   })
 }
 
-fn print_warnings(vulns: List(Warning)) -> Nil {
+fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
   {
     "⛔ "
     <> int.to_string(list.length(vulns))
@@ -86,9 +86,19 @@ fn print_warnings(vulns: List(Warning)) -> Nil {
   }
   |> io.print
 
-  vulns
-  |> list.map(warning.format_as_string)
-  |> string.join(constants.long_ass_dashes)
+  case conf.format {
+    config.Minimal -> {
+      vulns
+      |> list.map(warning.format_as_string_small)
+      |> string.join("")
+    }
+
+    _ -> {
+      vulns
+      |> list.map(warning.format_as_string)
+      |> string.join(constants.long_ass_dashes)
+    }
+  }
   |> io.print
   shellout.exit(1)
 }
@@ -113,53 +123,56 @@ pub fn main() {
   let retired_packages = get_retired_packges(pkgs, flags)
 
   iffnil(flags.fake, fn() {
-    print_warnings([
-      Warning(
-        option.None,
-        "fake",
-        "x.y.z",
-        "Retired",
-        warning.Vulnerable,
-        "Critical",
-        warning.Direct,
-      ),
-      Warning(
-        option.None,
-        "another_fake",
-        "1.2.3",
-        "Vulnerabe",
-        warning.Vulnerable,
-        "High",
-        warning.Direct,
-      ),
-      Warning(
-        option.None,
-        "and_another",
-        "4.5.6",
-        "Vulnerabe",
-        warning.Vulnerable,
-        "Moderate",
-        warning.Direct,
-      ),
-      Warning(
-        option.None,
-        "one_more",
-        "7.8.9",
-        "Vulnerabe",
-        warning.Vulnerable,
-        "LOW",
-        warning.Indirect,
-      ),
-      Warning(
-        option.None,
-        "this_one_was_retired",
-        "10.11.12",
-        "Retired",
-        warning.Retired,
-        "Package Retired",
-        warning.Indirect,
-      ),
-    ])
+    print_warnings(
+      [
+        Warning(
+          option.None,
+          "fake",
+          "x.y.z",
+          "Retired",
+          warning.Vulnerable,
+          "Critical",
+          warning.Direct,
+        ),
+        Warning(
+          option.None,
+          "another_fake",
+          "1.2.3",
+          "Vulnerabe",
+          warning.Vulnerable,
+          "High",
+          warning.Direct,
+        ),
+        Warning(
+          option.None,
+          "and_another",
+          "4.5.6",
+          "Vulnerabe",
+          warning.Vulnerable,
+          "Moderate",
+          warning.Direct,
+        ),
+        Warning(
+          option.None,
+          "one_more",
+          "7.8.9",
+          "Vulnerabe",
+          warning.Vulnerable,
+          "LOW",
+          warning.Indirect,
+        ),
+        Warning(
+          option.None,
+          "this_one_was_retired",
+          "10.11.12",
+          "Retired",
+          warning.Retired,
+          "Package Retired",
+          warning.Indirect,
+        ),
+      ],
+      conf,
+    )
   })
 
   let warnings =
@@ -168,6 +181,6 @@ pub fn main() {
 
   case warnings {
     [] -> print.success("✅ All good! ✨")
-    vulns -> print_warnings(vulns)
+    vulns -> print_warnings(vulns, conf)
   }
 }
