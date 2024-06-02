@@ -115,6 +115,7 @@ pub fn main() {
   iffnil(flags.fake, fn() {
     print_warnings([
       Warning(
+        option.None,
         "fake",
         "x.y.z",
         "Retired",
@@ -123,6 +124,7 @@ pub fn main() {
         warning.Direct,
       ),
       Warning(
+        option.None,
         "another_fake",
         "1.2.3",
         "Vulnerabe",
@@ -131,6 +133,7 @@ pub fn main() {
         warning.Direct,
       ),
       Warning(
+        option.None,
         "and_another",
         "4.5.6",
         "Vulnerabe",
@@ -139,6 +142,7 @@ pub fn main() {
         warning.Direct,
       ),
       Warning(
+        option.None,
         "one_more",
         "7.8.9",
         "Vulnerabe",
@@ -147,6 +151,7 @@ pub fn main() {
         warning.Indirect,
       ),
       Warning(
+        option.None,
         "this_one_was_retired",
         "10.11.12",
         "Retired",
