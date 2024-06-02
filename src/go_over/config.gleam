@@ -8,9 +8,15 @@ import go_over/warning.{type Warning}
 import simplifile
 import tom.{type Toml}
 
+pub type Format {
+  Minimal
+  Detailed
+}
+
 pub type Config {
   Config(
     cache: Bool,
+    format: Format,
     ignore_packages: List(String),
     ignore_severity: List(String),
     ignore_ids: List(String),
@@ -27,6 +33,10 @@ pub fn read_config(path: String) -> Config {
   let cache =
     tom.get_bool(go_over, ["cache"])
     |> unwrap(True)
+  let format =
+    tom.get_string(go_over, ["format"])
+    |> unwrap("minimal")
+    |> string.lowercase()
   let ignore =
     tom.get_table(go_over, ["ignore"])
     |> unwrap(dict.new())
@@ -42,6 +52,10 @@ pub fn read_config(path: String) -> Config {
 
   Config(
     cache: cache,
+    format: case format {
+      "minimal" -> Minimal
+      _ -> Detailed
+    },
     ignore_packages: list.map(packages, as_string),
     ignore_severity: list.map(severity, as_string),
     ignore_ids: list.map(ids, as_string),

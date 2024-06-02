@@ -42,6 +42,9 @@ Optional settings that can be added to your project's `gleam.toml`
 # disables caching if false
 # default: true
 cache = true
+# sets output format ("minimal", "detailed")
+# default: "minimal"
+format = "minimal"
 
 [go-over.ignore]
 # list of package names to skip when checking for advisories & warnings
