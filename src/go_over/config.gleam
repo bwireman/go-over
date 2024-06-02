@@ -2,7 +2,7 @@ import gleam/dict
 import gleam/list
 import gleam/result.{unwrap}
 import gleam/string
-import go_over/advisories.{type Advisory}
+import go_over/advisories/advisories.{type Advisory}
 import go_over/packages.{type Package}
 import go_over/warning.{type Warning}
 import simplifile

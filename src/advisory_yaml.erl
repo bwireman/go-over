@@ -1,4 +1,4 @@
--module(yamll).
+-module(advisory_yaml).
 
 -export([
     parse/1

@@ -1,6 +1,6 @@
 import gleamsver.{parse}
 import gleeunit/should
-import go_over/comparisons
+import go_over/advisories/comparisons
 
 pub fn parse_test() {
   comparisons.parse(" 1.1.1")

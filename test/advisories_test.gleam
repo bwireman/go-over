@@ -1,5 +1,5 @@
 import gleeunit/should
-import go_over/advisories.{check_for_advisories}
+import go_over/advisories/advisories.{check_for_advisories}
 import go_over/packages.{read_manifest}
 
 pub fn check_for_advisories_test() {
