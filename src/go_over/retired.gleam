@@ -4,11 +4,11 @@ import gleam/hexpm.{type ReleaseRetirement}
 import gleam/http/request
 import gleam/json
 import gleam/option.{type Option}
-import go_over/cache
-import go_over/constants
 import go_over/packages
-import go_over/print
-import go_over/util.{iffnil}
+import go_over/util/cache
+import go_over/util/constants
+import go_over/util/print
+import go_over/util/util.{iffnil}
 import simplifile
 
 fn path(pkg: packages.Package) -> String {

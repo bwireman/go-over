@@ -3,12 +3,12 @@ import gleam/list
 import gleam/option
 import gleam/result.{unwrap}
 import gleam/string
-import go_over/cache
-import go_over/comparisons
-import go_over/constants.{go_over_path, six_hours}
+import go_over/advisories/comparisons
 import go_over/packages.{type Package}
-import go_over/print
-import go_over/util.{iffnil}
+import go_over/util/cache
+import go_over/util/constants.{go_over_path, six_hours}
+import go_over/util/print
+import go_over/util/util.{iffnil}
 import shellout
 import simplifile
 
@@ -27,7 +27,7 @@ fn path() -> String {
   |> filepath.join("mirego-elixir-security-advisories")
 }
 
-@external(erlang, "yamll", "parse")
+@external(erlang, "advisory_yaml", "parse")
 fn read(
   path: String,
 ) -> #(

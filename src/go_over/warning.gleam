@@ -1,10 +1,10 @@
 import gleam/hexpm.{type ReleaseRetirement}
 import gleam/list
 import gleam/string
-import go_over/advisories.{type Advisory}
+import go_over/advisories/advisories.{type Advisory}
 import go_over/packages.{type Package}
-import go_over/print
 import go_over/retired
+import go_over/util/print
 
 pub type WarningReasonCode {
   Retired

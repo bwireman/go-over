@@ -1,6 +1,6 @@
 import gleamsver.{parse}
 import gleeunit/should
-import go_over/advisories.{Advisory}
+import go_over/advisories/advisories.{Advisory}
 import go_over/config.{
   filter_advisory_ids, filter_packages, filter_severity, read_config,
 }

@@ -3,7 +3,7 @@ import filepath
 import gleam/int
 import gleam/order
 import gleam/result
-import go_over/print
+import go_over/util/print
 import simplifile
 
 fn cache_name(path: String) -> String {
