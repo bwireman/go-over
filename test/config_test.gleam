@@ -1,3 +1,4 @@
+import gleam/option.{None}
 import gleamsver.{parse}
 import gleeunit/should
 import go_over/advisories/advisories.{Advisory}
@@ -56,12 +57,12 @@ pub fn filter_advisory_ids_test() {
 
 pub fn filter_severity_test() {
   let full = read_config("test/testdata/gleam/full.toml")
-  let a = Warning("", "", "", warning.Vulnerable, "a", warning.Direct)
-  let b = Warning("", "", "", warning.Vulnerable, "b", warning.Direct)
-  let c = Warning("", "", "", warning.Vulnerable, "c", warning.Direct)
-  let aa = Warning("", "", "", warning.Vulnerable, "A", warning.Direct)
-  let bb = Warning("", "", "", warning.Vulnerable, "B", warning.Direct)
-  let cc = Warning("", "", "", warning.Vulnerable, "C", warning.Direct)
+  let a = Warning(None, "", "", "", warning.Vulnerable, "a", warning.Direct)
+  let b = Warning(None, "", "", "", warning.Vulnerable, "b", warning.Direct)
+  let c = Warning(None, "", "", "", warning.Vulnerable, "c", warning.Direct)
+  let aa = Warning(None, "", "", "", warning.Vulnerable, "A", warning.Direct)
+  let bb = Warning(None, "", "", "", warning.Vulnerable, "B", warning.Direct)
+  let cc = Warning(None, "", "", "", warning.Vulnerable, "C", warning.Direct)
 
   should.equal(filter_severity(full, []), [])
   should.equal(filter_severity(full, [a]), [])

@@ -1,5 +1,6 @@
 import gleam/hexpm.{type ReleaseRetirement}
 import gleam/list
+import gleam/option.{type Option, None, Some}
 import gleam/string
 import go_over/advisories/advisories.{type Advisory}
 import go_over/packages.{type Package}
@@ -32,6 +33,7 @@ fn dep_code_as_string(d: Dep) -> String {
 
 pub type Warning {
   Warning(
+    advisory_id: Option(String),
     package: String,
     version: String,
     reason: String,
@@ -44,6 +46,7 @@ pub type Warning {
 pub fn adv_to_warning(pkg: Package, advs: List(Advisory)) -> List(Warning) {
   list.map(advs, fn(adv) {
     Warning(
+      Some(adv.id),
       pkg.name,
       pkg.version_raw,
       adv.description,
@@ -56,6 +59,7 @@ pub fn adv_to_warning(pkg: Package, advs: List(Advisory)) -> List(Warning) {
 
 pub fn retired_to_warning(pkg: Package, ret: ReleaseRetirement) -> Warning {
   Warning(
+    None,
     pkg.name,
     pkg.version_raw,
     retired.print_ret(ret),
@@ -68,6 +72,7 @@ pub fn retired_to_warning(pkg: Package, ret: ReleaseRetirement) -> Warning {
 pub fn format_as_string(w: Warning) -> String {
   let str =
     [
+      "ID: " <> option.unwrap(w.advisory_id, "N/A"),
       "Package: " <> w.package,
       "Version: " <> w.version,
       "WarningReason: " <> warning_reason_code_as_string(w.warning_reason_code),
