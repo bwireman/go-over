@@ -2,13 +2,13 @@ import filepath
 import gleam/list
 import gleam/option
 import gleam/result.{unwrap}
+import gleam/string
 import go_over/cache
 import go_over/comparisons
 import go_over/constants.{go_over_path, six_hours}
 import go_over/packages.{type Package}
 import go_over/print
 import go_over/util.{iffnil}
-import go_over/yaml
 import shellout
 import simplifile
 
@@ -27,15 +27,26 @@ fn path() -> String {
   |> filepath.join("mirego-elixir-security-advisories")
 }
 
+@external(erlang, "yamll", "parse")
+fn read(
+  path: String,
+) -> #(
+  List(UtfCodepoint),
+  List(UtfCodepoint),
+  List(UtfCodepoint),
+  List(UtfCodepoint),
+  List(List(UtfCodepoint)),
+)
+
 fn read_adv(path: String) -> Advisory {
-  let #(id, name, severity, desc, vulnerable_version_ranges) = yaml.parse(path)
+  let #(id, name, severity, desc, versions) = read(path)
 
   Advisory(
-    id: id,
-    name: name,
-    severity: severity,
-    vulnerable_version_ranges: vulnerable_version_ranges,
-    desciption: desc,
+    id: string.from_utf_codepoints(id),
+    name: string.from_utf_codepoints(name),
+    severity: string.from_utf_codepoints(severity),
+    vulnerable_version_ranges: list.map(versions, string.from_utf_codepoints),
+    desciption: string.from_utf_codepoints(desc),
   )
 }
 
