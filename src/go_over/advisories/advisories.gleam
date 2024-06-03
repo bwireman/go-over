@@ -55,7 +55,7 @@ fn read_all_adv() -> List(Advisory) {
   let assert Some(packages) =
     hard_fail(
       simplifile.read_directory(packages_path),
-      "Could not read " <> packages_path,
+      "could not read " <> packages_path,
     )
   list.flat_map(packages, fn(dir) {
     let dir_path = filepath.join(packages_path, dir)

@@ -28,7 +28,7 @@ pub fn hard_fail(res: Result(a, b), msg: String) -> Option(a) {
   case res {
     Ok(val) -> Some(val)
     _ -> {
-      print.warning(msg)
+      print.warning("Error: " <> msg)
       shellout.exit(1)
       None
     }
