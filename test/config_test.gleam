@@ -11,18 +11,21 @@ import go_over/warning.{Warning}
 pub fn read_config_test() {
   let empty = read_config("test/testdata/gleam/empty.toml")
   should.be_true(empty.cache)
+  should.equal(empty.format, config.Minimal)
   should.equal(empty.ignore_packages, [])
   should.equal(empty.ignore_severity, [])
   should.equal(empty.ignore_ids, [])
 
   let empty = read_config("test/testdata/gleam/basic.toml")
   should.be_false(empty.cache)
+  should.equal(empty.format, config.Detailed)
   should.equal(empty.ignore_packages, ["a"])
   should.equal(empty.ignore_severity, ["b"])
   should.equal(empty.ignore_ids, ["c"])
 
   let empty = read_config("test/testdata/gleam/partial.toml")
   should.be_true(empty.cache)
+  should.equal(empty.format, config.Minimal)
   should.equal(empty.ignore_packages, ["a", "b", "c"])
   should.equal(empty.ignore_severity, [])
   should.equal(empty.ignore_ids, [])

@@ -1,5 +1,6 @@
 [go-over]
 cache = false
+format = "detailed"
 
 [go-over.ignore]
 packages = ["a"]
