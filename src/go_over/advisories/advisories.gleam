@@ -1,14 +1,13 @@
 import filepath
 import gleam/list
-import gleam/option
-import gleam/result.{unwrap}
+import gleam/option.{Some}
 import gleam/string
 import go_over/advisories/comparisons
 import go_over/packages.{type Package}
 import go_over/util/cache
 import go_over/util/constants.{go_over_path, six_hours}
 import go_over/util/print
-import go_over/util/util.{iffnil}
+import go_over/util/util.{hard_fail, iffnil}
 import shellout
 import simplifile
 
@@ -53,15 +52,19 @@ fn read_adv(path: String) -> Advisory {
 fn read_all_adv() -> List(Advisory) {
   let packages_path = filepath.join(path(), "packages")
 
-  let packages =
-    simplifile.read_directory(packages_path)
-    |> unwrap([])
+  let assert Some(packages) =
+    hard_fail(
+      simplifile.read_directory(packages_path),
+      "Could not read " <> packages_path,
+    )
   list.flat_map(packages, fn(dir) {
     let dir_path = filepath.join(packages_path, dir)
 
-    let adv_names =
-      simplifile.read_directory(dir_path)
-      |> unwrap([])
+    let assert Some(adv_names) =
+      hard_fail(
+        simplifile.read_directory(dir_path),
+        "could not read " <> dir_path,
+      )
     list.map(adv_names, fn(adv_name) {
       read_adv(filepath.join(dir_path, adv_name))
     })
@@ -98,11 +101,12 @@ fn delete_and_clone() -> Nil {
   let _ = simplifile.delete(p)
   print.progress("Cloning: " <> constants.advisories_repo <> "...")
 
-  let assert Ok(Nil) =
+  let assert Some(Nil) =
     path()
     |> simplifile.create_directory_all()
+    |> hard_fail("could not create directory at " <> path())
 
-  let assert Ok(_) =
+  let assert Some(_) =
     shellout.command(
       run: "git",
       with: [
@@ -113,6 +117,7 @@ fn delete_and_clone() -> Nil {
       in: ".",
       opt: [],
     )
+    |> hard_fail("could not clone " <> constants.advisories_repo)
 
   [
     ".git", ".gitignore", ".github", "config", "lib", ".formatter.exs",
