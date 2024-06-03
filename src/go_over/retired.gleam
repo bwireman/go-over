@@ -35,14 +35,14 @@ fn pull_retired(pkg: packages.Package) -> Nil {
       <> "/releases/"
       <> pkg.version_raw,
     )
-    |> hard_fail("Request to hex.pm for package: " <> pkg.name <> " failed")
+    |> hard_fail("request to hex.pm for package: " <> pkg.name <> " failed")
 
   // Send the HTTP request to the server
   let assert Some(resp) =
     request
     |> request.prepend_header("accept", "application/json")
     |> hackney.send
-    |> hard_fail("Request to hex.pm for package: " <> pkg.name <> " failed")
+    |> hard_fail("request to hex.pm for package: " <> pkg.name <> " failed")
 
   let pkg_path = path(pkg)
   let pkg_path_fail =
