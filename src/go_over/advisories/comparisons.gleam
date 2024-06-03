@@ -1,16 +1,19 @@
 import gleam/list
+import gleam/option.{Some}
 import gleam/order
-import gleam/result.{unwrap}
 import gleam/string
 import gleamsver.{type SemVer}
+import go_over/util/util.{hard_fail}
 
 pub fn parse(ver: String) -> SemVer {
-  let parsed =
+  let assert Some(parsed) =
     string.split(ver, " ")
     |> list.last
-    |> unwrap("")
+    |> hard_fail("could not parse " <> ver)
 
-  let assert Ok(semver) = gleamsver.parse(parsed)
+  let assert Some(semver) =
+    gleamsver.parse(parsed)
+    |> hard_fail("could not parse " <> parsed)
   semver
 }
 
@@ -32,10 +35,10 @@ pub fn get_comparator(ver: String) -> fn(SemVer) -> Bool {
 }
 
 fn do_get_comparator(ver: String) -> fn(SemVer) -> Bool {
-  let op =
+  let assert Some(op) =
     string.split(ver, " ")
     |> list.first
-    |> unwrap("")
+    |> hard_fail("could not parse " <> ver)
 
   let semver = parse(ver)
   case op {

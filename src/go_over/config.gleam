@@ -1,10 +1,14 @@
 import gleam/dict
 import gleam/list
+import gleam/option.{type Option, None, Some}
 import gleam/result.{unwrap}
 import gleam/string
 import go_over/advisories/advisories.{type Advisory}
 import go_over/packages.{type Package}
+import go_over/util/print
+import go_over/util/util.{hard_fail}
 import go_over/warning.{type Warning}
+import shellout
 import simplifile
 import tom.{type Toml}
 
@@ -24,8 +28,10 @@ pub type Config {
 }
 
 pub fn read_config(path: String) -> Config {
-  let assert Ok(res) = simplifile.read(path)
-  let assert Ok(gleam) = tom.parse(res)
+  let assert Some(res) =
+    simplifile.read(path) |> hard_fail("could not read config file at " <> path)
+  let assert Some(gleam) =
+    tom.parse(res) |> hard_fail("could not read config file at " <> path)
 
   let go_over =
     tom.get_table(gleam, ["go-over"])
@@ -56,9 +62,9 @@ pub fn read_config(path: String) -> Config {
       "minimal" -> Minimal
       _ -> Detailed
     },
-    ignore_packages: list.map(packages, as_string),
-    ignore_severity: list.map(severity, as_string),
-    ignore_ids: list.map(ids, as_string),
+    ignore_packages: list.map(packages, as_string) |> option.values,
+    ignore_severity: list.map(severity, as_string) |> option.values,
+    ignore_ids: list.map(ids, as_string) |> option.values,
   )
 }
 
@@ -76,7 +82,13 @@ pub fn filter_severity(conf: Config, warnings: List(Warning)) -> List(Warning) {
   })
 }
 
-fn as_string(toml: Toml) -> String {
-  let assert tom.String(s) = toml
-  s
+fn as_string(toml: Toml) -> Option(String) {
+  case toml {
+    tom.String(s) -> Some(s)
+    _ -> {
+      print.warning("could not parse config value " <> string.inspect(toml))
+      shellout.exit(1)
+      None
+    }
+  }
 }

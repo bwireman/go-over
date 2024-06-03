@@ -1,7 +1,11 @@
 import gleam/dict
 import gleam/list
-import gleam/option
+import gleam/option.{Some}
+import gleam/string
 import gleamsver.{type SemVer}
+import go_over/util/print.{warning}
+import go_over/util/util.{hard_fail}
+import shellout
 import simplifile
 import tom
 
@@ -10,18 +14,30 @@ pub type Package {
 }
 
 pub fn read_manifest(path: String) -> List(Package) {
-  let assert Ok(res) = simplifile.read(path)
-  let assert Ok(manifest) = tom.parse(res)
-  let assert Ok(packages) = tom.get_array(manifest, ["packages"])
-  let assert Ok(requirements) = tom.get_table(manifest, ["requirements"])
+  let assert Some(res) =
+    simplifile.read(path) |> hard_fail("could not parse " <> path)
+  let assert Some(manifest) =
+    tom.parse(res) |> hard_fail("could not parse " <> path)
+  let assert Some(packages) =
+    tom.get_array(manifest, ["packages"])
+    |> hard_fail("could not parse " <> path <> " value: packages")
+  let assert Some(requirements) =
+    tom.get_table(manifest, ["requirements"])
+    |> hard_fail("could not parse " <> path <> " value: requirements")
   let required_packages = dict.keys(requirements)
 
   list.map(packages, fn(p) {
     case p {
-      tom.InlineTable(x) -> {
-        let assert Ok(name) = tom.get_string(x, ["name"])
-        let assert Ok(ver) = tom.get_string(x, ["version"])
-        let assert Ok(semver) = gleamsver.parse(ver)
+      tom.InlineTable(t) -> {
+        let assert Some(name) =
+          tom.get_string(t, ["name"])
+          |> hard_fail("could not parse parckage: " <> string.inspect(t))
+        let assert Some(ver) =
+          tom.get_string(t, ["version"])
+          |> hard_fail("could not parse parckage: " <> string.inspect(t))
+        let assert Some(semver) =
+          gleamsver.parse(ver)
+          |> hard_fail("could not parse parckage version: " <> ver)
 
         option.Some(Package(
           name,
@@ -31,7 +47,11 @@ pub fn read_manifest(path: String) -> List(Package) {
         ))
       }
 
-      _ -> option.None
+      _ -> {
+        warning("could not parse packages: incorrect type")
+        shellout.exit(1)
+        option.None
+      }
     }
   })
   |> option.values

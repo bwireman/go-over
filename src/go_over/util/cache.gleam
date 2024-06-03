@@ -1,9 +1,11 @@
 import birl
 import filepath
 import gleam/int
+import gleam/option.{Some}
 import gleam/order
 import gleam/result
 import go_over/util/print
+import go_over/util/util.{hard_fail}
 import simplifile
 
 fn cache_name(path: String) -> String {
@@ -46,10 +48,11 @@ pub fn pull_if_not_cached(
         birl.utc_now()
         |> birl.to_unix()
         |> int.to_string()
-      let assert Ok(_) =
+      let assert Some(_) =
         path
         |> cache_name()
         |> simplifile.write(now)
+        |> hard_fail("could not write cache file for " <> path)
 
       Nil
     }

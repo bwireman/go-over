@@ -2,6 +2,7 @@
 cd "$(dirname $0)/.."
 
 gleam update
+gleam build
 gleam format
 gleam test
 rm -rf .go-over/
