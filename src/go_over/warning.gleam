@@ -83,7 +83,7 @@ pub fn format_as_string(w: Warning) -> String {
   |> color(w, _)
 }
 
-pub fn format_as_string_small(w: Warning) -> String {
+pub fn format_as_string_minimal(w: Warning) -> String {
   color(
     w,
     w.package <> "-" <> w.version <> ": " <> string.lowercase(w.severity),

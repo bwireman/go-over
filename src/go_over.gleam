@@ -89,7 +89,7 @@ fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
   case conf.format {
     config.Minimal -> {
       vulns
-      |> list.map(warning.format_as_string_small)
+      |> list.map(warning.format_as_string_minimal)
       |> string.join("")
     }
 
