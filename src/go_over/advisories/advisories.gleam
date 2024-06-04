@@ -1,6 +1,6 @@
 import filepath
 import gleam/list
-import gleam/option.{Some}
+import gleam/option.{None, Some}
 import gleam/string
 import go_over/advisories/comparisons
 import go_over/packages.{type Package}
@@ -52,7 +52,7 @@ fn read_adv(path: String) -> Advisory {
 fn read_all_adv() -> List(Advisory) {
   let packages_path = filepath.join(path(), "packages")
 
-  let assert Some(packages) =
+  let packages =
     hard_fail(
       simplifile.read_directory(packages_path),
       "could not read " <> packages_path,
@@ -60,7 +60,7 @@ fn read_all_adv() -> List(Advisory) {
   list.flat_map(packages, fn(dir) {
     let dir_path = filepath.join(packages_path, dir)
 
-    let assert Some(adv_names) =
+    let adv_names =
       hard_fail(
         simplifile.read_directory(dir_path),
         "could not read " <> dir_path,
@@ -101,23 +101,21 @@ fn delete_and_clone() -> Nil {
   let _ = simplifile.delete(p)
   print.progress("Cloning: " <> constants.advisories_repo <> "...")
 
-  let assert Some(Nil) =
-    path()
-    |> simplifile.create_directory_all()
-    |> hard_fail("could not create directory at " <> path())
+  path()
+  |> simplifile.create_directory_all()
+  |> hard_fail("could not create directory at " <> path())
 
-  let assert Some(_) =
-    shellout.command(
-      run: "git",
-      with: [
-        "clone",
-        "https://github.com/" <> constants.advisories_repo <> ".git",
-        path(),
-      ],
-      in: ".",
-      opt: [],
-    )
-    |> hard_fail("could not clone " <> constants.advisories_repo)
+  shellout.command(
+    run: "git",
+    with: [
+      "clone",
+      "https://github.com/" <> constants.advisories_repo <> ".git",
+      path(),
+    ],
+    in: ".",
+    opt: [],
+  )
+  |> hard_fail("could not clone " <> constants.advisories_repo)
 
   [
     ".git", ".gitignore", ".github", "config", "lib", ".formatter.exs",
@@ -144,8 +142,8 @@ pub fn check_for_advisories(
 
   list.map(packages, fn(pkg) {
     case is_vulnerable(pkg, advs) {
-      [] -> option.None
-      vulns -> option.Some(#(pkg, vulns))
+      [] -> None
+      vulns -> Some(#(pkg, vulns))
     }
   })
   |> option.values

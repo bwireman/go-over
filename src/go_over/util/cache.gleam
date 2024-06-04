@@ -1,7 +1,6 @@
 import birl
 import filepath
 import gleam/int
-import gleam/option.{Some}
 import gleam/order
 import gleam/result
 import go_over/util/print
@@ -48,7 +47,7 @@ pub fn pull_if_not_cached(
         birl.utc_now()
         |> birl.to_unix()
         |> int.to_string()
-      let assert Some(_) =
+      let _ =
         path
         |> cache_name()
         |> simplifile.write(now)
