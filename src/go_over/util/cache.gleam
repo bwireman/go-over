@@ -15,7 +15,7 @@ fn file_cached(path: String, max_age_seconds: Int) -> Result(Bool, Nil) {
   path
   |> cache_name()
   |> simplifile.read()
-  |> result.replace_error(Nil)
+  |> result.nil_error()
   |> result.try(int.base_parse(_, 10))
   |> result.map(fn(v) {
     let cutoff = birl.from_unix(v + max_age_seconds)
