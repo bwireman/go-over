@@ -1,4 +1,3 @@
-import gleam/option.{type Option, None, Some}
 import go_over/util/print
 import shellout
 
@@ -24,13 +23,13 @@ pub fn throwaway(v: Bool, f: fn() -> Result(a, b)) -> Nil {
   }
 }
 
-pub fn hard_fail(res: Result(a, b), msg: String) -> Option(a) {
+pub fn hard_fail(res: Result(a, b), msg: String) -> a {
   case res {
-    Ok(val) -> Some(val)
+    Ok(val) -> val
     _ -> {
       print.warning("Error: " <> msg)
       shellout.exit(1)
-      None
+      panic as "unreachable"
     }
   }
 }

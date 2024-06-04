@@ -1,5 +1,4 @@
 import filepath
-import gleam/option.{Some}
 import go_over/util/util.{hard_fail}
 import simplifile
 
@@ -12,7 +11,7 @@ pub const advisories_repo = "mirego/elixir-security-advisories"
 pub const long_ass_dashes = "\n-----------------------------------------------\n"
 
 pub fn go_over_path() -> String {
-  let assert Some(curr) =
+  let curr =
     simplifile.current_directory()
     |> hard_fail("could not get current path")
   filepath.join(curr, ".go-over")

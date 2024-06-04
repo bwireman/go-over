@@ -28,9 +28,9 @@ pub type Config {
 }
 
 pub fn read_config(path: String) -> Config {
-  let assert Some(res) =
+  let res =
     simplifile.read(path) |> hard_fail("could not read config file at " <> path)
-  let assert Some(gleam) =
+  let gleam =
     tom.parse(res) |> hard_fail("could not read config file at " <> path)
 
   let go_over =

@@ -14,14 +14,12 @@ pub type Package {
 }
 
 pub fn read_manifest(path: String) -> List(Package) {
-  let assert Some(res) =
-    simplifile.read(path) |> hard_fail("could not parse " <> path)
-  let assert Some(manifest) =
-    tom.parse(res) |> hard_fail("could not parse " <> path)
-  let assert Some(packages) =
+  let res = simplifile.read(path) |> hard_fail("could not parse " <> path)
+  let manifest = tom.parse(res) |> hard_fail("could not parse " <> path)
+  let packages =
     tom.get_array(manifest, ["packages"])
     |> hard_fail("could not parse " <> path <> " value: packages")
-  let assert Some(requirements) =
+  let requirements =
     tom.get_table(manifest, ["requirements"])
     |> hard_fail("could not parse " <> path <> " value: requirements")
   let required_packages = dict.keys(requirements)
@@ -29,22 +27,17 @@ pub fn read_manifest(path: String) -> List(Package) {
   list.map(packages, fn(p) {
     case p {
       tom.InlineTable(t) -> {
-        let assert Some(name) =
+        let name =
           tom.get_string(t, ["name"])
           |> hard_fail("could not parse parckage: " <> string.inspect(t))
-        let assert Some(ver) =
+        let ver =
           tom.get_string(t, ["version"])
           |> hard_fail("could not parse parckage: " <> string.inspect(t))
-        let assert Some(semver) =
+        let semver =
           gleamsver.parse(ver)
           |> hard_fail("could not parse parckage version: " <> ver)
 
-        option.Some(Package(
-          name,
-          semver,
-          ver,
-          list.contains(required_packages, name),
-        ))
+        Some(Package(name, semver, ver, list.contains(required_packages, name)))
       }
 
       _ -> {
