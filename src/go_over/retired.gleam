@@ -8,7 +8,7 @@ import go_over/packages
 import go_over/util/cache
 import go_over/util/constants
 import go_over/util/print
-import go_over/util/util.{hard_fail, iffnil}
+import go_over/util/util.{hard_fail, iff_nil}
 import simplifile
 
 fn path(pkg: packages.Package) -> String {
@@ -65,7 +65,7 @@ pub fn check_retired(
   pkg: packages.Package,
   pull: Bool,
 ) -> Option(ReleaseRetirement) {
-  iffnil(pull, fn() {
+  iff_nil(pull, fn() {
     pkg
     |> path()
     |> cache.pull_if_not_cached(

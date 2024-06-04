@@ -9,7 +9,7 @@ pub fn iff(v: Bool, f: fn() -> a, default: a) -> a {
   }
 }
 
-pub fn iffnil(v: Bool, f: fn() -> Nil) -> Nil {
+pub fn iff_nil(v: Bool, f: fn() -> Nil) -> Nil {
   iff(v, f, Nil)
 }
 

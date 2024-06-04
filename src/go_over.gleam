@@ -9,7 +9,7 @@ import go_over/packages
 import go_over/retired
 import go_over/util/constants
 import go_over/util/print
-import go_over/util/util.{iffnil, throwaway}
+import go_over/util/util.{iff_nil, throwaway}
 import go_over/warning.{type Warning, Warning}
 import shellout
 import simplifile
@@ -27,7 +27,7 @@ fn spin_up() -> Flags {
       fake: list.any(args, fn(arg) { arg == "--fake" }),
     )
 
-  iffnil(flags.force && flags.skip, fn() {
+  iff_nil(flags.force && flags.skip, fn() {
     print.warning("Cannot specify both `--skip` & `--force`")
     shellout.exit(1)
   })
@@ -106,7 +106,7 @@ fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
 pub fn main() {
   let flags = spin_up()
   let conf = config.read_config("./gleam.toml")
-  iffnil(!conf.cache && flags.skip, fn() {
+  iff_nil(!conf.cache && flags.skip, fn() {
     print.warning("Cannot specify both `--skip` & `cache=false`")
     shellout.exit(1)
   })
@@ -122,7 +122,7 @@ pub fn main() {
   let vulnerable_packages = get_vulnerable_packages(pkgs, conf, flags)
   let retired_packages = get_retired_packges(pkgs, flags)
 
-  iffnil(flags.fake, fn() {
+  iff_nil(flags.fake, fn() {
     print_warnings(
       [
         Warning(
