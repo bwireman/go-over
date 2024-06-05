@@ -7,7 +7,7 @@ import go_over/packages.{type Package}
 import go_over/util/cache
 import go_over/util/constants.{go_over_path, six_hours}
 import go_over/util/print
-import go_over/util/util.{hard_fail, iff_nil}
+import go_over/util/util.{hard_fail}
 import shellout
 import simplifile
 
@@ -127,16 +127,15 @@ fn delete_and_clone() -> Nil {
 
 pub fn check_for_advisories(
   packages: List(packages.Package),
-  pull: Bool,
+  force_pull: Bool,
 ) -> List(#(Package, List(Advisory))) {
-  iff_nil(pull, fn() {
-    cache.pull_if_not_cached(
-      path(),
-      six_hours,
-      delete_and_clone,
-      constants.advisories_repo,
-    )
-  })
+  cache.pull_if_not_cached(
+    path(),
+    six_hours,
+    force_pull,
+    delete_and_clone,
+    constants.advisories_repo,
+  )
 
   let advs = read_all_adv()
 

@@ -1,10 +1,12 @@
 import gleam/int
 import gleam/io
+import gleam/json
 import gleam/list
 import gleam/option
+import gleam/result
 import gleam/string
 import go_over/advisories/advisories
-import go_over/config.{type Config}
+import go_over/config.{type Config, Config}
 import go_over/packages
 import go_over/retired
 import go_over/util/constants
@@ -15,32 +17,50 @@ import shellout
 import simplifile
 
 type Flags {
-  Flags(skip: Bool, force: Bool, fake: Bool)
+  Flags(force: Bool, fake: Bool, format: option.Option(config.Format))
 }
 
-fn spin_up() -> Flags {
+fn merge_flags_and_config(flgs: Flags, cfg: Config) -> Config {
+  Config(
+    cache: cfg.cache,
+    force: flgs.force,
+    fake: flgs.fake,
+    format: option.unwrap(flgs.format, cfg.format),
+    ignore_packages: cfg.ignore_packages,
+    ignore_severity: cfg.ignore_severity,
+    ignore_ids: cfg.ignore_ids,
+  )
+}
+
+fn spin_up(cfg: Config) -> Config {
   let args = shellout.arguments()
+
+  let format =
+    list.find(args, fn(arg) { string.starts_with(arg, "--format") })
+    |> result.try(fn(arg) { string.split_once(arg, "=") })
+    |> result.map(fn(arg) {
+      case arg {
+        #(_, val) -> val
+      }
+    })
+    |> result.map(config.parse_config_format)
+    |> option.from_result
+
   let flags =
     Flags(
-      skip: list.any(args, fn(arg) { arg == "--skip" }),
       force: list.any(args, fn(arg) { arg == "--force" }),
       fake: list.any(args, fn(arg) { arg == "--fake" }),
+      format: format,
     )
 
-  iff_nil(flags.force && flags.skip, fn() {
-    print.warning("Cannot specify both `--skip` & `--force`")
-    shellout.exit(1)
-  })
-
-  flags
+  merge_flags_and_config(flags, cfg)
 }
 
 fn get_vulnerable_packages(
   pkgs: List(packages.Package),
   conf: Config,
-  flags: Flags,
 ) -> List(Warning) {
-  advisories.check_for_advisories(pkgs, !flags.skip)
+  advisories.check_for_advisories(pkgs, conf.force || !conf.cache)
   |> list.map(fn(p) {
     let #(pkg, adv) = p
 
@@ -61,11 +81,11 @@ fn get_vulnerable_packages(
 
 fn get_retired_packges(
   pkgs: List(packages.Package),
-  flags: Flags,
+  conf: Config,
 ) -> List(Warning) {
   pkgs
   |> list.map(fn(pkg) {
-    case retired.check_retired(pkg, !flags.skip) {
+    case retired.check_retired(pkg, conf.force || !conf.cache) {
       option.Some(ret) -> option.Some(#(pkg, ret))
       option.None -> option.None
     }
@@ -77,52 +97,59 @@ fn get_retired_packges(
   })
 }
 
-fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
+fn print_warnings_count(vulns: List(Warning)) -> Nil {
   {
     "⛔ "
     <> int.to_string(list.length(vulns))
     <> " WARNING(s) FOUND!"
     <> constants.long_ass_dashes
   }
-  |> io.print
+  |> io.print_error
+}
 
+fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
   case conf.format {
     config.Minimal -> {
+      print_warnings_count(vulns)
+
       vulns
       |> list.map(warning.format_as_string_minimal)
       |> string.join("")
+      |> io.print_error
+    }
+
+    config.JSON -> {
+      vulns
+      |> list.map(warning.format_as_json)
+      |> json.preprocessed_array
+      |> json.to_string
+      |> io.print_error
     }
 
     _ -> {
+      print_warnings_count(vulns)
+
       vulns
       |> list.map(warning.format_as_string)
       |> string.join(constants.long_ass_dashes)
+      |> io.print_error
     }
   }
-  |> io.print
   shellout.exit(1)
 }
 
 pub fn main() {
-  let flags = spin_up()
-  let conf = config.read_config("./gleam.toml")
-  iff_nil(!conf.cache && flags.skip, fn() {
-    print.warning("Cannot specify both `--skip` & `cache=false`")
-    shellout.exit(1)
-  })
-
-  throwaway(flags.force || !conf.cache, fn() {
-    simplifile.delete(constants.go_over_path())
-  })
+  let conf = spin_up(config.read_config("./gleam.toml"))
+  throwaway(!conf.cache, fn() { simplifile.delete(constants.go_over_path()) })
 
   let pkgs =
     packages.read_manifest("./manifest.toml")
     |> config.filter_packages(conf, _)
 
-  let vulnerable_packages = get_vulnerable_packages(pkgs, conf, flags)
-  let retired_packages = get_retired_packges(pkgs, flags)
+  let vulnerable_packages = get_vulnerable_packages(pkgs, conf)
+  let retired_packages = get_retired_packges(pkgs, conf)
 
-  iff_nil(flags.fake, fn() {
+  iff_nil(conf.fake, fn() {
     print_warnings(
       [
         Warning(
@@ -138,7 +165,7 @@ pub fn main() {
           option.None,
           "another_fake",
           "1.2.3",
-          "Vulnerabe",
+          "Vulnerable",
           warning.Vulnerable,
           "High",
           warning.Direct,
@@ -147,7 +174,7 @@ pub fn main() {
           option.None,
           "and_another",
           "4.5.6",
-          "Vulnerabe",
+          "Vulnerable",
           warning.Vulnerable,
           "Moderate",
           warning.Direct,
@@ -156,7 +183,7 @@ pub fn main() {
           option.None,
           "one_more",
           "7.8.9",
-          "Vulnerabe",
+          "Vulnerable",
           warning.Vulnerable,
           "LOW",
           warning.Indirect,

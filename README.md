@@ -30,8 +30,10 @@ gleam run -m go_over
 
 ### 🏴 Flags
 
-- `--skip`: will skip checking the cache and used the stored data no matter what
+Override config values if set
+
 - `--force`: will force pulling new data even if the cached data is still valid
+- `--format=<format>`: specify the output format of any warnings. `["minimal", "detailed", "json"]`
 
 ### ⚙️ Config
 
@@ -42,7 +44,7 @@ Optional settings that can be added to your project's `gleam.toml`
 # disables caching if false
 # default: true
 cache = true
-# sets output format ("minimal", "detailed")
+# sets output format for warnings ["minimal", "detailed", "json"]
 # default: "minimal"
 format = "minimal"
 

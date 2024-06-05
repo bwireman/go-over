@@ -15,11 +15,14 @@ import tom.{type Toml}
 pub type Format {
   Minimal
   Detailed
+  JSON
 }
 
 pub type Config {
   Config(
     cache: Bool,
+    force: Bool,
+    fake: Bool,
     format: Format,
     ignore_packages: List(String),
     ignore_severity: List(String),
@@ -58,13 +61,14 @@ pub fn read_config(path: String) -> Config {
 
   Config(
     cache: cache,
-    format: case format {
-      "minimal" -> Minimal
-      _ -> Detailed
-    },
-    ignore_packages: list.map(packages, as_string) |> option.values,
-    ignore_severity: list.map(severity, as_string) |> option.values,
-    ignore_ids: list.map(ids, as_string) |> option.values,
+    //read from flags only
+    force: False,
+    //read from flags only
+    fake: False,
+    format: parse_config_format(format),
+    ignore_packages: list.map(packages, toml_as_string) |> option.values,
+    ignore_severity: list.map(severity, toml_as_string) |> option.values,
+    ignore_ids: list.map(ids, toml_as_string) |> option.values,
   )
 }
 
@@ -82,7 +86,15 @@ pub fn filter_severity(conf: Config, warnings: List(Warning)) -> List(Warning) {
   })
 }
 
-fn as_string(toml: Toml) -> Option(String) {
+pub fn parse_config_format(val: String) -> Format {
+  case val {
+    "json" -> JSON
+    "detailed" -> Detailed
+    _ -> Minimal
+  }
+}
+
+fn toml_as_string(toml: Toml) -> Option(String) {
   case toml {
     tom.String(s) -> Some(s)
     _ -> {

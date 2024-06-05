@@ -8,7 +8,7 @@ import go_over/packages
 import go_over/util/cache
 import go_over/util/constants
 import go_over/util/print
-import go_over/util/util.{hard_fail, iff_nil}
+import go_over/util/util.{hard_fail}
 import simplifile
 
 fn path(pkg: packages.Package) -> String {
@@ -63,20 +63,19 @@ fn pull_retired(pkg: packages.Package) -> Nil {
 
 pub fn check_retired(
   pkg: packages.Package,
-  pull: Bool,
+  force_pull: Bool,
 ) -> Option(ReleaseRetirement) {
-  iff_nil(pull, fn() {
-    pkg
-    |> path()
-    |> cache.pull_if_not_cached(
-      constants.hour,
-      fn() {
-        let _ = simplifile.delete(path(pkg))
-        pull_retired(pkg)
-      },
-      pkg.name <> ":" <> pkg.version_raw,
-    )
-  })
+  pkg
+  |> path()
+  |> cache.pull_if_not_cached(
+    constants.hour,
+    force_pull,
+    fn() {
+      let _ = simplifile.delete(path(pkg))
+      pull_retired(pkg)
+    },
+    pkg.name <> ":" <> pkg.version_raw,
+  )
 
   let cached_file_name = filename(pkg)
   let resp =
