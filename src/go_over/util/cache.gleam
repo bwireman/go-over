@@ -30,17 +30,18 @@ fn file_cached(path: String, max_age_seconds: Int) -> Result(Bool, Nil) {
 pub fn pull_if_not_cached(
   path: String,
   max_age: Int,
+  force_pull: Bool,
   pullfn: fn() -> Nil,
   cache_message: String,
 ) -> Nil {
-  case file_cached(path, max_age) {
-    Ok(True) -> {
+  case force_pull, file_cached(path, max_age) {
+    False, Ok(True) -> {
       print.progress("Cached: " <> cache_message)
 
       Nil
     }
 
-    _ -> {
+    _, _ -> {
       pullfn()
 
       let now =

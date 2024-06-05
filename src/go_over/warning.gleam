@@ -1,4 +1,5 @@
 import gleam/hexpm.{type ReleaseRetirement}
+import gleam/json.{type Json, object, string}
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
@@ -71,7 +72,7 @@ pub fn retired_to_warning(pkg: Package, ret: ReleaseRetirement) -> Warning {
 
 pub fn format_as_string(w: Warning) -> String {
   [
-    "ID: " <> option.unwrap(w.advisory_id, "N/A"),
+    "ID: " <> option.unwrap(w.advisory_id, "null"),
     "Package: " <> w.package,
     "Version: " <> w.version,
     "WarningReason: " <> warning_reason_code_as_string(w.warning_reason_code),
@@ -88,6 +89,21 @@ pub fn format_as_string_minimal(w: Warning) -> String {
     w,
     w.package <> "-" <> w.version <> ": " <> string.lowercase(w.severity),
   )
+}
+
+pub fn format_as_json(w: Warning) -> Json {
+  object([
+    #("id", json.nullable(w.advisory_id, string)),
+    #("package", string(w.package)),
+    #("version", string(w.version)),
+    #(
+      "warning_reason",
+      string(warning_reason_code_as_string(w.warning_reason_code)),
+    ),
+    #("dependency_type", string(dep_code_as_string(w.dep))),
+    #("severity", string(string.lowercase(w.severity))),
+    #("reason", string(w.reason)),
+  ])
 }
 
 fn color(w: Warning, str: String) {

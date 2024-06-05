@@ -6,7 +6,6 @@ gleam build
 gleam format
 gleam test
 rm -rf .go-over/
-gleam run
-gleam run -- --skip --force 
+gleam run -- --force
 gleam run -- --fake
 gleam run
