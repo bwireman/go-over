@@ -1,0 +1,10 @@
+{
+  "name": "go-over",
+  "repository": "git@github.com:bwireman/go-over.git",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "sync-fetch": "^0.5.2",
+    "yaml": "^2.4.3"
+  }
+}

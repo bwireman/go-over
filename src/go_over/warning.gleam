@@ -5,7 +5,7 @@ import gleam/option.{type Option, None, Some}
 import gleam/string
 import go_over/advisories/advisories.{type Advisory}
 import go_over/packages.{type Package}
-import go_over/retired
+import go_over/retired/core
 import go_over/util/print
 
 pub type WarningReasonCode {
@@ -63,7 +63,7 @@ pub fn retired_to_warning(pkg: Package, ret: ReleaseRetirement) -> Warning {
     None,
     pkg.name,
     pkg.version_raw,
-    retired.print_ret(ret),
+    core.print_ret(ret),
     Retired,
     "package-retired",
     Direct,
