@@ -15,8 +15,10 @@ if [ "$BRANCH" != "main" ]; then
     echo "Branch must be 'main'"
     exit 1
 fi
+
 gleam format
-gleam update
+./scripts/update.sh
+./scripts/test.sh
 
 if [ ! -z "$(git status --porcelain)" ]; then
     echo "Working dir mush be clean"
