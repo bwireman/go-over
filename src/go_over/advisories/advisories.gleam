@@ -1,7 +1,6 @@
 import filepath
 import gleam/list
 import gleam/option.{None, Some}
-import gleam/string
 import go_over/advisories/comparisons
 import go_over/packages.{type Package}
 import go_over/util/cache
@@ -27,25 +26,22 @@ fn path() -> String {
 }
 
 @external(erlang, "advisory_yaml", "parse")
-fn read(
-  path: String,
-) -> #(
-  List(UtfCodepoint),
-  List(UtfCodepoint),
-  List(UtfCodepoint),
-  List(UtfCodepoint),
-  List(List(UtfCodepoint)),
-)
+@external(javascript, "./../../advisory_yaml.mjs", "parse")
+fn read(body: String) -> #(String, String, String, String, List(String))
 
 fn read_adv(path: String) -> Advisory {
-  let #(id, name, severity, desc, versions) = read(path)
+  let body =
+    simplifile.read(path)
+    |> hard_fail("could not read adv file at: " <> path)
+
+  let #(id, name, severity, desc, versions) = read(body)
 
   Advisory(
-    id: string.from_utf_codepoints(id),
-    name: string.from_utf_codepoints(name),
-    severity: string.from_utf_codepoints(severity),
-    vulnerable_version_ranges: list.map(versions, string.from_utf_codepoints),
-    description: string.from_utf_codepoints(desc),
+    id: id,
+    name: name,
+    severity: severity,
+    vulnerable_version_ranges: versions,
+    description: desc,
   )
 }
 

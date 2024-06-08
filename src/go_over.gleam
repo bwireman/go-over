@@ -8,7 +8,7 @@ import gleam/string
 import go_over/advisories/advisories
 import go_over/config.{type Config, Config}
 import go_over/packages
-import go_over/retired
+import go_over/retired/retired
 import go_over/util/constants
 import go_over/util/print
 import go_over/util/util.{iff_nil, throwaway}

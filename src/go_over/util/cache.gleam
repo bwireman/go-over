@@ -48,11 +48,14 @@ pub fn pull_if_not_cached(
         birl.utc_now()
         |> birl.to_unix()
         |> int.to_string()
-      let _ =
-        path
-        |> cache_name()
-        |> simplifile.write(now)
-        |> hard_fail("could not write cache file for " <> path)
+
+      simplifile.create_directory_all(path)
+      |> hard_fail("could not write cache file for " <> path)
+
+      path
+      |> cache_name()
+      |> simplifile.write(now)
+      |> hard_fail("could not write cache file for " <> path)
 
       Nil
     }
