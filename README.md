@@ -83,20 +83,6 @@ ids = ["GHSA-xxxx-yyyy-zzzz"]
 - Security advisory data is cached for **_six_** hours
 - hex.pm retired package data is cached for **_one_** hour
 
-## 🌸 Javascript
-
-If running with Javascript install
-
-```json
-{
-  "dependencies": {
-    "sync-fetch": "^0.5.2",
-    "yaml": "^2.4.3"
-  }
-}
-```
-Bun & Nodejs are supported
-
 # 🖌️ Other Art
 
 - As I'm sure is no surprise this tool is inspired by (and all around worse than) [mirego/mix_audit](https://github.com/mirego/mix_audit). Please check it out!
