@@ -2,6 +2,7 @@
   "name": "go-over",
   "repository": "git@github.com:bwireman/go-over.git",
   "license": "MIT",
+  "type": "module",
   "private": true,
   "dependencies": {
     "sync-fetch": "^0.5.2",

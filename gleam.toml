@@ -1,5 +1,5 @@
 name = "go_over"
-version = "0.5.0"
+version = "1.0.0"
 licences = ["MIT"]
 repository = { type = "github", user = "bwireman", repo = "go-over" }
 description = "A tool to audit Erlang & Elixir dependencies, to make sure your gleam projects really sparkle! ✨"
