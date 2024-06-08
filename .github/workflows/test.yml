@@ -1,24 +1,70 @@
-name: test
+name: Test
 
 on:
   push:
     branches:
-      - master
       - main
   pull_request:
 
+env:
+  otp: "26.0.2"
+  gleam: "1.2.0"
+  rebar: "3"
+
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: erlef/setup-beam@v1
         with:
-          otp-version: "26.0.2"
-          gleam-version: "1.2.0"
-          rebar3-version: "3"
-          # elixir-version: "1.15.4"
+          otp-version: ${{ env.otp }}
+          gleam-version: ${{ env.gleam }}
+          rebar3-version: ${{ env.rebar }}
       - run: gleam deps download
-      - run: gleam run
       - run: gleam test
       - run: gleam format --check src test
+
+  erlang:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ env.otp }}
+          gleam-version: ${{ env.gleam }}
+          rebar3-version: ${{ env.rebar }}
+      - run: gleam run --target erlang
+
+  node:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ env.otp }}
+          gleam-version: ${{ env.gleam }}
+          rebar3-version: ${{ env.rebar }}
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - run: npm i
+      - run: gleam run --target javascript --runtime nodejs
+
+  bun:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ env.otp }}
+          gleam-version: ${{ env.gleam }}
+          rebar3-version: ${{ env.rebar }}
+      - uses: oven-sh/setup-bun@v1
+      - run: bun install
+      - run: gleam run --target javascript --runtime bun
