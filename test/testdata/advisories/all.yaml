@@ -1,0 +1,6 @@
+id: id
+package: package
+severity: severity
+title: title
+vulnerable_version_ranges: 
+  - '>= 0.1.0'
