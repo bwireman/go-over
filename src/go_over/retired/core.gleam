@@ -18,8 +18,8 @@ pub fn filename(pkg) -> String {
 }
 
 @target(javascript)
-@external(javascript, "../../fetch.mjs", "do_fetch")
-pub fn do_fetch(x: String) -> String
+@external(javascript, "../../ffi.mjs", "do_fetch")
+pub fn do_fetch(x: String) -> Result(String, Nil)
 
 pub fn print_ret(ret: ReleaseRetirement) -> String {
   let reason = hexpm.retirement_reason_to_string(ret.reason)

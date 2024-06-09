@@ -5,6 +5,7 @@ cd "$(dirname $0)/.."
 gleam update
 gleam build
 gleam format
+yarn run eslint src/ffi.mjs  --fix
 gleam test --target erlang
 gleam test --target javascript --runtime bun
 gleam test --target javascript --runtime nodejs
