@@ -34,7 +34,7 @@ export function do_fetch(url) {
  * - vulnerable_version_ranges: List<string>
  *
  * @param {string} content
- * @returns List<String | List<String>>
+ * @returns Result<List<String | List<String>>, null>
  */
 export function parse_adv(content) {
     const {
@@ -45,5 +45,5 @@ export function parse_adv(content) {
         vulnerable_version_ranges,
     } = parse_yaml(content)
 
-    return [id, pkg, severity, title, toList(vulnerable_version_ranges)]
+    return new Ok([id, pkg, severity, title, toList(vulnerable_version_ranges)])
 }
