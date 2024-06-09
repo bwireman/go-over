@@ -27,14 +27,18 @@ fn path() -> String {
 
 @external(erlang, "ffi", "parse_adv")
 @external(javascript, "./../../ffi.mjs", "parse_adv")
-fn read(body: String) -> #(String, String, String, String, List(String))
+fn read(
+  body: String,
+) -> Result(#(String, String, String, String, List(String)), Nil)
 
 fn read_adv(path: String) -> Advisory {
   let body =
     simplifile.read(path)
     |> hard_fail("could not read adv file at: " <> path)
 
-  let #(id, name, severity, desc, versions) = read(body)
+  let #(id, name, severity, desc, versions) =
+    read(body)
+    |> hard_fail("could not parse advisory file: " <> path)
 
   Advisory(
     id: id,
