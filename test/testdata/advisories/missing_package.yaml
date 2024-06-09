@@ -1,0 +1,5 @@
+id: id
+severity: severity
+title: title
+vulnerable_version_ranges: 
+  - '>= 0.1.0'

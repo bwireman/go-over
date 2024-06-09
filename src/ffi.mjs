@@ -37,13 +37,27 @@ export function do_fetch(url) {
  * @returns Result<List<String | List<String>>, null>
  */
 export function parse_adv(content) {
-    const {
-        id,
-        package: pkg,
-        severity,
-        title,
-        vulnerable_version_ranges,
-    } = parse_yaml(content)
+    try {
+        const {
+            id,
+            package: pkg,
+            severity,
+            title,
+            vulnerable_version_ranges,
+        } = parse_yaml(content)
 
-    return new Ok([id, pkg, severity, title, toList(vulnerable_version_ranges)])
+        if (!id || !pkg || !severity || !title || !vulnerable_version_ranges) {
+            return new Error(null)
+        }
+
+        return new Ok([
+            id,
+            pkg,
+            severity,
+            title,
+            toList(vulnerable_version_ranges),
+        ])
+    } catch {
+        return new Error(null)
+    }
 }

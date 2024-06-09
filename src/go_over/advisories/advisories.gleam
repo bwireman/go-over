@@ -27,7 +27,7 @@ fn path() -> String {
 
 @external(erlang, "ffi", "parse_adv")
 @external(javascript, "./../../ffi.mjs", "parse_adv")
-fn read(
+pub fn read(
   body: String,
 ) -> Result(#(String, String, String, String, List(String)), Nil)
 
