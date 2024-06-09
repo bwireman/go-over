@@ -1,10 +1,10 @@
--module(advisory_yaml).
+-module(ffi).
 
 -export([
-    parse/1
+    parse_adv/1
 ]).
 
-parse(Raw) ->
+parse_adv(Raw) ->
     [Content] = yamerl:decode(Raw),
     {_, ID} = lists:keyfind("id", 1, Content),
     {_, Name} = lists:keyfind("package", 1, Content),

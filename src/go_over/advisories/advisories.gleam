@@ -25,8 +25,8 @@ fn path() -> String {
   |> filepath.join("mirego-elixir-security-advisories")
 }
 
-@external(erlang, "advisory_yaml", "parse")
-@external(javascript, "./../../advisory_yaml.mjs", "parse")
+@external(erlang, "ffi", "parse_adv")
+@external(javascript, "./../../ffi.mjs", "parse_adv")
 fn read(body: String) -> #(String, String, String, String, List(String))
 
 fn read_adv(path: String) -> Advisory {

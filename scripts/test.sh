@@ -10,5 +10,4 @@ gleam test --target javascript --runtime bun
 gleam test --target javascript --runtime nodejs
 rm -rf .go-over/
 gleam run -- --force
-gleam run -- --fake
 gleam run
