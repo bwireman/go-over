@@ -4,6 +4,16 @@
     parse_adv/1
 ]).
 
+% Parses mirego/elixir-security-advisories advisory yaml
+% files and returns these fields in an array
+% - id: binary()
+% - package: binary()
+% - severity: binary()
+% - title: binary()
+% - vulnerable_version_ranges: list(binary())
+%
+% @param {binary()} content
+% @returns {binary(), binary(), binary(), binary(), list(binary())}
 parse_adv(Raw) ->
     [Content] = yamerl:decode(Raw),
     {_, ID} = lists:keyfind("id", 1, Content),
