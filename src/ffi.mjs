@@ -2,10 +2,16 @@ import fetch from "sync-fetch"
 import { parse as parse_yaml } from "yaml"
 import { toList, Ok, Error } from "../prelude.mjs"
 
-export function do_fetch(path) {
+/**
+ * Synchronously fetches url and returns the raw text
+ *
+ * @param {string} url
+ * @returns Result<String, null>
+ */
+export function do_fetch(url) {
     try {
-        const response = fetch(path, {
-            headers: { "User-Agent": "gleam.go-over.fetch" },
+        const response = fetch(url, {
+            headers: { "User-Agent": "sync-fetch go-over Gleam" },
         })
 
         if (response.ok) {
@@ -18,6 +24,18 @@ export function do_fetch(path) {
     return new Error(null)
 }
 
+/**
+ * Parses mirego/elixir-security-advisories advisory yaml
+ * files and returns these fields in an array
+ * - id: string
+ * - package: string
+ * - severity: string
+ * - title: string
+ * - vulnerable_version_ranges: List<string>
+ *
+ * @param {string} content
+ * @returns List<String | List<String>>
+ */
 export function parse_adv(content) {
     const {
         id,
