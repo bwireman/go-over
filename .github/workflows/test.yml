@@ -7,7 +7,7 @@ on:
   pull_request:
 
 env:
-  otp: "26.0.2"
+  otp: "27.0"
   gleam: "1.2.0"
   rebar: "3"
   nodelts: 20.x
