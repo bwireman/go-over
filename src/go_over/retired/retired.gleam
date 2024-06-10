@@ -17,7 +17,7 @@ import simplifile
 pub fn do_pull_retired(pkg: Package) -> String {
   pkg
   |> core.hex_url()
-  |> core.do_fetch()
+  |> util.do_fetch()
   |> hard_fail("request to hex.pm for package: " <> pkg.name <> " failed")
 }
 

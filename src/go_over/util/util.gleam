@@ -33,3 +33,7 @@ pub fn hard_fail(res: Result(a, b), msg: String) -> a {
     }
   }
 }
+
+@target(javascript)
+@external(javascript, "../../ffi.mjs", "do_fetch")
+pub fn do_fetch(x: String) -> Result(String, Nil)

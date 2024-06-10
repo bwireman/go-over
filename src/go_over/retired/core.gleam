@@ -17,10 +17,6 @@ pub fn filename(pkg) -> String {
   |> filepath.join("resp.json")
 }
 
-@target(javascript)
-@external(javascript, "../../ffi.mjs", "do_fetch")
-pub fn do_fetch(x: String) -> Result(String, Nil)
-
 pub fn print_ret(ret: ReleaseRetirement) -> String {
   let reason = hexpm.retirement_reason_to_string(ret.reason)
   case ret.message {
