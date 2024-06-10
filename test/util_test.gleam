@@ -1,7 +1,7 @@
 @target(javascript)
 import gleeunit/should
 @target(javascript)
-import go_over/retired/core.{do_fetch}
+import go_over/util/util.{do_fetch}
 
 @target(javascript)
 pub fn do_fetch_test() {
