@@ -43,12 +43,17 @@ pub fn read_adv_test() {
   read(body)
   |> should.be_error
 
+  let assert Ok(body) =
+    simplifile.read("test/testdata/advisories/non_list_versions.yaml")
+  read(body)
+  |> should.be_error
+
+  let assert Ok(body) =
+    simplifile.read("test/testdata/advisories/not-even-yaml.txt")
+  read(body)
+  |> should.be_error
+
   let assert Ok(body) = simplifile.read("test/testdata/advisories/all.yaml")
   read(body)
   |> should.be_ok
-
-  let assert Ok(body) =
-    simplifile.read("test/testdata/advisories/missing_versions_non_list.yaml")
-  read(body)
-  |> should.be_error
 }

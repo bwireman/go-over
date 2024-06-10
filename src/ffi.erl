@@ -15,6 +15,13 @@
 % @param {binary()} content
 % @returns {ok, {binary(), binary(), binary(), binary(), list(binary())}}
 parse_adv(Raw) ->
+    try do_parse_adv(Raw) of
+        Res -> Res
+    catch
+        _:_ -> {error, nil}
+    end.
+
+do_parse_adv(Raw) ->
     maybe
         [Content] ?= yamerl:decode(Raw),
         {_, ID} ?= lists:keyfind("id", 1, Content),
