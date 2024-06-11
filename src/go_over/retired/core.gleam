@@ -9,17 +9,37 @@ import go_over/packages.{type Package}
 import go_over/util/constants
 import go_over/util/util.{hard_fail}
 
-pub fn path(pkg: packages.Package) -> String {
+pub fn release_path(pkg: packages.Package) -> String {
   constants.go_over_path()
   |> filepath.join("deps")
   |> filepath.join(pkg.name)
   |> filepath.join(pkg.version_raw)
 }
 
-pub fn filename(pkg) -> String {
+pub fn outdated_path(pkg: packages.Package) -> String {
+  constants.go_over_path()
+  |> filepath.join("outdated")
+  |> filepath.join(pkg.name)
+  |> filepath.join(pkg.version_raw)
+}
+
+pub fn pkg_pull_error(pkg: packages.Package, pkg_path: String) {
+  "could not store hex.pm pkg info. package: "
+  <> pkg.name
+  <> " at path "
+  <> pkg_path
+}
+
+pub fn release_filename(pkg) -> String {
   pkg
-  |> path
+  |> release_path
   |> filepath.join("resp.json")
+}
+
+pub fn outdated_filename(pkg) -> String {
+  pkg
+  |> outdated_path
+  |> filepath.join("outdated-resp.json")
 }
 
 pub fn print_ret(ret: ReleaseRetirement) -> String {

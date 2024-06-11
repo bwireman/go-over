@@ -8,6 +8,7 @@ import gleam/string
 import go_over/advisories/advisories
 import go_over/config.{type Config, Config}
 import go_over/packages
+import go_over/retired/outdated
 import go_over/retired/retired
 import go_over/util/constants
 import go_over/util/print
@@ -97,6 +98,18 @@ fn get_retired_packges(
   })
 }
 
+fn get_outdated_packages(pkgs: List(packages.Package), conf: Config) {
+  pkgs
+  |> list.map(fn(pkg) {
+    case outdated.check_outdated(pkg, conf.force || !conf.cache) {
+      option.Some(ret) -> option.Some(#(pkg, ret))
+      option.None -> option.None
+    }
+  })
+  |> option.values
+  |> io.debug
+}
+
 fn print_warnings_count(vulns: List(Warning)) -> Nil {
   {
     "⛔ "
@@ -148,6 +161,7 @@ pub fn main() {
 
   let vulnerable_packages = get_vulnerable_packages(pkgs, conf)
   let retired_packages = get_retired_packges(pkgs, conf)
+  let _ = get_outdated_packages(pkgs, conf)
 
   iff_nil(conf.fake, fn() {
     print_warnings(
