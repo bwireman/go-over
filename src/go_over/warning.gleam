@@ -11,12 +11,14 @@ import go_over/util/print
 pub type WarningReasonCode {
   Retired
   Vulnerable
+  Outdated
 }
 
 fn warning_reason_code_as_string(w: WarningReasonCode) -> String {
   case w {
     Retired -> "Retired"
     Vulnerable -> "Vulnerable"
+    Outdated -> "Outdated"
   }
 }
 
@@ -29,6 +31,13 @@ fn dep_code_as_string(d: Dep) -> String {
   case d {
     Direct -> "Direct"
     Indirect -> "Indirect"
+  }
+}
+
+fn dep_code_from_bool(d: Bool) -> Dep {
+  case d {
+    True -> Direct
+    False -> Indirect
   }
 }
 
@@ -53,7 +62,7 @@ pub fn adv_to_warning(pkg: Package, advs: List(Advisory)) -> List(Warning) {
       adv.description,
       Vulnerable,
       string.lowercase(adv.severity),
-      Direct,
+      dep_code_from_bool(pkg.direct),
     )
   })
 }
@@ -66,7 +75,19 @@ pub fn retired_to_warning(pkg: Package, ret: ReleaseRetirement) -> Warning {
     core.print_ret(ret),
     Retired,
     "package-retired",
-    Direct,
+    dep_code_from_bool(pkg.direct),
+  )
+}
+
+pub fn outdated_to_warning(pkg: Package, new_version: String) -> Warning {
+  Warning(
+    None,
+    pkg.name,
+    pkg.version_raw,
+    new_version <> " exists",
+    Outdated,
+    "package-outdated",
+    dep_code_from_bool(pkg.direct),
   )
 }
 
@@ -110,7 +131,7 @@ fn color(w: Warning, str: String) {
   case string.lowercase(w.severity) {
     "critical" -> print.format_critical(str)
     "high" -> print.format_high(str)
-    "moderate" -> print.format_moderate(str)
+    "moderate" | "package-outdated" -> print.format_moderate(str)
     "low" -> print.format_low(str)
     _ -> print.format_warning(str)
   }

@@ -14,4 +14,4 @@ echo "=> nodejs"
 gleam test --target javascript --runtime nodejs
 rm -rf .go-over/
 gleam run -- --force
-gleam run
+gleam run --target javascript

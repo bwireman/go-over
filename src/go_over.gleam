@@ -18,13 +18,21 @@ import shellout
 import simplifile
 
 type Flags {
-  Flags(force: Bool, fake: Bool, format: option.Option(config.Format))
+  Flags(
+    force: Bool,
+    fake: Bool,
+    outdated: Bool,
+    ignore_indirect: Bool,
+    format: option.Option(config.Format),
+  )
 }
 
 fn merge_flags_and_config(flgs: Flags, cfg: Config) -> Config {
   Config(
     cache: cfg.cache,
     force: flgs.force,
+    outdated: cfg.outdated || flgs.outdated,
+    ignore_indirect: cfg.ignore_indirect || flgs.ignore_indirect,
     fake: flgs.fake,
     format: option.unwrap(flgs.format, cfg.format),
     ignore_packages: cfg.ignore_packages,
@@ -50,6 +58,8 @@ fn spin_up(cfg: Config) -> Config {
   let flags =
     Flags(
       force: list.any(args, fn(arg) { arg == "--force" }),
+      outdated: list.any(args, fn(arg) { arg == "--outdated" }),
+      ignore_indirect: list.any(args, fn(arg) { arg == "--ignore-indirect" }),
       fake: list.any(args, fn(arg) { arg == "--fake" }),
       format: format,
     )
@@ -98,7 +108,10 @@ fn get_retired_packges(
   })
 }
 
-fn get_outdated_packages(pkgs: List(packages.Package), conf: Config) {
+fn get_outdated_packages(
+  pkgs: List(packages.Package),
+  conf: Config,
+) -> List(Warning) {
   pkgs
   |> list.map(fn(pkg) {
     case outdated.check_outdated(pkg, conf.force || !conf.cache) {
@@ -107,7 +120,10 @@ fn get_outdated_packages(pkgs: List(packages.Package), conf: Config) {
     }
   })
   |> option.values
-  |> io.debug
+  |> list.map(fn(p) {
+    let #(pkg, ret) = p
+    warning.outdated_to_warning(pkg, ret)
+  })
 }
 
 fn print_warnings_count(vulns: List(Warning)) -> Nil {
@@ -158,10 +174,14 @@ pub fn main() {
   let pkgs =
     packages.read_manifest("./manifest.toml")
     |> config.filter_packages(conf, _)
+    |> config.filter_indirect(conf, _)
 
   let vulnerable_packages = get_vulnerable_packages(pkgs, conf)
   let retired_packages = get_retired_packges(pkgs, conf)
-  let _ = get_outdated_packages(pkgs, conf)
+  let outdated_packages = case conf.outdated {
+    True -> get_outdated_packages(pkgs, conf)
+    False -> []
+  }
 
   iff_nil(conf.fake, fn() {
     print_warnings(
@@ -218,6 +238,7 @@ pub fn main() {
 
   let warnings =
     list.append(retired_packages, vulnerable_packages)
+    |> list.append(outdated_packages)
     |> config.filter_severity(conf, _)
 
   case warnings {
