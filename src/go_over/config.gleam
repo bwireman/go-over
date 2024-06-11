@@ -21,6 +21,8 @@ pub type Format {
 pub type Config {
   Config(
     cache: Bool,
+    outdated: Bool,
+    ignore_indirect: Bool,
     force: Bool,
     fake: Bool,
     format: Format,
@@ -42,6 +44,12 @@ pub fn read_config(path: String) -> Config {
   let cache =
     tom.get_bool(go_over, ["cache"])
     |> unwrap(True)
+  let outdated =
+    tom.get_bool(go_over, ["outdated"])
+    |> unwrap(False)
+  let ignore_indirect =
+    tom.get_bool(go_over, ["ignore_indirect"])
+    |> unwrap(False)
   let format =
     tom.get_string(go_over, ["format"])
     |> unwrap("minimal")
@@ -61,6 +69,8 @@ pub fn read_config(path: String) -> Config {
 
   Config(
     cache: cache,
+    outdated: outdated,
+    ignore_indirect: ignore_indirect,
     //read from flags only
     force: False,
     //read from flags only
@@ -74,6 +84,13 @@ pub fn read_config(path: String) -> Config {
 
 pub fn filter_packages(conf: Config, pkgs: List(Package)) -> List(Package) {
   list.filter(pkgs, fn(pkg) { !list.contains(conf.ignore_packages, pkg.name) })
+}
+
+pub fn filter_indirect(conf: Config, pkgs: List(Package)) -> List(Package) {
+  case conf.ignore_indirect {
+    False -> pkgs
+    True -> list.filter(pkgs, fn(pkg) { pkg.direct })
+  }
 }
 
 pub fn filter_advisory_ids(conf: Config, advs: List(Advisory)) -> List(Advisory) {
