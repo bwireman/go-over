@@ -36,6 +36,8 @@ gleeunit = ">= 1.0.0 and < 2.0.0"
 [go-over]
 cache = true
 format = "minimal"
+outdated = false
+ignore_indirect = false
 
 [go-over.ignore]
 packages = []

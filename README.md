@@ -52,6 +52,8 @@ Override config values if set
 
 - `--force`: will force pulling new data even if the cached data is still valid
 - `--format=<format>`: specify the output format of any warnings. `["minimal", "detailed", "json"]`
+- `--outdated`: will _additionally_ check if newer versions of dependencies exist
+- `--ignore-indirect`: will ignore all warnings for indirect dependencies
 
 ### ⚙️ Config
 
@@ -65,6 +67,12 @@ cache = true
 # sets output format for warnings ["minimal", "detailed", "json"]
 # default: "minimal"
 format = "minimal"
+# will additionally check if newer versions of dependencies exist
+# default: false
+outdated = false
+# will ignore all warnings for indirect dependencies
+# default: false
+ignore_indirect = false
 
 [go-over.ignore]
 # list of package names to skip when checking for advisories & warnings
