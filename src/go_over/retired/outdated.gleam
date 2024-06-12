@@ -1,4 +1,5 @@
 import gleam/dynamic.{type DecodeError, type Dynamic, DecodeError} as dyn
+import gleam/function
 import gleam/json
 import gleam/option.{type Option}
 import gleam/order
@@ -32,7 +33,7 @@ fn decode_latest_stable_version(
   data: Dynamic,
 ) -> Result(Option(String), List(DecodeError)) {
   dyn.decode1(
-    fn(x) { x },
+    function.identity,
     dyn.field("latest_stable_version", dyn.optional(dyn.string)),
   )(data)
 }
