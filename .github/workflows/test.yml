@@ -87,3 +87,14 @@ jobs:
       - run: bun install
       - run: gleam test --target javascript --runtime bun
       - run: gleam run --target javascript --runtime bun
+
+  deno:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x # Run with latest stable Deno.
+      - run: deno install
+      - run: gleam test --target javascript --runtime deno
+      - run: gleam run --target javascript --runtime deno
