@@ -50,8 +50,8 @@ jobs:
           otp-version: ${{ env.otp }}
           gleam-version: ${{ env.gleam }}
           rebar3-version: ${{ env.rebar }}
-      - run: gleam run --target erlang
       - run: gleam test --target erlang
+      - run: gleam run --target erlang
 
   node:
     runs-on: ubuntu-latest
@@ -70,7 +70,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
-      - run: yarn install
       - run: gleam test --target javascript --runtime nodejs
       - run: gleam run --target javascript --runtime nodejs
 
@@ -95,6 +94,5 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x # Run with latest stable Deno.
-      - run: deno install
       - run: gleam test --target javascript --runtime deno
       - run: gleam run --target javascript --runtime deno
