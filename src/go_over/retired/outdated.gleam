@@ -44,7 +44,7 @@ pub fn check_outdated(pkg: Package, force_pull: Bool) -> Option(String) {
   |> cache.pull_if_not_cached(
     constants.hour,
     force_pull,
-    fn() { pull_outdated(pkg) },
+    util.freeze1(pull_outdated, pkg),
     pkg.name <> ": latest version",
   )
 

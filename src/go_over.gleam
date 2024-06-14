@@ -169,7 +169,10 @@ fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
 
 pub fn main() {
   let conf = spin_up(config.read_config("./gleam.toml"))
-  throwaway(!conf.cache, fn() { simplifile.delete(constants.go_over_path()) })
+  throwaway(
+    !conf.cache,
+    util.freeze1(simplifile.delete, constants.go_over_path()),
+  )
 
   let pkgs =
     packages.read_manifest("./manifest.toml")
@@ -183,8 +186,10 @@ pub fn main() {
     False -> []
   }
 
-  iff_nil(conf.fake, fn() {
-    print_warnings(
+  iff_nil(
+    conf.fake,
+    util.freeze2(
+      print_warnings,
       [
         Warning(
           option.None,
@@ -233,8 +238,8 @@ pub fn main() {
         ),
       ],
       conf,
-    )
-  })
+    ),
+  )
 
   let warnings =
     list.append(retired_packages, vulnerable_packages)

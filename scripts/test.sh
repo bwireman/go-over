@@ -2,6 +2,7 @@
 set -e
 cd "$(dirname $0)/.."
 
+gleam check
 gleam update
 gleam build
 gleam format

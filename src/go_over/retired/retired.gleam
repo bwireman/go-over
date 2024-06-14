@@ -35,7 +35,7 @@ pub fn check_retired(
   |> cache.pull_if_not_cached(
     constants.hour,
     force_pull,
-    fn() { pull_retired(pkg) },
+    util.freeze1(pull_retired, pkg),
     pkg.name <> ":" <> pkg.version_raw,
   )
 

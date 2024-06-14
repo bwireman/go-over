@@ -34,6 +34,14 @@ pub fn hard_fail(res: Result(a, b), msg: String) -> a {
   }
 }
 
+pub fn freeze1(f: fn(a) -> b, arg: a) -> fn() -> b {
+  fn() { f(arg) }
+}
+
+pub fn freeze2(f: fn(a, b) -> c, arg1: a, arg2: b) -> fn() -> c {
+  fn() { f(arg1, arg2) }
+}
+
 @target(javascript)
 @external(javascript, "../../ffi.mjs", "do_fetch")
 pub fn do_fetch(x: String) -> Result(String, Nil)

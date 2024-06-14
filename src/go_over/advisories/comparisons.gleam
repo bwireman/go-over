@@ -1,3 +1,4 @@
+import gleam/function
 import gleam/list
 import gleam/order
 import gleam/string
@@ -52,7 +53,7 @@ fn do_get_comparator(ver: String) -> fn(SemVer) -> Bool {
 }
 
 fn eq(r: SemVer) -> fn(SemVer) -> Bool {
-  fn(l: SemVer) { gleamsver.compare(l, r) == order.Eq }
+  function.curry2(gleamsver.are_equal)(r)
 }
 
 fn lt(r: SemVer) -> fn(SemVer) -> Bool {
