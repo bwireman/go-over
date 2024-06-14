@@ -19,7 +19,7 @@ gleam add --dev go_over
 ## 📣 Also!
 
 - add `.go-over/` to your `.gitignore`
-- make sure `git` is installed
+- make sure `git` & `curl` are installed
 
 #### 🌸 Javascript
 
@@ -28,13 +28,12 @@ If running with Javascript install
 ```json
 {
   "devDependencies": {
-    "sync-fetch": "^0.5.2",
     "yaml": "^2.4.3"
   }
 }
 ```
 
-Bun & Nodejs are supported
+Bun, Deno & Nodejs are _all_ supported!
 
 # ▶️ Usage
 
