@@ -16,6 +16,9 @@ extra_applications = ["yamerl"]
 typescript_declarations = false
 runtime = "nodejs"
 
+[javascript.deno]
+allow_all = true
+
 [dependencies]
 gleam_stdlib = ">= 0.34.0 and < 2.0.0"
 shellout = ">= 1.6.0 and < 2.0.0"
