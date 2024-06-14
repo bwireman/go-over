@@ -4,5 +4,5 @@ set -e
 cd "$(dirname $0)/.."
 
 gleam update
-gleam run
+gleam run -- --outdated
 yarn upgrade --frozen-lockfile --ignore-scripts -A --check-files
