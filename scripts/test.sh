@@ -13,6 +13,10 @@ echo "=> bun"
 gleam test --target javascript --runtime bun
 echo "=> nodejs"
 gleam test --target javascript --runtime nodejs
+echo "=> deno"
+gleam test --target javascript --runtime deno
 rm -rf .go-over/
-gleam run -- --force
-gleam run --target javascript
+gleam run --target javascript --runtime deno -- --force
+gleam run --target javascript --runtime bun
+gleam run --target javascript --runtime nodejs
+gleam run -- --outdated
