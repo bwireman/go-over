@@ -27,7 +27,7 @@ If running with Javascript install
 
 ```json
 {
-  "dependencies": {
+  "devDependencies": {
     "sync-fetch": "^0.5.2",
     "yaml": "^2.4.3"
   }
@@ -75,14 +75,14 @@ outdated = false
 ignore_indirect = false
 
 [go-over.ignore]
-# list of package names to skip when checking for advisories & warnings
+# list of package names to skip when auditing dependencies
 # default: []
 packages = ["example_package"]
-# list of warning severities to skip when checking for advisories & warnings
+# list of warning severities to skip when auditing dependencies
 # default: []
 # (case insensitive)
 severity = ["example_moderate"]
-# list of advisory IDs to skip when checking for advisories & warnings
+# list of advisory IDs to skip when auditing dependencies
 # default: []
 ids = ["GHSA-xxxx-yyyy-zzzz"]
 ```
