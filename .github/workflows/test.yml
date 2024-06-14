@@ -33,7 +33,7 @@ jobs:
           otp-version: ${{ env.otp }}
           gleam-version: ${{ env.gleam }}
           rebar3-version: ${{ env.rebar }}
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.nodelts }}
           cache: "npm"
@@ -66,7 +66,7 @@ jobs:
           gleam-version: ${{ env.gleam }}
           rebar3-version: ${{ env.rebar }}
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
