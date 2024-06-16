@@ -45,7 +45,7 @@ pub fn check_outdated(pkg: Package, force_pull: Bool) -> Option(String) {
     constants.hour,
     force_pull,
     util.freeze1(pull_outdated, pkg),
-    pkg.name <> ": latest version",
+    pkg.name <> ": latest stable version",
   )
 
   let cached_file_name = core.outdated_filename(pkg)

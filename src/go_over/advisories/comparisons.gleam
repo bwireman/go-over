@@ -11,10 +11,8 @@ pub fn parse(ver: String) -> SemVer {
     |> list.last
     |> hard_fail("could not parse " <> ver)
 
-  let semver =
-    gleamsver.parse(parsed)
-    |> hard_fail("could not parse " <> parsed)
-  semver
+  gleamsver.parse(parsed)
+  |> hard_fail("could not parse " <> parsed)
 }
 
 pub fn get_comparator(ver: String) -> fn(SemVer) -> Bool {

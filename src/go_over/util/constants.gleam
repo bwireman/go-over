@@ -11,8 +11,7 @@ pub const advisories_repo = "mirego/elixir-security-advisories"
 pub const long_ass_dashes = "\n-----------------------------------------------\n"
 
 pub fn go_over_path() -> String {
-  let curr =
-    simplifile.current_directory()
-    |> hard_fail("could not get current path")
-  filepath.join(curr, ".go-over")
+  simplifile.current_directory()
+  |> hard_fail("could not get current path")
+  |> filepath.join(".go-over")
 }

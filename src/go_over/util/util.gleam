@@ -34,8 +34,8 @@ pub fn hard_fail(res: Result(a, b), msg: String) -> a {
   }
 }
 
-pub fn freeze1(f: fn(a) -> b, arg: a) -> fn() -> b {
-  fn() { f(arg) }
+pub fn freeze1(f: fn(a) -> b, arg1: a) -> fn() -> b {
+  fn() { f(arg1) }
 }
 
 pub fn freeze2(f: fn(a, b) -> c, arg1: a, arg2: b) -> fn() -> c {

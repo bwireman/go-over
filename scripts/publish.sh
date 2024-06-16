@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-cd "$(dirname $0)/.."
+cd "$(dirname "$0")/.."
 
 if [ -z "$1" ]; then
     echo "Must set version for release"
@@ -20,7 +20,7 @@ gleam format
 ./scripts/update.sh
 ./scripts/test.sh
 
-if [ ! -z "$(git status --porcelain)" ]; then
+if [ -n "$(git status --porcelain)" ]; then
     echo "Working dir mush be clean"
     exit 1
 fi
@@ -37,7 +37,7 @@ function publish {
 
 echo "Version set to:" "$VER"
 while true; do
-    read -p "Do you wish to publish? [Yn] " yn
+    read -rp "Do you wish to publish? [Yn] " yn
     case $yn in
         [Yy]* ) publish; break;;
         [Nn]* ) echo "canceling..." ; exit;;

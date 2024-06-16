@@ -41,6 +41,10 @@ fn merge_flags_and_config(flgs: Flags, cfg: Config) -> Config {
   )
 }
 
+fn has_flag(args: List(String), name: String) -> Bool {
+  list.any(args, fn(arg) { arg == "--" <> name })
+}
+
 fn spin_up(cfg: Config) -> Config {
   let args = shellout.arguments()
 
@@ -57,10 +61,10 @@ fn spin_up(cfg: Config) -> Config {
 
   let flags =
     Flags(
-      force: list.any(args, fn(arg) { arg == "--force" }),
-      outdated: list.any(args, fn(arg) { arg == "--outdated" }),
-      ignore_indirect: list.any(args, fn(arg) { arg == "--ignore-indirect" }),
-      fake: list.any(args, fn(arg) { arg == "--fake" }),
+      force: has_flag(args, "force"),
+      outdated: has_flag(args, "outdated"),
+      ignore_indirect: has_flag(args, "ignore-indirect"),
+      fake: has_flag(args, "fake"),
       format: format,
     )
 
