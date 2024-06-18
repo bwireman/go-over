@@ -6,7 +6,7 @@
 [![gleam js](https://img.shields.io/badge/%20gleam%20%E2%9C%A8-js%20%F0%9F%8C%B8-yellow)](https://gleam.run/news/v0.16-gleam-compiles-to-javascript/)
 [![gleam erlang](https://img.shields.io/badge/erlang%20%E2%98%8E%EF%B8%8F-red?style=flat&label=gleam%20%E2%9C%A8)](https://gleam.run)
 
-A tool to audit Erlang & Elixir dependencies, to make sure your gleam projects really sparkle! ✨
+A tool to audit Erlang & Elixir dependencies, to make sure your ✨ gleam projects really sparkle!
 
 🚨 _**NOTE**_: security advisories are _NOT_ currently monitored for gleam dependencies. The language, while excellent, is far too new and niche
 
@@ -18,8 +18,8 @@ gleam add --dev go_over
 
 ## 📣 Also!
 
-- add `.go-over/` to your `.gitignore`
-- make sure `git` & `curl` are installed
+-   add `.go-over/` to your `.gitignore`
+-   make sure `git` & `curl` are installed
 
 #### 🌸 Javascript
 
@@ -27,9 +27,9 @@ If running with Javascript install
 
 ```json
 {
-  "devDependencies": {
-    "yaml": "^2.4.3"
-  }
+    "devDependencies": {
+        "yaml": "^2.4.3"
+    }
 }
 ```
 
@@ -49,10 +49,10 @@ gleam run -m go_over
 
 Override config values if set
 
-- `--force`: will force pulling new data even if the cached data is still valid
-- `--format=<format>`: specify the output format of any warnings. `["minimal", "detailed", "json"]`
-- `--outdated`: will _additionally_ check if newer versions of dependencies exist
-- `--ignore-indirect`: will ignore all warnings for indirect dependencies
+-   `--force`: will force pulling new data even if the cached data is still valid
+-   `--format=<format>`: specify the output format of any warnings. `["minimal", "detailed", "json"]`
+-   `--outdated`: will _additionally_ check if newer versions of dependencies exist
+-   `--ignore-indirect`: will ignore all warnings for indirect dependencies
 
 ### ⚙️ Config
 
@@ -88,20 +88,29 @@ ids = ["GHSA-xxxx-yyyy-zzzz"]
 
 ### ⌛ Caching
 
-- Security advisory data is cached for **_six_** hours
-- hex.pm retired package data is cached for **_one_** hour
+-   Security advisory data is cached for **_six_** hours
+-   hex.pm retired package data is cached for **_one_** hour
+
+## 🪝 pre-commit hooks
+
+You can add go_over to you're pre-commit hooks by running
+
+```sh
+# use --recreate to wipe and recreate the hook
+gleam run -m go_over/hook [-- --recreate]
+```
 
 # 🖌️ Other Art
 
-- As I'm sure is no surprise this tool is inspired by (and all around worse than) [mirego/mix_audit](https://github.com/mirego/mix_audit). Please check it out!
-- It also draws inspiration from [mix hex.audit](https://hexdocs.pm/hex/Mix.Tasks.Hex.Audit.html)
+-   As I'm sure is no surprise this tool is inspired by (and all around worse than) [mirego/mix_audit](https://github.com/mirego/mix_audit). Please check it out!
+-   It also draws inspiration from [mix hex.audit](https://hexdocs.pm/hex/Mix.Tasks.Hex.Audit.html)
 
 # ⚖️ License
 
-- This tool uses [mirego/elixir-security-advisories](https://github.com/mirego/elixir-security-advisories) which is it self licensed with
+-   This tool uses [mirego/elixir-security-advisories](https://github.com/mirego/elixir-security-advisories) which is it self licensed with
 
-  - `BSD-3-Clause license`
-  - `CC-BY 4.0 open source license`.
-  - See their [#license section](https://github.com/mirego/elixir-security-advisories?tab=readme-ov-file#license)
+    -   `BSD-3-Clause license`
+    -   `CC-BY 4.0 open source license`.
+    -   See their [#license section](https://github.com/mirego/elixir-security-advisories?tab=readme-ov-file#license)
 
-- Code original to this repo is Licensed under `MIT`
+-   Code original to this repo is Licensed under `MIT`
