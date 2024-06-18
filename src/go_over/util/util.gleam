@@ -1,3 +1,4 @@
+import gleam/list
 import go_over/util/print
 import shellout
 
@@ -32,6 +33,10 @@ pub fn hard_fail(res: Result(a, b), msg: String) -> a {
       panic as "unreachable"
     }
   }
+}
+
+pub fn has_flag(args: List(String), name: String) -> Bool {
+  list.any(args, fn(arg) { arg == "--" <> name })
 }
 
 pub fn freeze1(f: fn(a) -> b, arg1: a) -> fn() -> b {

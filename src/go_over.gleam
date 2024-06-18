@@ -12,7 +12,7 @@ import go_over/retired/outdated
 import go_over/retired/retired
 import go_over/util/constants
 import go_over/util/print
-import go_over/util/util.{iff_nil, throwaway}
+import go_over/util/util.{has_flag, iff_nil, throwaway}
 import go_over/warning.{type Warning, Warning}
 import shellout
 import simplifile
@@ -39,10 +39,6 @@ fn merge_flags_and_config(flgs: Flags, cfg: Config) -> Config {
     ignore_severity: cfg.ignore_severity,
     ignore_ids: cfg.ignore_ids,
   )
-}
-
-fn has_flag(args: List(String), name: String) -> Bool {
-  list.any(args, fn(arg) { arg == "--" <> name })
 }
 
 fn spin_up(cfg: Config) -> Config {
