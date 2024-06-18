@@ -74,7 +74,7 @@ pub fn retired_to_warning(pkg: Package, ret: ReleaseRetirement) -> Warning {
     pkg.version_raw,
     core.print_ret(ret),
     Retired,
-    "package-retired",
+    "package-retired (" <> hexpm.retirement_reason_to_string(ret.reason) <> ")",
     dep_code_from_bool(pkg.direct),
   )
 }
