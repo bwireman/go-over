@@ -33,11 +33,17 @@ pub fn main() {
   let _ = simplifile.create_file(pre_commit_path)
   let all =
     set.from_list([simplifile.Read, simplifile.Write, simplifile.Execute])
+
   let _ =
     simplifile.set_permissions(
       pre_commit_path,
       simplifile.FilePermissions(user: all, group: all, other: all),
     )
 
-  simplifile.append(pre_commit_path, "\n" <> tmpl)
+  let text = case util.has_flag(shellout.arguments(), "outdated") {
+    False -> tmpl
+    True -> tmpl <> " -- --outdated"
+  }
+
+  simplifile.append(pre_commit_path, "\n" <> text)
 }
