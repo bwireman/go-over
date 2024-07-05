@@ -2,7 +2,7 @@
 
 [![Package Version](https://img.shields.io/hexpm/v/go_over)](https://hex.pm/packages/go_over)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/go_over/)
-[![mit](https://img.shields.io/github/license/bwireman/delay?color=brightgreen)](https://github.com/bwireman/delay/blob/main/LICENSE)
+[![mit](https://img.shields.io/github/license/bwireman/go-over?color=brightgreen)](https://github.com/bwireman/over/blob/main/LICENSE)
 [![gleam js](https://img.shields.io/badge/%20gleam%20%E2%9C%A8-js%20%F0%9F%8C%B8-yellow)](https://gleam.run/news/v0.16-gleam-compiles-to-javascript/)
 [![gleam erlang](https://img.shields.io/badge/erlang%20%E2%98%8E%EF%B8%8F-red?style=flat&label=gleam%20%E2%9C%A8)](https://gleam.run)
 
