@@ -93,13 +93,14 @@ ids = ["GHSA-xxxx-yyyy-zzzz"]
 
 ## 🪝 pre-commit hooks
 
-You can add go_over to you're pre-commit hooks by running
-
-```sh
-# use --recreate to wipe and recreate the hook
-# use --outdated to have the hook run with that flag
-gleam run -m go_over/hook [-- --recreate --outdated]
+You can add go_over to you're pre-commit hooks by install [🌵cactus](https://hex.pm/packages/cactus) & then adding this to your `gleam.toml`
+```toml
+[cactus.pre-commit]
+actions = [
+    { command = "go_over", kind = "module", args=["--outdated"] ,
+]
 ```
+
 
 # 🖌️ Other Art
 

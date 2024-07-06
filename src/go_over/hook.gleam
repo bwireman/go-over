@@ -1,5 +1,7 @@
 import filepath
+import gleam/io
 import gleam/set
+import go_over/util/print.{format_high}
 import go_over/util/util.{hard_fail}
 import shellout
 import simplifile
@@ -18,6 +20,10 @@ fn get_path() -> String {
 }
 
 pub fn main() {
+  format_high(
+    "This command is DEPRECATED consider using 🌵 cactus instead\nhttps://hex.pm/packages/cactus",
+  )
+  |> io.println_error()
   let pwd = get_path()
 
   simplifile.create_directory_all(pwd)
