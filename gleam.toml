@@ -33,19 +33,12 @@ gleamsver = ">= 1.0.0 and < 2.0.0"
 
 [dev-dependencies]
 gleeunit = ">= 1.0.0 and < 2.0.0"
-cactus = ">= 0.1.0 and < 1.0.0"
+cactus = ">= 1.0.0 and < 2.0.0"
 
 [cactus.pre-commit]
 actions = [
-    { command = "format", kind = "sub_command", args = ["--check"] },
-    { command = "test", kind = "sub_command" },
-    { command = "./scripts/test.sh", kind = "binary" },
-]
-
-[cactus.pre-push]
-actions = [
-    { command = "format", kind = "sub_command", args = ["--check"] },
-    { command = "test", kind = "sub_command" },
+    { command = "./scripts/format.sh", kind = "binary" },
+    { command = "./scripts/update.sh", kind = "binary" },
     { command = "./scripts/test.sh", kind = "binary" },
 ]
 

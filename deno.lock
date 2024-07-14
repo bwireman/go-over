@@ -8,7 +8,7 @@
       "npm:eslint@9.x": "npm:eslint@9.4.0",
       "npm:globals@^15.4.0": "npm:globals@15.4.0",
       "npm:prettier@^3.3.1": "npm:prettier@3.3.1",
-      "npm:yaml@^2.4.3": "npm:yaml@2.4.3"
+      "npm:yaml@^2.4.5": "npm:yaml@2.4.5"
     },
     "npm": {
       "@eslint-community/eslint-utils@4.4.0_eslint@9.4.0": {
@@ -559,8 +559,8 @@
         "integrity": "sha512-BN22B5eaMMI9UMtjrGd5g5eCYPpCPDUy0FJXbYsaT5zYxjFOckS53SQDE3pWkVoWpHXVb3BrYcEN4Twa55B5cA==",
         "dependencies": {}
       },
-      "yaml@2.4.3": {
-        "integrity": "sha512-sntgmxj8o7DE7g/Qi60cqpLBA3HG3STcDA0kO+WfB05jEKhZMbY7umNm2rBpQvsmZ16/lPXCJGW2672dgOUkrg==",
+      "yaml@2.4.5": {
+        "integrity": "sha512-aBx2bnqDzVOyNKfsysjA2ms5ZlnjSAW2eG3/L5G/CSujfjLJTJsEw1bGw8kCf04KodQWk1pxlGnZ56CRxiawmg==",
         "dependencies": {}
       },
       "yocto-queue@0.1.0": {
@@ -579,7 +579,7 @@
         "npm:eslint@9.x",
         "npm:globals@^15.4.0",
         "npm:prettier@^3.3.1",
-        "npm:yaml@^2.4.3"
+        "npm:yaml@^2.4.5"
       ]
     }
   }
