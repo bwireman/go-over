@@ -1,0 +1,6 @@
+id: id
+package: package
+severity: 123
+title: title
+versions: 
+  - '>= 0.1.0'

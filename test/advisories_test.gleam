@@ -53,6 +53,31 @@ pub fn read_adv_test() {
   read(body)
   |> should.be_error
 
+  let assert Ok(body) =
+    simplifile.read("test/testdata/advisories/not_string_id.yaml")
+  read(body)
+  |> should.be_error
+
+  let assert Ok(body) =
+    simplifile.read("test/testdata/advisories/not_string_package.yaml")
+  read(body)
+  |> should.be_error
+
+  let assert Ok(body) =
+    simplifile.read("test/testdata/advisories/not_string_severity.yaml")
+  read(body)
+  |> should.be_error
+
+  let assert Ok(body) =
+    simplifile.read("test/testdata/advisories/not_string_title.yaml")
+  read(body)
+  |> should.be_error
+
+  let assert Ok(body) =
+    simplifile.read("test/testdata/advisories/not_string_versions.yaml")
+  read(body)
+  |> should.be_error
+
   let assert Ok(body) = simplifile.read("test/testdata/advisories/all.yaml")
   read(body)
   |> should.be_ok
