@@ -5,7 +5,7 @@
   "type": "module",
   "private": true,
   "dependencies": {
-    "yaml": "^2.4.5"
+    "yaml": "^2.5.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.4.0",

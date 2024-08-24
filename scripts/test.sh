@@ -13,17 +13,13 @@ yarn run eslint src/ffi.mjs  --fix
 
 rm -rf .go-over/
 echo -e "${GREEN}==> erlang${NC}"
-gleam test --target erlang
-gleam run --target erlang  -- --force --outdated
+./scripts/target_test.sh erlang
 
 echo -e "${GREEN}==> nodejs${NC}"
-gleam test --target javascript --runtime nodejs
-gleam run --target javascript --runtime nodejs
+./scripts/target_test.sh javascript nodejs
 
 echo -e "${GREEN}==> deno${NC}"
-gleam test --target javascript --runtime deno
-gleam run --target javascript --runtime deno -- --force --outdated
+./scripts/target_test.sh javascript deno
 
 echo -e "${GREEN}==> bun${NC}"
-gleam test --target javascript --runtime bun
-gleam run --target javascript --runtime bun
+./scripts/target_test.sh javascript bun

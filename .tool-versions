@@ -1,4 +1,4 @@
 gleam 1.4.1
 erlang 27.0
-nodejs 20.16.0
-deno 1.45.5
+nodejs 20.17.0
+deno 1.46.1
