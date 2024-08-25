@@ -93,7 +93,7 @@ ids = ["GHSA-xxxx-yyyy-zzzz"]
 
 ## 🪝 pre-commit hooks
 
-You can add go_over to you're pre-commit hooks by install [🌵cactus](https://hex.pm/packages/cactus) & then adding this to your `gleam.toml`
+You can add go_over to you're pre-commit hooks by installing [🌵cactus](https://hex.pm/packages/cactus) & then adding this to your `gleam.toml`
 ```toml
 [cactus.pre-commit]
 actions = [
