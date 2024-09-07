@@ -1,0 +1,27 @@
+name: Dependency Check
+
+on:
+  schedule:
+  - cron: "0 9 * * *"
+
+env:
+  otp: "27.0"
+  gleam: "1.4.1"
+  rebar: "3"
+
+jobs:
+  check-deps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ env.otp }}
+          gleam-version: ${{ env.gleam }}
+          rebar3-version: ${{ env.rebar }}
+      - run: gleam build
+      - run: gleam run -m go_over -- --outdated
+      - uses: jayqi/failed-build-issue-action@v1
+        if: failure()
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
