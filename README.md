@@ -94,6 +94,7 @@ ids = ["GHSA-xxxx-yyyy-zzzz"]
 ## 🪝 pre-commit hooks
 
 You can add go_over to you're pre-commit hooks by installing [🌵cactus](https://hex.pm/packages/cactus) & then adding this to your `gleam.toml`
+
 ```toml
 [cactus.pre-commit]
 actions = [
@@ -101,6 +102,9 @@ actions = [
 ]
 ```
 
+## ⚙️ CI
+
+You can also schedule daily runs to keep your deps up to date and open issues when necessary! [Example ▶️](./.github/workflows/deps.yml)
 
 # 🖌️ Other Art
 
