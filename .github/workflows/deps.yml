@@ -2,7 +2,8 @@ name: Dependency Check
 
 on:
   schedule:
-  - cron: "0 9 * * *"
+    # run once a day at 9am UTC
+    - cron: "0 9 * * *"
 
 env:
   otp: "27.0"
@@ -21,6 +22,8 @@ jobs:
           rebar3-version: ${{ env.rebar }}
       - run: gleam build
       - run: gleam run -m go_over -- --outdated
+      # create an issue in the repo if there are
+      # outdated or vulnerable dependencies
       - uses: jayqi/failed-build-issue-action@v1
         if: failure()
         with:
