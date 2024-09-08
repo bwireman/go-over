@@ -104,7 +104,7 @@ actions = [
 
 ## ⚙️ CI
 
-You can also schedule daily runs to keep your deps up to date and open issues when necessary! [Example ▶️](https://github.com/bwireman/cactus/blob/main/.github/workflows/deps.yml)
+You can also schedule daily runs to keep your deps up to date and open issues when necessary! [Example ▶️](https://github.com/bwireman/go-over/blob/main/.github/workflows/deps.yml)
 
 # 🖌️ Other Art
 
