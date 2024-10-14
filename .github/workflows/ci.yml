@@ -100,5 +100,6 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v2.x # Run with latest stable Deno.
+      - run: deno install
       - run: gleam test --target javascript --runtime deno
       - run: gleam run --target javascript --runtime deno -- --outdated
