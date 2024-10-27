@@ -8,7 +8,7 @@ on:
 
 env:
   otp: "27.0"
-  gleam: "1.5.0"
+  gleam: "1.5.1"
   rebar: "3"
   nodelts: 20.x
 
@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20.x, 22.x]
+        node-version: [20.x, 22.x, 23.x]
     steps:
       - uses: actions/checkout@v4
       - uses: erlef/setup-beam@v1
