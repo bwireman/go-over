@@ -3,7 +3,7 @@
 
 packages = [
   { name = "birl", version = "1.7.1", build_tools = ["gleam"], requirements = ["gleam_stdlib", "ranger"], otp_app = "birl", source = "hex", outer_checksum = "5C66647D62BCB11FE327E7A6024907C4A17954EF22865FE0940B54A852446D01" },
-  { name = "cactus", version = "1.1.0", build_tools = ["gleam"], requirements = ["filepath", "gleam_stdlib", "gleither", "shellout", "simplifile", "tom"], otp_app = "cactus", source = "hex", outer_checksum = "8E90C71368A21B956AEC53CF47D12BE1BBEC06625AA0A5F646229B5D5DD6872B" },
+  { name = "cactus", version = "1.2.0", build_tools = ["gleam"], requirements = ["filepath", "gleam_stdlib", "gleither", "shellout", "simplifile", "tom"], otp_app = "cactus", source = "hex", outer_checksum = "1763E98BFC38474DD1708EE2B5F9772FC0482855DFAC8A2CE31A555BAA8F4264" },
   { name = "filepath", version = "1.0.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "filepath", source = "hex", outer_checksum = "EFB6FF65C98B2A16378ABC3EE2B14124168C0CE5201553DE652E2644DCFDB594" },
   { name = "gleam_hexpm", version = "1.1.0", build_tools = ["gleam"], requirements = ["birl", "gleam_stdlib"], otp_app = "gleam_hexpm", source = "hex", outer_checksum = "D32439FD6AD683FE1094922737904EC2091E2D7B1F236AD23815935694A5221A" },
   { name = "gleam_json", version = "2.0.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "gleam_json", source = "hex", outer_checksum = "CB10B0E7BF44282FB25162F1A24C1A025F6B93E777CCF238C4017E4EEF2CDE97" },
