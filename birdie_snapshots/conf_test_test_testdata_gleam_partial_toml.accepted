@@ -1,0 +1,15 @@
+---
+version: 1.2.3
+title: Conf test: test/testdata/gleam/partial.toml
+---
+Config(
+  True,
+  False,
+  False,
+  False,
+  False,
+  Minimal,
+  ["a", "b", "c"],
+  [],
+  [],
+)

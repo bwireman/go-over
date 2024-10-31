@@ -3,4 +3,8 @@ package: package
 severity: severity
 title: title
 vulnerable_version_ranges: 
-  - '>= 0.1.0'
+  - '>= 0.1.0, <= 1.0.0'
+  - '= 2.0.0'
+  - '= 2.0'
+  - '= 2' 
+  - '<= 3.0.0' 

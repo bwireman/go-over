@@ -1,6 +1,8 @@
+import birdie
 import gleeunit/should
 import go_over/advisories/advisories.{check_for_advisories, read}
 import go_over/packages.{read_manifest}
+import pprint
 import simplifile
 
 pub fn check_for_advisories_test() {
@@ -16,69 +18,71 @@ pub fn check_for_advisories_test() {
 pub fn read_adv_test() {
   let assert Ok(body) = simplifile.read("test/testdata/advisories/blank.yaml")
   read(body)
-  |> should.be_error
+  |> should.be_error()
 
   let assert Ok(body) =
     simplifile.read("test/testdata/advisories/missing_id.yaml")
   read(body)
-  |> should.be_error
+  |> should.be_error()
 
   let assert Ok(body) =
     simplifile.read("test/testdata/advisories/missing_package.yaml")
   read(body)
-  |> should.be_error
+  |> should.be_error()
 
   let assert Ok(body) =
     simplifile.read("test/testdata/advisories/missing_title.yaml")
   read(body)
-  |> should.be_error
+  |> should.be_error()
 
   let assert Ok(body) =
     simplifile.read("test/testdata/advisories/missing_severity.yaml")
   read(body)
-  |> should.be_error
+  |> should.be_error()
 
   let assert Ok(body) =
     simplifile.read("test/testdata/advisories/missing_versions.yaml")
   read(body)
-  |> should.be_error
+  |> should.be_error()
 
   let assert Ok(body) =
     simplifile.read("test/testdata/advisories/non_list_versions.yaml")
   read(body)
-  |> should.be_error
+  |> should.be_error()
 
   let assert Ok(body) =
     simplifile.read("test/testdata/advisories/not-even-yaml.txt")
   read(body)
-  |> should.be_error
+  |> should.be_error()
 
   let assert Ok(body) =
     simplifile.read("test/testdata/advisories/not_string_id.yaml")
   read(body)
-  |> should.be_error
+  |> should.be_error()
 
   let assert Ok(body) =
     simplifile.read("test/testdata/advisories/not_string_package.yaml")
   read(body)
-  |> should.be_error
+  |> should.be_error()
 
   let assert Ok(body) =
     simplifile.read("test/testdata/advisories/not_string_severity.yaml")
   read(body)
-  |> should.be_error
+  |> should.be_error()
 
   let assert Ok(body) =
     simplifile.read("test/testdata/advisories/not_string_title.yaml")
   read(body)
-  |> should.be_error
+  |> should.be_error()
 
   let assert Ok(body) =
     simplifile.read("test/testdata/advisories/not_string_versions.yaml")
   read(body)
-  |> should.be_error
+  |> should.be_error()
 
   let assert Ok(body) = simplifile.read("test/testdata/advisories/all.yaml")
   read(body)
-  |> should.be_ok
+  |> should.be_ok()
+  |> pprint.format()
+  |> birdie.snap(title: "Advisories test: test/testdata/advisories/all.yaml")
 }

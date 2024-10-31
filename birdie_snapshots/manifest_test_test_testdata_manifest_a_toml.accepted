@@ -1,0 +1,12 @@
+---
+version: 1.2.3
+title: Manifest test: test/testdata/manifest/a.toml
+---
+[
+  Package(
+    "a",
+    SemVer(0, 8, 1, "", ""),
+    "0.8.1",
+    True,
+  ),
+]

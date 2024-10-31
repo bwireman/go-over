@@ -1,3 +1,4 @@
+import birdie
 import gleam/option.{None}
 import gleamsver.{parse}
 import gleeunit/should
@@ -7,32 +8,43 @@ import go_over/config.{
 }
 import go_over/packages.{Package}
 import go_over/warning.{Warning}
+import pprint
+
+fn test_read_config(p: String) {
+  let body = read_config(p)
+
+  body
+  |> pprint.format()
+  |> birdie.snap("Conf test: " <> p)
+
+  body
+}
 
 pub fn read_config_test() {
-  let empty = read_config("test/testdata/gleam/empty.toml")
+  let empty = test_read_config("test/testdata/gleam/empty.toml")
   should.be_true(empty.cache)
   should.equal(empty.format, config.Minimal)
   should.equal(empty.ignore_packages, [])
   should.equal(empty.ignore_severity, [])
   should.equal(empty.ignore_ids, [])
 
-  let empty = read_config("test/testdata/gleam/basic.toml")
-  should.be_false(empty.cache)
-  should.equal(empty.format, config.Detailed)
-  should.equal(empty.ignore_packages, ["a"])
-  should.equal(empty.ignore_severity, ["b"])
-  should.equal(empty.ignore_ids, ["c"])
+  let basic = test_read_config("test/testdata/gleam/basic.toml")
+  should.be_false(basic.cache)
+  should.equal(basic.format, config.Detailed)
+  should.equal(basic.ignore_packages, ["a"])
+  should.equal(basic.ignore_severity, ["b"])
+  should.equal(basic.ignore_ids, ["c"])
 
-  let empty = read_config("test/testdata/gleam/partial.toml")
-  should.be_true(empty.cache)
-  should.equal(empty.format, config.Minimal)
-  should.equal(empty.ignore_packages, ["a", "b", "c"])
-  should.equal(empty.ignore_severity, [])
-  should.equal(empty.ignore_ids, [])
+  let partial = test_read_config("test/testdata/gleam/partial.toml")
+  should.be_true(partial.cache)
+  should.equal(partial.format, config.Minimal)
+  should.equal(partial.ignore_packages, ["a", "b", "c"])
+  should.equal(partial.ignore_severity, [])
+  should.equal(partial.ignore_ids, [])
 }
 
 pub fn filter_packages_test() {
-  let full = read_config("test/testdata/gleam/full.toml")
+  let full = test_read_config("test/testdata/gleam/full.toml")
   let assert Ok(v) = parse("1.1.1")
   let a = Package("a", v, "", False)
   let b = Package("b", v, "", False)
@@ -46,7 +58,7 @@ pub fn filter_packages_test() {
 }
 
 pub fn filter_advisory_ids_test() {
-  let full = read_config("test/testdata/gleam/full.toml")
+  let full = test_read_config("test/testdata/gleam/full.toml")
   let a = Advisory("a", "", "", [], "")
   let b = Advisory("b", "", "", [], "")
   let c = Advisory("c", "", "", [], "")
@@ -59,7 +71,7 @@ pub fn filter_advisory_ids_test() {
 }
 
 pub fn filter_severity_test() {
-  let full = read_config("test/testdata/gleam/full.toml")
+  let full = test_read_config("test/testdata/gleam/full.toml")
   let a = Warning(None, "", "", "", warning.Vulnerable, "a", warning.Direct)
   let b = Warning(None, "", "", "", warning.Vulnerable, "b", warning.Direct)
   let c = Warning(None, "", "", "", warning.Vulnerable, "c", warning.Direct)
