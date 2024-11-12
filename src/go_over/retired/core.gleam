@@ -4,7 +4,6 @@ import gleam/option.{Some}
 import go_over/packages.{type Package}
 import go_over/util/constants
 import go_over/util/util.{hard_fail}
-import shellout
 
 pub fn release_path(pkg: packages.Package) -> String {
   constants.go_over_path()
@@ -56,6 +55,6 @@ pub fn release_url(pkg: Package) {
 }
 
 pub fn do_pull_hex(pkg: Package, url: String) -> String {
-  shellout.command(run: "curl", with: ["-s", url], in: ".", opt: [])
+  util.retry_cmd("curl", ["-s", url])
   |> hard_fail("request to hex.pm for package: " <> pkg.name <> " failed")
 }

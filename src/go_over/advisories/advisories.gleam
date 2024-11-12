@@ -7,7 +7,6 @@ import go_over/util/cache
 import go_over/util/constants.{go_over_path, six_hours}
 import go_over/util/print
 import go_over/util/util.{hard_fail}
-import shellout
 import simplifile
 
 pub type Advisory {
@@ -106,16 +105,11 @@ fn delete_and_clone() -> Nil {
   |> simplifile.create_directory_all()
   |> hard_fail("could not create directory at " <> path())
 
-  shellout.command(
-    run: "git",
-    with: [
-      "clone",
-      "https://github.com/" <> constants.advisories_repo <> ".git",
-      path(),
-    ],
-    in: ".",
-    opt: [],
-  )
+  util.retry_cmd("git", [
+    "clone",
+    "https://github.com/" <> constants.advisories_repo <> ".git",
+    path(),
+  ])
   |> hard_fail("could not clone " <> constants.advisories_repo)
 
   [
