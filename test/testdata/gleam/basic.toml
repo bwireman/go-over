@@ -6,3 +6,4 @@ format = "detailed"
 packages = ["a"]
 severity = ["b"]
 ids = ["c"]
+indirect = true

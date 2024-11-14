@@ -20,6 +20,7 @@ pub type Format {
 
 pub type Config {
   Config(
+    dev_deps: List(String),
     cache: Bool,
     outdated: Bool,
     ignore_indirect: Bool,
@@ -29,6 +30,7 @@ pub type Config {
     ignore_packages: List(String),
     ignore_severity: List(String),
     ignore_ids: List(String),
+    ignore_dev_dependencies: Bool,
   )
 }
 
@@ -37,9 +39,16 @@ pub fn read_config(path: String) -> Config {
     simplifile.read(path) |> hard_fail("could not read config file at " <> path)
   let gleam =
     tom.parse(res) |> hard_fail("could not read config file at " <> path)
+  let dev_deps =
+    tom.get_table(gleam, ["dev-dependencies"])
+    |> unwrap(dict.new())
+    |> dict.keys()
 
   let go_over =
     tom.get_table(gleam, ["go-over"])
+    |> unwrap(dict.new())
+  let ignore =
+    tom.get_table(go_over, ["ignore"])
     |> unwrap(dict.new())
   let cache =
     tom.get_bool(go_over, ["cache"])
@@ -47,16 +56,22 @@ pub fn read_config(path: String) -> Config {
   let outdated =
     tom.get_bool(go_over, ["outdated"])
     |> unwrap(False)
-  let ignore_indirect =
-    tom.get_bool(go_over, ["ignore_indirect"])
-    |> unwrap(False)
   let format =
     tom.get_string(go_over, ["format"])
     |> unwrap("minimal")
     |> string.lowercase()
-  let ignore =
-    tom.get_table(go_over, ["ignore"])
-    |> unwrap(dict.new())
+
+  let ignore_indirect =
+    tom.get_bool(ignore, ["indirect"])
+    |> result.lazy_unwrap(fn() {
+      print.warning(
+        "Warning: `go-over.ignore_indirect` is deprecated, use `go-over.ignore.indirect` instead",
+      )
+
+      tom.get_bool(go_over, ["ignore_indirect"])
+      |> unwrap(False)
+    })
+
   let packages =
     tom.get_array(ignore, ["packages"])
     |> unwrap([])
@@ -66,8 +81,12 @@ pub fn read_config(path: String) -> Config {
   let ids =
     tom.get_array(ignore, ["ids"])
     |> unwrap([])
+  let ignore_dev_dependencies =
+    tom.get_bool(ignore, ["dev_dependencies"])
+    |> unwrap(False)
 
   Config(
+    dev_deps: dev_deps,
     cache: cache,
     outdated: outdated,
     ignore_indirect: ignore_indirect,
@@ -79,6 +98,7 @@ pub fn read_config(path: String) -> Config {
     ignore_packages: list.map(packages, toml_as_string) |> option.values,
     ignore_severity: list.map(severity, toml_as_string) |> option.values,
     ignore_ids: list.map(ids, toml_as_string) |> option.values,
+    ignore_dev_dependencies: ignore_dev_dependencies,
   )
 }
 
@@ -90,6 +110,17 @@ pub fn filter_indirect(conf: Config, pkgs: List(Package)) -> List(Package) {
   case conf.ignore_indirect {
     False -> pkgs
     True -> list.filter(pkgs, fn(pkg) { pkg.direct })
+  }
+}
+
+pub fn filter_dev_dependencies(
+  conf: Config,
+  pkgs: List(Package),
+) -> List(Package) {
+  case conf.ignore_dev_dependencies {
+    False -> pkgs
+    True ->
+      list.filter(pkgs, fn(pkg) { !list.contains(conf.dev_deps, pkg.name) })
   }
 }
 

@@ -49,9 +49,10 @@ actions = [
 cache = true
 format = "minimal"
 outdated = false
-ignore_indirect = false
 
 [go-over.ignore]
+indirect = false
+dev_dependencies = false
 packages = ["glance", "gleam_community_colour"]
 severity = []
 ids = []

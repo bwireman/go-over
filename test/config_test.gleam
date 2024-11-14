@@ -4,7 +4,8 @@ import gleamsver.{parse}
 import gleeunit/should
 import go_over/advisories/advisories.{Advisory}
 import go_over/config.{
-  filter_advisory_ids, filter_packages, filter_severity, read_config,
+  filter_advisory_ids, filter_dev_dependencies, filter_packages, filter_severity,
+  read_config,
 }
 import go_over/packages.{Package}
 import go_over/warning.{Warning}
@@ -27,6 +28,7 @@ pub fn read_config_test() {
   should.equal(empty.ignore_packages, [])
   should.equal(empty.ignore_severity, [])
   should.equal(empty.ignore_ids, [])
+  should.be_false(empty.ignore_indirect)
 
   let basic = test_read_config("test/testdata/gleam/basic.toml")
   should.be_false(basic.cache)
@@ -34,6 +36,7 @@ pub fn read_config_test() {
   should.equal(basic.ignore_packages, ["a"])
   should.equal(basic.ignore_severity, ["b"])
   should.equal(basic.ignore_ids, ["c"])
+  should.be_true(basic.ignore_indirect)
 
   let partial = test_read_config("test/testdata/gleam/partial.toml")
   should.be_true(partial.cache)
@@ -41,6 +44,35 @@ pub fn read_config_test() {
   should.equal(partial.ignore_packages, ["a", "b", "c"])
   should.equal(partial.ignore_severity, [])
   should.equal(partial.ignore_ids, [])
+  should.be_false(partial.ignore_indirect)
+
+  let conflict = test_read_config("test/testdata/gleam/indirect_old.toml")
+  should.be_true(conflict.ignore_indirect)
+
+  let conflict = test_read_config("test/testdata/gleam/indirect_new.toml")
+  should.be_true(conflict.ignore_indirect)
+
+  let conflict =
+    test_read_config("test/testdata/gleam/indirect_conflict_old.toml")
+  should.be_false(conflict.ignore_indirect)
+
+  let conflict =
+    test_read_config("test/testdata/gleam/indirect_conflict_new.toml")
+  should.be_true(conflict.ignore_indirect)
+}
+
+pub fn filter_dev_deps_test() {
+  let full = test_read_config("test/testdata/gleam/full.toml")
+  let assert Ok(v) = parse("1.1.1")
+  let a = Package("a", v, "", False)
+  let b = Package("b", v, "", False)
+  let c = Package("c", v, "", False)
+
+  should.equal(filter_dev_dependencies(full, []), [])
+  should.equal(filter_dev_dependencies(full, [a]), [a])
+  should.equal(filter_dev_dependencies(full, [a, b]), [a, b])
+  should.equal(filter_dev_dependencies(full, [b, c]), [b])
+  should.equal(filter_dev_dependencies(full, [a, b, c]), [a, b])
 }
 
 pub fn filter_packages_test() {

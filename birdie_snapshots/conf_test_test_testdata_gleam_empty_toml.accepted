@@ -3,6 +3,7 @@ version: 1.2.3
 title: Conf test: test/testdata/gleam/empty.toml
 ---
 Config(
+  [],
   True,
   False,
   False,
@@ -12,4 +13,5 @@ Config(
   [],
   [],
   [],
+  False,
 )

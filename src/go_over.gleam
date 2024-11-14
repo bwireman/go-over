@@ -29,6 +29,7 @@ type Flags {
 
 fn merge_flags_and_config(flgs: Flags, cfg: Config) -> Config {
   Config(
+    dev_deps: cfg.dev_deps,
     cache: cfg.cache,
     force: flgs.force,
     outdated: cfg.outdated || flgs.outdated,
@@ -38,6 +39,7 @@ fn merge_flags_and_config(flgs: Flags, cfg: Config) -> Config {
     ignore_packages: cfg.ignore_packages,
     ignore_severity: cfg.ignore_severity,
     ignore_ids: cfg.ignore_ids,
+    ignore_dev_dependencies: cfg.ignore_dev_dependencies,
   )
 }
 
@@ -176,6 +178,7 @@ pub fn main() {
 
   let pkgs =
     packages.read_manifest("./manifest.toml")
+    |> config.filter_dev_dependencies(conf, _)
     |> config.filter_packages(conf, _)
     |> config.filter_indirect(conf, _)
 

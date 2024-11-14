@@ -1,4 +1,8 @@
+[dev-dependencies]
+c = "~> 1.1.1"
+
 [go-over.ignore]
+dev_dependencies = true
 packages = ["a", "b"]
 severity = ["a", "b"]
 ids = ["a", "b"]

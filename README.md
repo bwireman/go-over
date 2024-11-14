@@ -71,9 +71,16 @@ format = "minimal"
 outdated = false
 # will ignore all warnings for indirect dependencies
 # default: false
+# DEPRECATED use go-over.ignore.indirect instead
 ignore_indirect = false
 
 [go-over.ignore]
+# will ignore all warnings for indirect dependencies
+# default: false
+indirect = false
+# will ignore all warnings for dev-dependencies. Note: to ignore indirect dependencies regardless of source see go-over.ignore.indirect
+# default: false
+dev_dependencies = false
 # list of package names to skip when auditing dependencies
 # default: []
 packages = ["example_package"]

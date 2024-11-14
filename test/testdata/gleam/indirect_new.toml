@@ -1,0 +1,2 @@
+[go-over.ignore]
+indirect = true

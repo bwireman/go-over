@@ -1,6 +1,6 @@
 ---
 version: 1.2.3
-title: Conf test: test/testdata/gleam/partial.toml
+title: Conf test: test/testdata/gleam/indirect_conflict_old.toml
 ---
 Config(
   [],
@@ -10,7 +10,7 @@ Config(
   False,
   False,
   Minimal,
-  ["a", "b", "c"],
+  [],
   [],
   [],
   False,
