@@ -105,7 +105,7 @@ You can add go_over to you're pre-commit hooks by installing [🌵cactus](https:
 ```toml
 [cactus.pre-commit]
 actions = [
-    { command = "go_over", kind = "module", args=["--outdated"] ,
+    { command = "go_over", kind = "module", args=["--outdated"] },
 ]
 ```
 

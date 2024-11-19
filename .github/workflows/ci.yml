@@ -8,7 +8,7 @@ on:
 
 env:
   otp: "27.0"
-  gleam: "1.5.1"
+  gleam: "1.6.0"
   rebar: "3"
   nodelts: 20.x
 
