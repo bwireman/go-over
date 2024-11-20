@@ -71,15 +71,18 @@ fn read_all_adv() -> List(Advisory) {
   })
 }
 
-fn is_vulnerable(p: packages.Package, advs: List(Advisory)) -> List(Advisory) {
-  list.map(advs, fn(adv) {
+fn is_vulnerable(
+  p: packages.Package,
+  advisories: List(Advisory),
+) -> List(Advisory) {
+  list.map(advisories, fn(adv) {
     case adv.name == p.name {
       False -> option.None
       True -> {
         case
           {
-            list.any(adv.vulnerable_version_ranges, fn(vulnsemver) {
-              let comp = comparisons.get_comparator(vulnsemver)
+            list.any(adv.vulnerable_version_ranges, fn(vuln_semver) {
+              let comp = comparisons.get_comparator(vuln_semver)
 
               comp(p.version)
             })
@@ -132,10 +135,10 @@ pub fn check_for_advisories(
     constants.advisories_repo,
   )
 
-  let advs = read_all_adv()
+  let advisories = read_all_adv()
 
   list.map(packages, fn(pkg) {
-    case is_vulnerable(pkg, advs) {
+    case is_vulnerable(pkg, advisories) {
       [] -> None
       vulns -> Some(#(pkg, vulns))
     }

@@ -31,7 +31,7 @@ pub fn pull_if_not_cached(
   path: String,
   max_age: Int,
   force_pull: Bool,
-  pullfn: fn() -> Nil,
+  pull_fn: fn() -> Nil,
   cache_message: String,
 ) -> Nil {
   case force_pull, file_cached(path, max_age) {
@@ -42,7 +42,7 @@ pub fn pull_if_not_cached(
     }
 
     _, _ -> {
-      pullfn()
+      pull_fn()
 
       let now =
         birl.utc_now()

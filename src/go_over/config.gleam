@@ -64,12 +64,17 @@ pub fn read_config(path: String) -> Config {
   let ignore_indirect =
     tom.get_bool(ignore, ["indirect"])
     |> result.lazy_unwrap(fn() {
-      print.warning(
-        "Warning: `go-over.ignore_indirect` is deprecated, use `go-over.ignore.indirect` instead",
-      )
+      case tom.get_bool(go_over, ["ignore_indirect"]) {
+        Ok(value) -> {
+          print.high(
+            "Warning: `go-over.ignore_indirect` is deprecated, use `go-over.ignore.indirect` instead",
+          )
 
-      tom.get_bool(go_over, ["ignore_indirect"])
-      |> unwrap(False)
+          value
+        }
+
+        Error(_) -> False
+      }
     })
 
   let packages =
@@ -124,8 +129,11 @@ pub fn filter_dev_dependencies(
   }
 }
 
-pub fn filter_advisory_ids(conf: Config, advs: List(Advisory)) -> List(Advisory) {
-  list.filter(advs, fn(adv) { !list.contains(conf.ignore_ids, adv.id) })
+pub fn filter_advisory_ids(
+  conf: Config,
+  advisories: List(Advisory),
+) -> List(Advisory) {
+  list.filter(advisories, fn(adv) { !list.contains(conf.ignore_ids, adv.id) })
 }
 
 pub fn filter_severity(conf: Config, warnings: List(Warning)) -> List(Warning) {

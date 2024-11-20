@@ -29,13 +29,13 @@ pub fn read_manifest(path: String) -> List(Package) {
       tom.InlineTable(t) -> {
         let name =
           tom.get_string(t, ["name"])
-          |> hard_fail("could not parse parckage: " <> string.inspect(t))
+          |> hard_fail("could not parse package: " <> string.inspect(t))
         let ver =
           tom.get_string(t, ["version"])
-          |> hard_fail("could not parse parckage: " <> string.inspect(t))
+          |> hard_fail("could not parse package: " <> string.inspect(t))
         let semver =
           gleamsver.parse(ver)
-          |> hard_fail("could not parse parckage version: " <> ver)
+          |> hard_fail("could not parse package version: " <> ver)
 
         Some(Package(name, semver, ver, list.contains(required_packages, name)))
       }

@@ -7,10 +7,10 @@ import shellout
 import simplifile
 
 @target(erlang)
-const tmpl = "gleam run -m go_over --target erlang"
+const template = "gleam run -m go_over --target erlang"
 
 @target(javascript)
-const tmpl = "gleam run -m go_over --target javascript"
+const template = "gleam run -m go_over --target javascript"
 
 fn get_path() -> String {
   simplifile.current_directory()
@@ -47,8 +47,8 @@ pub fn main() {
     )
 
   let text = case util.has_flag(shellout.arguments(), "outdated") {
-    False -> tmpl
-    True -> tmpl <> " -- --outdated"
+    False -> template
+    True -> template <> " -- --outdated"
   }
 
   simplifile.append(pre_commit_path, "\n" <> text)

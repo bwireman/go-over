@@ -31,6 +31,11 @@ pub fn warning(msg: String) {
   |> io.println
 }
 
+pub fn high(msg: String) {
+  format_high(msg)
+  |> io.println
+}
+
 pub fn success(msg: String) {
   shellout.style(msg, with: shellout.color(["brightgreen"]), custom: [])
   |> io.println

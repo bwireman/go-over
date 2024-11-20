@@ -27,15 +27,15 @@ type Flags {
   )
 }
 
-fn merge_flags_and_config(flgs: Flags, cfg: Config) -> Config {
+fn merge_flags_and_config(flags: Flags, cfg: Config) -> Config {
   Config(
     dev_deps: cfg.dev_deps,
     cache: cfg.cache,
-    force: flgs.force,
-    outdated: cfg.outdated || flgs.outdated,
-    ignore_indirect: cfg.ignore_indirect || flgs.ignore_indirect,
-    fake: flgs.fake,
-    format: option.unwrap(flgs.format, cfg.format),
+    force: flags.force,
+    outdated: cfg.outdated || flags.outdated,
+    ignore_indirect: cfg.ignore_indirect || flags.ignore_indirect,
+    fake: flags.fake,
+    format: option.unwrap(flags.format, cfg.format),
     ignore_packages: cfg.ignore_packages,
     ignore_severity: cfg.ignore_severity,
     ignore_ids: cfg.ignore_ids,
@@ -92,7 +92,7 @@ fn get_vulnerable_packages(
   })
 }
 
-fn get_retired_packges(
+fn get_retired_packages(
   pkgs: List(packages.Package),
   conf: Config,
 ) -> List(Warning) {
@@ -183,7 +183,7 @@ pub fn main() {
     |> config.filter_indirect(conf, _)
 
   let vulnerable_packages = get_vulnerable_packages(pkgs, conf)
-  let retired_packages = get_retired_packges(pkgs, conf)
+  let retired_packages = get_retired_packages(pkgs, conf)
   let outdated_packages = case conf.outdated {
     True -> get_outdated_packages(pkgs, conf)
     False -> []

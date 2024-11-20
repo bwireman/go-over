@@ -37,7 +37,7 @@ pub fn hard_fail(res: Result(a, b), msg: String) -> a {
 }
 
 pub fn has_flag(args: List(String), name: String) -> Bool {
-  list.any(args, fn(arg) { arg == "--" <> name })
+  list.contains(args, "--" <> name)
 }
 
 pub fn retry_cmd(

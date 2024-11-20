@@ -53,8 +53,8 @@ pub type Warning {
   )
 }
 
-pub fn adv_to_warning(pkg: Package, advs: List(Advisory)) -> List(Warning) {
-  list.map(advs, fn(adv) {
+pub fn adv_to_warning(pkg: Package, advisories: List(Advisory)) -> List(Warning) {
+  list.map(advisories, fn(adv) {
     Warning(
       Some(adv.id),
       pkg.name,
