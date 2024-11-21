@@ -1,5 +1,5 @@
 ---
-version: 1.2.3
+version: 1.2.4
 title: Manifest test: test/testdata/manifest/b.toml
 ---
 [

@@ -53,6 +53,6 @@ outdated = false
 [go-over.ignore]
 indirect = false
 dev_dependencies = false
-packages = ["glance"]
+packages = []
 severity = []
 ids = []
