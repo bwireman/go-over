@@ -2,18 +2,22 @@ import gleam/int
 import gleam/io
 import gleam/json
 import gleam/list
-import gleam/option
+import gleam/option.{None, Some}
 import gleam/result
 import gleam/string
 import go_over/advisories/advisories
 import go_over/config.{type Config, Config}
-import go_over/packages
+import go_over/packages.{type Package}
 import go_over/retired/outdated
 import go_over/retired/retired
 import go_over/util/constants
 import go_over/util/print
-import go_over/util/util.{has_flag, iff_nil, throwaway}
-import go_over/warning.{type Warning, Warning}
+import go_over/util/util.{has_flag}
+import go_over/warning.{
+  type Warning, Direct, Indirect, Retired, Vulnerable, Warning,
+}
+import gxyz/gxyz_function
+import gxyz/gxyz_tuple
 import shellout
 import simplifile
 
@@ -47,15 +51,11 @@ fn spin_up(cfg: Config) -> Config {
   let args = shellout.arguments()
 
   let format =
-    list.find(args, fn(arg) { string.starts_with(arg, "--format") })
-    |> result.try(fn(arg) { string.split_once(arg, "=") })
-    |> result.map(fn(arg) {
-      case arg {
-        #(_, val) -> val
-      }
-    })
+    list.find(args, string.starts_with(_, "--format"))
+    |> result.try(string.split_once(_, "="))
+    |> result.map(gxyz_tuple.at2_1)
     |> result.map(config.parse_config_format)
-    |> option.from_result
+    |> option.from_result()
 
   let flags =
     Flags(
@@ -69,15 +69,10 @@ fn spin_up(cfg: Config) -> Config {
   merge_flags_and_config(flags, cfg)
 }
 
-fn get_vulnerable_packages(
-  pkgs: List(packages.Package),
-  conf: Config,
-) -> List(Warning) {
+fn get_vulnerable_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
   advisories.check_for_advisories(pkgs, conf.force || !conf.cache)
   |> list.map(fn(p) {
-    let #(pkg, adv) = p
-
-    #(pkg, config.filter_advisory_ids(conf, adv))
+    gxyz_tuple.map2_1(p, config.filter_advisory_ids(conf, _))
   })
   |> list.filter(fn(p) {
     case p {
@@ -86,39 +81,29 @@ fn get_vulnerable_packages(
     }
   })
   |> list.flat_map(fn(p) {
-    let #(pkg, adv) = p
-
-    warning.adv_to_warning(pkg, adv)
+    warning.adv_to_warning(gxyz_tuple.at2_0(p), gxyz_tuple.at2_1(p))
   })
 }
 
-fn get_retired_packages(
-  pkgs: List(packages.Package),
-  conf: Config,
-) -> List(Warning) {
+fn get_retired_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
   pkgs
   |> list.map(fn(pkg) {
-    case retired.check_retired(pkg, conf.force || !conf.cache) {
-      option.Some(ret) -> option.Some(#(pkg, ret))
-      option.None -> option.None
-    }
+    retired.check_retired(pkg, conf.force || !conf.cache)
+    |> option.map(fn(ret) { #(pkg, ret) })
   })
-  |> option.values
+  |> option.values()
   |> list.map(fn(p) {
     let #(pkg, ret) = p
     warning.retired_to_warning(pkg, ret)
   })
 }
 
-fn get_outdated_packages(
-  pkgs: List(packages.Package),
-  conf: Config,
-) -> List(Warning) {
+fn get_outdated_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
   pkgs
   |> list.map(fn(pkg) {
     case outdated.check_outdated(pkg, conf.force || !conf.cache) {
-      option.Some(ret) -> option.Some(#(pkg, ret))
-      option.None -> option.None
+      Some(ret) -> Some(#(pkg, ret))
+      None -> None
     }
   })
   |> option.values
@@ -149,13 +134,12 @@ fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
       |> io.print_error
     }
 
-    config.JSON -> {
+    config.JSON ->
       vulns
       |> list.map(warning.format_as_json)
-      |> json.preprocessed_array
-      |> json.to_string
-      |> io.print_error
-    }
+      |> json.preprocessed_array()
+      |> json.to_string()
+      |> io.print_error()
 
     _ -> {
       print_warnings_count(vulns)
@@ -171,9 +155,9 @@ fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
 
 pub fn main() {
   let conf = spin_up(config.read_config("./gleam.toml"))
-  throwaway(
+  gxyz_function.ignore_result(
     !conf.cache,
-    util.freeze1(simplifile.delete, constants.go_over_path()),
+    gxyz_function.freeze1(simplifile.delete, constants.go_over_path()),
   )
 
   let pkgs =
@@ -184,64 +168,16 @@ pub fn main() {
 
   let vulnerable_packages = get_vulnerable_packages(pkgs, conf)
   let retired_packages = get_retired_packages(pkgs, conf)
-  let outdated_packages = case conf.outdated {
-    True -> get_outdated_packages(pkgs, conf)
-    False -> []
-  }
+  let outdated_packages =
+    gxyz_function.iff(
+      conf.outdated,
+      gxyz_function.freeze2(get_outdated_packages, pkgs, conf),
+      [],
+    )
 
-  iff_nil(
+  gxyz_function.iff_nil(
     conf.fake,
-    util.freeze2(
-      print_warnings,
-      [
-        Warning(
-          option.None,
-          "fake",
-          "x.y.z",
-          "Retired",
-          warning.Vulnerable,
-          "Critical",
-          warning.Direct,
-        ),
-        Warning(
-          option.None,
-          "another_fake",
-          "1.2.3",
-          "Vulnerable",
-          warning.Vulnerable,
-          "High",
-          warning.Direct,
-        ),
-        Warning(
-          option.None,
-          "and_another",
-          "4.5.6",
-          "Vulnerable",
-          warning.Vulnerable,
-          "Moderate",
-          warning.Direct,
-        ),
-        Warning(
-          option.None,
-          "one_more",
-          "7.8.9",
-          "Vulnerable",
-          warning.Vulnerable,
-          "LOW",
-          warning.Indirect,
-        ),
-        Warning(
-          option.None,
-          "this_one_was_retired",
-          "10.11.12",
-          "Retired",
-          warning.Retired,
-          "Package Retired",
-          warning.Indirect,
-        ),
-      ],
-      conf,
-    ),
+    gxyz_function.freeze2(print_warnings, example_warnings, conf),
   )
 
   let warnings =
@@ -250,7 +186,39 @@ pub fn main() {
     |> config.filter_severity(conf, _)
 
   case warnings {
-    [] -> print.success("✅ All good! ✨")
+    [] -> print.success("All good! ✅")
     vulns -> print_warnings(vulns, conf)
   }
 }
+
+const example_warnings = [
+  Warning(None, "fake", "x.y.z", "Retired", Vulnerable, "Critical", Direct),
+  Warning(
+    None,
+    "another_fake",
+    "1.2.3",
+    "Vulnerable",
+    Vulnerable,
+    "High",
+    Direct,
+  ),
+  Warning(
+    None,
+    "and_another",
+    "4.5.6",
+    "Vulnerable",
+    Vulnerable,
+    "Moderate",
+    Direct,
+  ),
+  Warning(None, "one_more", "7.8.9", "Vulnerable", Vulnerable, "LOW", Indirect),
+  Warning(
+    None,
+    "this_one_was_retired",
+    "10.11.12",
+    "Retired",
+    Retired,
+    "Package Retired",
+    Indirect,
+  ),
+]

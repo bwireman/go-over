@@ -31,6 +31,7 @@ gleam_json = ">= 2.0.0 and < 3.0.0"
 birl = ">= 1.7.0 and < 2.0.0"
 gleamsver = ">= 1.0.0 and < 2.0.0"
 delay = ">= 1.2.0 and < 2.0.0"
+gxyz = ">= 0.1.0 and < 1.0.0"
 
 [dev-dependencies]
 gleeunit = ">= 1.0.0 and < 2.0.0"

@@ -55,6 +55,6 @@ pub fn release_url(pkg: Package) {
 }
 
 pub fn do_pull_hex(pkg: Package, url: String) -> String {
-  util.retry_cmd("curl", ["-s", url])
+  util.retry_cmd("curl", ["-sf", url])
   |> hard_fail("request to hex.pm for package: " <> pkg.name <> " failed")
 }

@@ -7,6 +7,7 @@ import go_over/util/cache
 import go_over/util/constants
 import go_over/util/print
 import go_over/util/util.{hard_fail}
+import gxyz/gxyz_function
 import simplifile
 
 fn pull_retired(pkg: Package) -> Nil {
@@ -35,7 +36,7 @@ pub fn check_retired(
   |> cache.pull_if_not_cached(
     constants.hour,
     force_pull,
-    util.freeze1(pull_retired, pkg),
+    gxyz_function.freeze1(pull_retired, pkg),
     pkg.name <> ":" <> pkg.version_raw,
   )
 

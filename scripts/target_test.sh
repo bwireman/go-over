@@ -23,10 +23,11 @@ else
 fi
 
 # shellcheck disable=SC2086
-gleam run $CMD -- --force --outdated
+gleam run $CMD -- --force
+rm -rf .go-over/outdated
 
 # shellcheck disable=SC2086
-gleam run $CMD
+gleam run $CMD -- --outdated
 
 # shellcheck disable=SC2086
 gleam test $CMD

@@ -1,6 +1,6 @@
 import gleam/dict
 import gleam/list
-import gleam/option.{Some}
+import gleam/option.{None, Some}
 import gleam/string
 import gleamsver.{type SemVer}
 import go_over/util/print.{warning}
@@ -43,7 +43,7 @@ pub fn read_manifest(path: String) -> List(Package) {
       _ -> {
         warning("could not parse packages: incorrect type")
         shellout.exit(1)
-        option.None
+        None
       }
     }
   })

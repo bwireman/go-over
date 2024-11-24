@@ -1,7 +1,7 @@
 import { parse as parse_yaml } from "yaml"
 import { toList, Ok, Error } from "../prelude.mjs"
 
-const string = "string"
+const string_type = "string"
 const err = new Error(null)
 
 /**
@@ -30,19 +30,19 @@ export function parse_adv(content) {
             return err
         }
 
-        if (typeof id !== string) {
+        if (typeof id !== string_type) {
             return err
         }
 
-        if (typeof pkg !== string) {
+        if (typeof pkg !== string_type) {
             return err
         }
 
-        if (typeof severity !== string) {
+        if (typeof severity !== string_type) {
             return err
         }
 
-        if (typeof title !== string) {
+        if (typeof title !== string_type) {
             return err
         }
 
@@ -51,7 +51,7 @@ export function parse_adv(content) {
         }
 
         for (const element of vulnerable_version_ranges) {
-            if (typeof element !== string) {
+            if (typeof element !== string_type) {
                 return err
             }
         }

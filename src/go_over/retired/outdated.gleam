@@ -10,6 +10,7 @@ import go_over/util/cache
 import go_over/util/constants
 import go_over/util/print
 import go_over/util/util.{hard_fail}
+import gxyz/gxyz_function
 import simplifile
 
 fn pull_outdated(pkg: Package) -> Nil {
@@ -44,7 +45,7 @@ pub fn check_outdated(pkg: Package, force_pull: Bool) -> Option(String) {
   |> cache.pull_if_not_cached(
     constants.hour,
     force_pull,
-    util.freeze1(pull_outdated, pkg),
+    gxyz_function.freeze1(pull_outdated, pkg),
     pkg.name <> ": latest stable version",
   )
 

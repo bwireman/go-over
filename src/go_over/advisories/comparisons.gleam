@@ -4,6 +4,9 @@ import gleam/string
 import gleamsver.{type SemVer}
 import go_over/util/util.{hard_fail}
 
+type CurriedComparator =
+  fn(SemVer) -> Bool
+
 pub fn parse(ver: String) -> SemVer {
   let parsed =
     string.split(ver, " ")
@@ -14,7 +17,7 @@ pub fn parse(ver: String) -> SemVer {
   |> hard_fail("could not parse " <> parsed)
 }
 
-pub fn get_comparator(ver: String) -> fn(SemVer) -> Bool {
+pub fn get_comparator(ver: String) -> CurriedComparator {
   let cleaned =
     ver
     |> string.split(",")
@@ -31,7 +34,7 @@ pub fn get_comparator(ver: String) -> fn(SemVer) -> Bool {
   }
 }
 
-fn do_get_comparator(ver: String) -> fn(SemVer) -> Bool {
+fn do_get_comparator(ver: String) -> CurriedComparator {
   let op =
     string.split(ver, " ")
     |> list.first
@@ -49,26 +52,26 @@ fn do_get_comparator(ver: String) -> fn(SemVer) -> Bool {
   }
 }
 
-fn eq(r: SemVer) -> fn(SemVer) -> Bool {
+fn eq(r: SemVer) -> CurriedComparator {
   fn(l) { gleamsver.are_equal(r, l) }
 }
 
-fn lt(r: SemVer) -> fn(SemVer) -> Bool {
+fn lt(r: SemVer) -> CurriedComparator {
   fn(l: SemVer) { gleamsver.compare(l, r) == order.Lt }
 }
 
-fn lte(r: SemVer) -> fn(SemVer) -> Bool {
+fn lte(r: SemVer) -> CurriedComparator {
   fn(l: SemVer) { eq(r)(l) || lt(r)(l) }
 }
 
-fn gt(r: SemVer) -> fn(SemVer) -> Bool {
+fn gt(r: SemVer) -> CurriedComparator {
   fn(l: SemVer) { gleamsver.compare(l, r) == order.Gt }
 }
 
-fn gte(r: SemVer) -> fn(SemVer) -> Bool {
+fn gte(r: SemVer) -> CurriedComparator {
   fn(l: SemVer) { eq(r)(l) || gt(r)(l) }
 }
 
-fn all_good() -> fn(SemVer) -> Bool {
+fn all_good() -> CurriedComparator {
   fn(_: SemVer) { False }
 }
