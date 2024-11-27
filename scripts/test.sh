@@ -5,11 +5,11 @@ cd "$(dirname "$0")/.."
 GREEN='\033[0;32m'
 NC='\033[0m'
 
+deno fmt
 gleam check
 gleam update
 gleam build
 gleam format
-yarn run eslint src/ffi.mjs  --fix
 
 rm -rf .go-over/
 echo -e "${GREEN}==> erlang${NC}"

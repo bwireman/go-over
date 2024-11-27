@@ -24,23 +24,6 @@ jobs:
           rebar3-version: ${{ env.rebar }}
       - run: gleam format --check src test
 
-  audit:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: erlef/setup-beam@v1
-        with:
-          otp-version: ${{ env.otp }}
-          gleam-version: ${{ env.gleam }}
-          rebar3-version: ${{ env.rebar }}
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.nodelts }}
-          cache: "npm"
-      - run: ./scripts/update.sh
-      - run: yarn install
-      - run: yarn run eslint src/ffi.mjs
-
   erlang:
     runs-on: ubuntu-latest
     steps:

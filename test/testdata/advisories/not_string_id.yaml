@@ -2,5 +2,5 @@ id: 123.123
 package: package
 severity: severity
 title: title
-versions: 
-  - '>= 0.1.0'
+versions:
+  - ">= 0.1.0"

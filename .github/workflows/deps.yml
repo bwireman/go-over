@@ -4,6 +4,10 @@ on:
   schedule:
     # run once a day at 9am UTC
     - cron: "0 9 * * *"
+  push:
+    branches:
+      - main
+  pull_request:
 
 env:
   otp: "27.0"

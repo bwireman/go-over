@@ -1,5 +1,5 @@
 id: id
 package: package
 title: title
-vulnerable_version_ranges: 
-  - '>= 0.1.0'
+vulnerable_version_ranges:
+  - ">= 0.1.0"
