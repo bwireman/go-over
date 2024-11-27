@@ -74,15 +74,8 @@ fn get_vulnerable_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
   |> list.map(fn(p) {
     gxyz_tuple.map2_1(p, config.filter_advisory_ids(conf, _))
   })
-  |> list.filter(fn(p) {
-    case p {
-      #(_, []) -> False
-      _ -> True
-    }
-  })
-  |> list.flat_map(fn(p) {
-    warning.adv_to_warning(gxyz_tuple.at2_0(p), gxyz_tuple.at2_1(p))
-  })
+  |> list.filter(fn(p) { gxyz_tuple.at2_1(p) == [] })
+  |> list.flat_map(gxyz_tuple.apply_from2(_, warning.adv_to_warning))
 }
 
 fn get_retired_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
@@ -92,10 +85,7 @@ fn get_retired_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
     |> option.map(fn(ret) { #(pkg, ret) })
   })
   |> option.values()
-  |> list.map(fn(p) {
-    let #(pkg, ret) = p
-    warning.retired_to_warning(pkg, ret)
-  })
+  |> list.map(gxyz_tuple.apply_from2(_, warning.retired_to_warning))
 }
 
 fn get_outdated_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
@@ -106,11 +96,8 @@ fn get_outdated_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
       None -> None
     }
   })
-  |> option.values
-  |> list.map(fn(p) {
-    let #(pkg, ret) = p
-    warning.outdated_to_warning(pkg, ret)
-  })
+  |> option.values()
+  |> list.map(gxyz_tuple.apply_from2(_, warning.outdated_to_warning))
 }
 
 fn print_warnings_count(vulns: List(Warning)) -> Nil {
