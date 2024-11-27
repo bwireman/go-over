@@ -15,11 +15,14 @@ rm -rf .go-over/
 echo -e "${GREEN}==> erlang${NC}"
 ./scripts/target_test.sh erlang
 
+sleep 15
 echo -e "${GREEN}==> nodejs${NC}"
 ./scripts/target_test.sh javascript nodejs
 
+sleep 15
 echo -e "${GREEN}==> deno${NC}"
 ./scripts/target_test.sh javascript deno
 
+sleep 15
 echo -e "${GREEN}==> bun${NC}"
 ./scripts/target_test.sh javascript bun

@@ -26,6 +26,7 @@ fi
 gleam run $CMD -- --force
 rm -rf .go-over/outdated
 
+sleep 5
 # shellcheck disable=SC2086
 gleam run $CMD -- --outdated
 
