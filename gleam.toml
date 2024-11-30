@@ -41,9 +41,12 @@ pprint = ">= 1.0.4 and < 2.0.0"
 
 [cactus.pre-commit]
 actions = [
-    { command = "./scripts/format.sh", kind = "binary", files = [".js", ".gleam"] },
+    { command = "./scripts/format.sh", kind = "binary", files = [".mjs", ".js", ".gleam"] },
     { command = "./scripts/update.sh", kind = "binary" },
-    { command = "./scripts/test.sh", kind = "binary" },
+    { command = "./scripts/target_test.sh", kind = "binary", args = ["erlang"], files = [".erl", ".gleam"] },
+    { command = "./scripts/target_test.sh", kind = "binary", args = ["javascript", "node"], files = [".mjs", ".js", ".gleam"] },
+    { command = "./scripts/target_test.sh", kind = "binary", args = ["javascript", "deno"], files = [".mjs", ".js", ".gleam"] },
+    { command = "./scripts/target_test.sh", kind = "binary", args = ["javascript", "bun"], files = [".mjs", ".js", ".gleam"] },
 ]
 
 [go-over]
@@ -54,6 +57,6 @@ outdated = false
 [go-over.ignore]
 indirect = false
 dev_dependencies = false
-packages = []
+packages = ["glexer"]
 severity = []
 ids = []

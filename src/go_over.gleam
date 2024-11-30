@@ -1,3 +1,4 @@
+import gleam/function
 import gleam/int
 import gleam/io
 import gleam/json
@@ -112,14 +113,12 @@ fn print_warnings_count(vulns: List(Warning)) -> Nil {
 
 fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
   case conf.format {
-    config.Minimal -> {
-      print_warnings_count(vulns)
-
+    config.Minimal ->
       vulns
+      |> function.tap(print_warnings_count)
       |> list.map(warning.format_as_string_minimal)
       |> string.join("")
       |> io.print_error
-    }
 
     config.JSON ->
       vulns
@@ -128,14 +127,12 @@ fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
       |> json.to_string()
       |> io.print_error()
 
-    _ -> {
-      print_warnings_count(vulns)
-
+    _ ->
       vulns
+      |> function.tap(print_warnings_count)
       |> list.map(warning.format_as_string)
       |> string.join(constants.long_ass_dashes)
       |> io.print_error
-    }
   }
   shellout.exit(1)
 }
