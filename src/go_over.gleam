@@ -138,14 +138,14 @@ fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
 }
 
 pub fn main() {
-  let conf = spin_up(config.read_config("./gleam.toml"))
+  let conf = spin_up(config.read_config("gleam.toml"))
   gxyz_function.ignore_result(
     !conf.cache,
     gxyz_function.freeze1(simplifile.delete, constants.go_over_path()),
   )
 
   let pkgs =
-    packages.read_manifest("./manifest.toml")
+    packages.read_manifest("manifest.toml")
     |> config.filter_dev_dependencies(conf, _)
     |> config.filter_packages(conf, _)
     |> config.filter_indirect(conf, _)
