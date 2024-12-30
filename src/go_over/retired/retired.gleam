@@ -47,7 +47,7 @@ pub fn check_retired(
     |> hard_fail("failed to read " <> cached_file_name)
 
   let release =
-    json.decode(resp, hexpm.decode_release)
+    json.parse(resp, hexpm.release_decoder())
     |> hard_fail("failed to parse " <> cached_file_name)
 
   release.retirement

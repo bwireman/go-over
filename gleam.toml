@@ -26,8 +26,8 @@ simplifile = ">= 2.0.0 and < 3.0.0"
 filepath = ">= 1.0.0 and < 2.0.0"
 tom = ">= 1.0.0 and < 2.0.0"
 yamerl = ">= 0.10.0 and < 1.0.0"
-gleam_hexpm = ">= 1.0.0 and < 2.0.0"
-gleam_json = ">= 2.0.0 and < 3.0.0"
+gleam_hexpm = ">= 2.0.0 and < 3.0.0"
+gleam_json = ">= 2.2.0 and < 3.0.0"
 birl = ">= 1.7.0 and < 2.0.0"
 gleamsver = ">= 1.0.0 and < 2.0.0"
 delay = ">= 1.2.0 and < 2.0.0"
@@ -57,6 +57,5 @@ outdated = false
 [go-over.ignore]
 indirect = false
 dev_dependencies = false
-packages = ["glance"]
 severity = []
 ids = []
