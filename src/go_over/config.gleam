@@ -169,6 +169,7 @@ fn toml_as_string(toml: Toml) -> Option(String) {
   }
 }
 
+// ? want to head the `fake` flag but otherwise use the default help
 pub fn help(args: arg_info.ArgInfo) -> String {
   arg_info.ArgInfo(
     named: args.named,
@@ -178,6 +179,12 @@ pub fn help(args: arg_info.ArgInfo) -> String {
   )
   |> arg_info.help_text(
     "go_over",
-    "Audit Erlang & Elixir dependencies, to make sure your gleam projects really ✨ sparkle!",
+    " ____ _____      ____ _   _____  _____
+  / __ `/ __ \\    / __ \\ | / / _ \\/ ___/
+ / /_/ / /_/ /   / /_/ / |/ /  __/ /
+ \\__, /\\____/____\\____/|___/\\___/_/
+/____/     /_____/
+
+🕵️‍♂️ Audit Erlang & Elixir dependencies, to make sure your gleam projects really ✨ sparkle!",
   )
 }
