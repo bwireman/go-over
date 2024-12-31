@@ -28,6 +28,7 @@ pub type Config {
     force: Bool,
     fake: Bool,
     format: Format,
+    verbose: Bool,
     ignore_packages: List(String),
     ignore_severity: List(String),
     ignore_ids: List(String),
@@ -100,6 +101,8 @@ pub fn read_config(path: String) -> Config {
     force: False,
     //read from flags only
     fake: False,
+    //read from flags only
+    verbose: False,
     format: parse_config_format(format) |> option.unwrap(Minimal),
     ignore_packages: list.map(packages, toml_as_string) |> option.values,
     ignore_severity: list.map(severity, toml_as_string) |> option.values,

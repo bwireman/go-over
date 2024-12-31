@@ -10,8 +10,8 @@ import go_over/util/util.{hard_fail}
 import gxyz/gxyz_function
 import simplifile
 
-fn pull_retired(pkg: Package) -> Nil {
-  print.progress("Checking: " <> pkg.name <> " From hex.pm")
+fn pull_retired(pkg: Package, verbose: Bool) -> Nil {
+  print.progress(verbose, "Checking: " <> pkg.name <> " From hex.pm")
   let pkg_path = core.release_path(pkg)
   let pkg_path_fail = core.pkg_pull_error(pkg, pkg_path)
 
@@ -30,13 +30,15 @@ fn pull_retired(pkg: Package) -> Nil {
 pub fn check_retired(
   pkg: Package,
   force_pull: Bool,
+  verbose: Bool,
 ) -> Option(ReleaseRetirement) {
   pkg
   |> core.release_path()
   |> cache.pull_if_not_cached(
     constants.hour,
     force_pull,
-    gxyz_function.freeze1(pull_retired, pkg),
+    verbose,
+    gxyz_function.freeze2(pull_retired, pkg, verbose),
     pkg.name <> ":" <> pkg.version_raw,
   )
 

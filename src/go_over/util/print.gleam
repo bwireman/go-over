@@ -1,9 +1,12 @@
 import gleam/io
+import gxyz/gxyz_function.{iff_nil}
 import shellout
 
-pub fn progress(msg: String) {
-  shellout.style(msg, with: shellout.color(["brightmagenta"]), custom: [])
-  |> io.println
+pub fn progress(verbose: Bool, msg: String) {
+  iff_nil(verbose, fn() {
+    shellout.style(msg, with: shellout.color(["brightmagenta"]), custom: [])
+    |> io.println
+  })
 }
 
 pub fn format_warning(msg: String) {
