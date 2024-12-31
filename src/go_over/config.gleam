@@ -1,3 +1,4 @@
+import clip/arg_info
 import gleam/dict
 import gleam/list
 import gleam/option.{type Option, Some}
@@ -166,4 +167,17 @@ fn toml_as_string(toml: Toml) -> Option(String) {
       panic as "Unreachable, please create an issue in https://github.com/bwireman/go-over if you see this"
     }
   }
+}
+
+pub fn help(args: arg_info.ArgInfo) -> String {
+  arg_info.ArgInfo(
+    named: args.named,
+    positional: args.positional,
+    flags: gxyz_list.reject(args.flags, fn(f) { f.name == "fake" }),
+    subcommands: args.subcommands,
+  )
+  |> arg_info.help_text(
+    "go_over",
+    "Audit Erlang & Elixir dependencies, to make sure your gleam projects really ✨ sparkle!",
+  )
 }
