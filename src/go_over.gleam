@@ -1,10 +1,13 @@
+import clip
+import clip/flag
+import clip/help
+import clip/opt
 import gleam/function
 import gleam/int
 import gleam/io
 import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
-import gleam/result
 import gleam/string
 import go_over/advisories/advisories
 import go_over/config.{type Config, Config}
@@ -13,7 +16,6 @@ import go_over/retired/outdated
 import go_over/retired/retired
 import go_over/util/constants
 import go_over/util/print
-import go_over/util/util.{has_flag}
 import go_over/warning.{
   type Warning, Direct, Indirect, Retired, Vulnerable, Warning,
 }
@@ -48,26 +50,55 @@ fn merge_flags_and_config(flags: Flags, cfg: Config) -> Config {
   )
 }
 
-fn spin_up(cfg: Config) -> Config {
-  let args = shellout.arguments()
+fn spin_up(cfg: Config) -> Result(Config, String) {
+  clip.command({
+    use force <- clip.parameter
+    use outdated <- clip.parameter
+    use ignore_indirect <- clip.parameter
+    use fake <- clip.parameter
+    use format <- clip.parameter
 
-  let format =
-    list.find(args, string.starts_with(_, "--format"))
-    |> result.try(string.split_once(_, "="))
-    |> result.map(gxyz_tuple.at2_1)
-    |> result.map(config.parse_config_format)
-    |> option.from_result()
+    let flags =
+      Flags(
+        force:,
+        outdated:,
+        ignore_indirect:,
+        fake:,
+        format: config.parse_config_format(format),
+      )
 
-  let flags =
-    Flags(
-      force: has_flag(args, "force"),
-      outdated: has_flag(args, "outdated"),
-      ignore_indirect: has_flag(args, "ignore-indirect"),
-      fake: has_flag(args, "fake"),
-      format: format,
-    )
-
-  merge_flags_and_config(flags, cfg)
+    merge_flags_and_config(flags, cfg)
+  })
+  |> clip.flag(
+    flag.new("force")
+    |> flag.help(
+      "will force pulling new data even if the cached data is still valid",
+    ),
+  )
+  |> clip.flag(
+    flag.new("outdated")
+    |> flag.help(
+      "will additionally check if newer versions of dependencies exist",
+    ),
+  )
+  |> clip.flag(
+    flag.new("ignore_indirect")
+    |> flag.help("will ignore all warnings for indirect dependencies"),
+  )
+  |> clip.flag(flag.new("fake"))
+  |> clip.opt(
+    opt.new("format")
+    |> opt.default("")
+    |> opt.help(
+      "specify the output format of any warnings, [minimal, verbose, json]",
+    ),
+  )
+  |> clip.help(help.simple(
+    "go_over",
+    "Audit Erlang & Elixir dependencies, to make sure your gleam
+projects really ✨ sparkle!",
+  ))
+  |> clip.run(shellout.arguments())
 }
 
 fn get_vulnerable_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
@@ -138,7 +169,15 @@ fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
 }
 
 pub fn main() {
-  let conf = spin_up(config.read_config("gleam.toml"))
+  let conf = case spin_up(config.read_config("gleam.toml")) {
+    Error(e) -> {
+      io.println_error(e)
+      shellout.exit(0)
+      panic as "Unreachable, please create an issue in https://github.com/bwireman/go-over if you see this"
+    }
+    Ok(conf) -> conf
+  }
+
   gxyz_function.ignore_result(
     !conf.cache,
     gxyz_function.freeze1(simplifile.delete, constants.go_over_path()),

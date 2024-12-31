@@ -1,5 +1,4 @@
 import delay
-import gleam/list
 import go_over/util/print
 import shellout
 
@@ -9,13 +8,9 @@ pub fn hard_fail(res: Result(a, b), msg: String) -> a {
     _ -> {
       print.warning("Error: " <> msg)
       shellout.exit(1)
-      panic as "unreachable"
+      panic as "Unreachable, please create an issue in https://github.com/bwireman/go-over if you see this"
     }
   }
-}
-
-pub fn has_flag(args: List(String), name: String) -> Bool {
-  list.contains(args, "--" <> name)
 }
 
 pub fn retry_cmd(
