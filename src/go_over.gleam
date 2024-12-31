@@ -30,6 +30,7 @@ type Flags {
     fake: Bool,
     outdated: Bool,
     ignore_indirect: Bool,
+    verbose: Bool,
     format: option.Option(config.Format),
   )
 }
@@ -42,6 +43,7 @@ fn merge_flags_and_config(flags: Flags, cfg: Config) -> Config {
     outdated: cfg.outdated || flags.outdated,
     ignore_indirect: cfg.ignore_indirect || flags.ignore_indirect,
     fake: flags.fake,
+    verbose: flags.verbose,
     format: option.unwrap(flags.format, cfg.format),
     ignore_packages: cfg.ignore_packages,
     ignore_severity: cfg.ignore_severity,
@@ -56,6 +58,7 @@ fn spin_up(cfg: Config) -> Result(Config, String) {
     use outdated <- clip.parameter
     use ignore_indirect <- clip.parameter
     use fake <- clip.parameter
+    use verbose <- clip.parameter
     use format <- clip.parameter
 
     let flags =
@@ -64,6 +67,7 @@ fn spin_up(cfg: Config) -> Result(Config, String) {
         outdated:,
         ignore_indirect:,
         fake:,
+        verbose:,
         format: config.parse_config_format(format),
       )
 
@@ -72,25 +76,26 @@ fn spin_up(cfg: Config) -> Result(Config, String) {
   |> clip.flag(
     flag.new("force")
     |> flag.help(
-      "will force pulling new data even if the cached data is still valid",
+      "Force pulling new data even if the cached data is still valid",
     ),
   )
   |> clip.flag(
     flag.new("outdated")
     |> flag.help(
-      "will additionally check if newer versions of dependencies exist",
+      "Additionally check if newer versions of dependencies exist",
     ),
   )
   |> clip.flag(
     flag.new("ignore_indirect")
-    |> flag.help("will ignore all warnings for indirect dependencies"),
+    |> flag.help("Ignore all warnings for indirect dependencies"),
   )
   |> clip.flag(flag.new("fake"))
+  |> clip.flag(flag.new("verbose") |> flag.help("Print progress as packages are checked"))
   |> clip.opt(
     opt.new("format")
     |> opt.default("")
     |> opt.help(
-      "specify the output format of any warnings, [minimal, verbose, json]",
+      "Specify the output format of any warnings, [minimal, verbose, json]",
     ),
   )
   |> clip.help(help.simple(
@@ -102,7 +107,7 @@ projects really ✨ sparkle!",
 }
 
 fn get_vulnerable_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
-  advisories.check_for_advisories(pkgs, conf.force || !conf.cache)
+  advisories.check_for_advisories(pkgs, conf.force || !conf.cache, conf.verbose)
   |> list.map(fn(p) {
     gxyz_tuple.map2_1(p, config.filter_advisory_ids(conf, _))
   })
@@ -113,7 +118,7 @@ fn get_vulnerable_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
 fn get_retired_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
   pkgs
   |> list.map(fn(pkg) {
-    retired.check_retired(pkg, conf.force || !conf.cache)
+    retired.check_retired(pkg, conf.force || !conf.cache, conf.verbose)
     |> option.map(fn(ret) { #(pkg, ret) })
   })
   |> option.values()
@@ -123,7 +128,7 @@ fn get_retired_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
 fn get_outdated_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
   pkgs
   |> list.map(fn(pkg) {
-    case outdated.check_outdated(pkg, conf.force || !conf.cache) {
+    case outdated.check_outdated(pkg, conf.force || !conf.cache, conf.verbose) {
       Some(ret) -> Some(#(pkg, ret))
       None -> None
     }

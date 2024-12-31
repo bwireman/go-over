@@ -31,12 +31,13 @@ pub fn pull_if_not_cached(
   path: String,
   max_age: Int,
   force_pull: Bool,
+  verbose: Bool,
   pull_fn: fn() -> Nil,
   cache_message: String,
 ) -> Nil {
   case force_pull, file_cached(path, max_age) {
     False, Ok(True) -> {
-      print.progress("Cached: " <> cache_message)
+      print.progress(verbose, "Cached: " <> cache_message)
 
       Nil
     }

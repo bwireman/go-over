@@ -7,6 +7,7 @@ import go_over/util/cache
 import go_over/util/constants.{go_over_path, six_hours}
 import go_over/util/print
 import go_over/util/util.{hard_fail}
+import gxyz/gxyz_function
 import simplifile
 
 pub type Advisory {
@@ -97,12 +98,12 @@ fn is_vulnerable(
   |> option.values
 }
 
-fn delete_and_clone() -> Nil {
-  // ? File may or may not exist
+fn delete_and_clone(verbose: Bool) -> Nil {
   let p = path()
 
+  // ? File may or may not exist
   let _ = simplifile.delete(p)
-  print.progress("Cloning: " <> constants.advisories_repo <> "...")
+  print.progress(verbose, "Cloning: " <> constants.advisories_repo <> "...")
 
   path()
   |> simplifile.create_directory_all()
@@ -126,12 +127,14 @@ fn delete_and_clone() -> Nil {
 pub fn check_for_advisories(
   packages: List(packages.Package),
   force_pull: Bool,
+  verbose: Bool,
 ) -> List(#(Package, List(Advisory))) {
   cache.pull_if_not_cached(
     path(),
     six_hours,
     force_pull,
-    delete_and_clone,
+    verbose,
+    gxyz_function.freeze1(delete_and_clone, verbose),
     constants.advisories_repo,
   )
 
