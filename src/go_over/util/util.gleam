@@ -1,5 +1,4 @@
 import delay
-import gleam/list
 import go_over/util/print
 import shellout
 
@@ -12,10 +11,6 @@ pub fn hard_fail(res: Result(a, b), msg: String) -> a {
       panic as "unreachable"
     }
   }
-}
-
-pub fn has_flag(args: List(String), name: String) -> Bool {
-  list.contains(args, "--" <> name)
 }
 
 pub fn retry_cmd(

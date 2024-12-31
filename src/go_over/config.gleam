@@ -99,7 +99,7 @@ pub fn read_config(path: String) -> Config {
     force: False,
     //read from flags only
     fake: False,
-    format: parse_config_format(format),
+    format: parse_config_format(format) |> option.unwrap(Minimal),
     ignore_packages: list.map(packages, toml_as_string) |> option.values,
     ignore_severity: list.map(severity, toml_as_string) |> option.values,
     ignore_ids: list.map(ids, toml_as_string) |> option.values,
@@ -142,11 +142,12 @@ pub fn filter_severity(conf: Config, warnings: List(Warning)) -> List(Warning) {
   })
 }
 
-pub fn parse_config_format(val: String) -> Format {
+pub fn parse_config_format(val: String) -> option.Option(Format) {
   case val {
-    "json" -> JSON
-    "detailed" -> Detailed
-    _ -> Minimal
+    "json" -> option.Some(JSON)
+    "detailed" -> option.Some(Detailed)
+    "minimal" -> option.Some(Minimal)
+    _ -> option.None
   }
 }
 
