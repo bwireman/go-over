@@ -1,4 +1,8 @@
+import clip
 import clip/arg_info
+import clip/flag
+import clip/help
+import clip/opt
 import gleam/dict
 import gleam/list
 import gleam/option.{type Option, Some}
@@ -34,6 +38,17 @@ pub type Config {
     ignore_severity: List(String),
     ignore_ids: List(String),
     ignore_dev_dependencies: Bool,
+  )
+}
+
+pub type Flags {
+  Flags(
+    force: Bool,
+    fake: Bool,
+    outdated: Bool,
+    ignore_indirect: Bool,
+    verbose: Bool,
+    format: option.Option(Format),
   )
 }
 
@@ -113,7 +128,9 @@ pub fn read_config(path: String) -> Config {
 }
 
 pub fn filter_packages(conf: Config, pkgs: List(Package)) -> List(Package) {
-  list.filter(pkgs, fn(pkg) { !list.contains(conf.ignore_packages, pkg.name) })
+  gxyz_list.reject(pkgs, fn(pkg) {
+    list.contains(conf.ignore_packages, pkg.name)
+  })
 }
 
 pub fn filter_indirect(conf: Config, pkgs: List(Package)) -> List(Package) {
@@ -170,7 +187,7 @@ fn toml_as_string(toml: Toml) -> Option(String) {
 }
 
 // ? want to head the `fake` flag but otherwise use the default help
-pub fn help(args: arg_info.ArgInfo) -> String {
+fn help(args: arg_info.ArgInfo) -> String {
   arg_info.ArgInfo(
     named: args.named,
     positional: args.positional,
@@ -187,4 +204,70 @@ pub fn help(args: arg_info.ArgInfo) -> String {
 
 🕵️‍♂️ Audit Erlang & Elixir dependencies, to make sure your gleam projects really ✨ sparkle!",
   )
+}
+
+pub fn merge_flags_and_config(flags: Flags, cfg: Config) -> Config {
+  Config(
+    dev_deps: cfg.dev_deps,
+    cache: cfg.cache,
+    force: flags.force,
+    outdated: cfg.outdated || flags.outdated,
+    ignore_indirect: cfg.ignore_indirect || flags.ignore_indirect,
+    fake: flags.fake,
+    verbose: flags.verbose,
+    format: option.unwrap(flags.format, cfg.format),
+    ignore_packages: cfg.ignore_packages,
+    ignore_severity: cfg.ignore_severity,
+    ignore_ids: cfg.ignore_ids,
+    ignore_dev_dependencies: cfg.ignore_dev_dependencies,
+  )
+}
+
+pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
+  clip.command({
+    use force <- clip.parameter
+    use outdated <- clip.parameter
+    use ignore_indirect <- clip.parameter
+    use fake <- clip.parameter
+    use verbose <- clip.parameter
+    use format <- clip.parameter
+
+    let flags =
+      Flags(
+        force:,
+        outdated:,
+        ignore_indirect:,
+        fake:,
+        verbose:,
+        format: parse_config_format(format),
+      )
+
+    merge_flags_and_config(flags, cfg)
+  })
+  |> clip.flag(flag.help(
+    flag.new("force"),
+    "Force pulling new data even if the cached data is still valid",
+  ))
+  |> clip.flag(flag.help(
+    flag.new("outdated"),
+    "Additionally check if newer versions of dependencies exist",
+  ))
+  |> clip.flag(flag.help(
+    flag.new("ignore_indirect"),
+    "Ignore all warnings for indirect dependencies",
+  ))
+  |> clip.flag(flag.new("fake"))
+  |> clip.flag(flag.help(
+    flag.new("verbose"),
+    "Print progress as packages are checked",
+  ))
+  |> clip.opt(
+    opt.new("format")
+    |> opt.default("")
+    |> opt.help(
+      "Specify the output format of any warnings, [minimal, verbose, json]",
+    ),
+  )
+  |> clip.help(help.custom(help))
+  |> clip.run(argv)
 }

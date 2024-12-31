@@ -1,0 +1,18 @@
+---
+version: 1.2.5
+title: Spin up test: format=json
+---
+Config(
+  [],
+  True,
+  False,
+  False,
+  False,
+  False,
+  Json,
+  False,
+  [],
+  [],
+  [],
+  False,
+)
