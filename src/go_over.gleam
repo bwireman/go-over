@@ -73,24 +73,23 @@ fn spin_up(cfg: Config) -> Result(Config, String) {
 
     merge_flags_and_config(flags, cfg)
   })
-  |> clip.flag(
-    flag.new("force")
-    |> flag.help(
-      "Force pulling new data even if the cached data is still valid",
-    ),
-  )
-  |> clip.flag(
-    flag.new("outdated")
-    |> flag.help(
-      "Additionally check if newer versions of dependencies exist",
-    ),
-  )
-  |> clip.flag(
-    flag.new("ignore_indirect")
-    |> flag.help("Ignore all warnings for indirect dependencies"),
-  )
+  |> clip.flag(flag.help(
+    flag.new("force"),
+    "Force pulling new data even if the cached data is still valid",
+  ))
+  |> clip.flag(flag.help(
+    flag.new("outdated"),
+    "Additionally check if newer versions of dependencies exist",
+  ))
+  |> clip.flag(flag.help(
+    flag.new("ignore_indirect"),
+    "Ignore all warnings for indirect dependencies",
+  ))
   |> clip.flag(flag.new("fake"))
-  |> clip.flag(flag.new("verbose") |> flag.help("Print progress as packages are checked"))
+  |> clip.flag(flag.help(
+    flag.new("verbose"),
+    "Print progress as packages are checked",
+  ))
   |> clip.opt(
     opt.new("format")
     |> opt.default("")
@@ -98,11 +97,7 @@ fn spin_up(cfg: Config) -> Result(Config, String) {
       "Specify the output format of any warnings, [minimal, verbose, json]",
     ),
   )
-  |> clip.help(help.simple(
-    "go_over",
-    "Audit Erlang & Elixir dependencies, to make sure your gleam
-projects really ✨ sparkle!",
-  ))
+  |> clip.help(help.custom(config.help))
   |> clip.run(shellout.arguments())
 }
 
