@@ -25,4 +25,9 @@ pub fn read_manifest_test() {
   should.equal(b.name, "b")
   should.equal(b.version_raw, "2.2.123")
   should.be_false(b.direct)
+
+  let assert [_, dos] = test_read_manifest("test/testdata/manifest/dos.toml")
+  should.equal(dos.name, "dos")
+  should.equal(dos.version_raw, "2.2.123")
+  should.be_false(dos.direct)
 }
