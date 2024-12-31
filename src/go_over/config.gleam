@@ -167,7 +167,7 @@ pub fn filter_severity(conf: Config, warnings: List(Warning)) -> List(Warning) {
 }
 
 pub fn parse_config_format(val: String) -> option.Option(Format) {
-  case val {
+  case string.lowercase(val) {
     "json" -> option.Some(JSON)
     "detailed" -> option.Some(Detailed)
     "minimal" -> option.Some(Minimal)
@@ -187,7 +187,7 @@ fn toml_as_string(toml: Toml) -> Option(String) {
 }
 
 // ? want to head the `fake` flag but otherwise use the default help
-fn help(args: arg_info.ArgInfo) -> String {
+fn help_message(args: arg_info.ArgInfo) -> String {
   arg_info.ArgInfo(
     named: args.named,
     positional: args.positional,
@@ -232,17 +232,10 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
     use verbose <- clip.parameter
     use format <- clip.parameter
 
-    let flags =
-      Flags(
-        force:,
-        outdated:,
-        ignore_indirect:,
-        fake:,
-        verbose:,
-        format: parse_config_format(format),
-      )
-
-    merge_flags_and_config(flags, cfg)
+    merge_flags_and_config(
+      Flags(force:, outdated:, ignore_indirect:, fake:, verbose:, format:),
+      cfg,
+    )
   })
   |> clip.flag(flag.help(
     flag.new("force"),
@@ -263,11 +256,12 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
   ))
   |> clip.opt(
     opt.new("format")
-    |> opt.default("")
     |> opt.help(
       "Specify the output format of any warnings, [minimal, verbose, json]",
-    ),
+    )
+    |> opt.map(parse_config_format)
+    |> opt.default(option.None),
   )
-  |> clip.help(help.custom(help))
+  |> clip.help(help.custom(help_message))
   |> clip.run(argv)
 }
