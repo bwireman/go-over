@@ -13,28 +13,29 @@ env:
   nodelts: 22.x
 
 jobs:
-  # build:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: erlef/setup-beam@v1
-  #       with:
-  #         otp-version: ${{ env.otp }}
-  #         gleam-version: ${{ env.gleam }}
-  #         rebar3-version: ${{ env.rebar }}
-  #     - run: gleam format --check src test
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ env.otp }}
+          gleam-version: ${{ env.gleam }}
+          rebar3-version: ${{ env.rebar }}
+      - run: gleam format --check src test
 
-  # erlang:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: erlef/setup-beam@v1
-  #       with:
-  #         otp-version: ${{ env.otp }}
-  #         gleam-version: ${{ env.gleam }}
-  #         rebar3-version: ${{ env.rebar }}
-  #     - run: gleam test --target erlang
-  #     - run: gleam run --target erlang -- --outdated
+  erlang:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ env.otp }}
+          gleam-version: ${{ env.gleam }}
+          rebar3-version: ${{ env.rebar }}
+      - run: gleam test --target erlang
+      - run: gleam run --target erlang -- --outdated
+
   windows:
     runs-on: windows-latest
     steps:
@@ -46,53 +47,53 @@ jobs:
           rebar3-version: ${{ env.rebar }}
       - run: gleam run --target erlang -- --outdated
 
-  # node:
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       node-version: [20.x, 22.x, 23.x]
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: erlef/setup-beam@v1
-  #       with:
-  #         otp-version: ${{ env.otp }}
-  #         gleam-version: ${{ env.gleam }}
-  #         rebar3-version: ${{ env.rebar }}
-  #     - name: Use Node.js ${{ matrix.node-version }}
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: ${{ matrix.node-version }}
-  #         cache: "npm"
-  #     - run: yarn install
-  #     - run: gleam test --target javascript --runtime nodejs
-  #     - run: gleam run --target javascript --runtime nodejs -- --outdated
+  node:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x, 23.x]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ env.otp }}
+          gleam-version: ${{ env.gleam }}
+          rebar3-version: ${{ env.rebar }}
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - run: yarn install
+      - run: gleam test --target javascript --runtime nodejs
+      - run: gleam run --target javascript --runtime nodejs -- --outdated
 
-  # bun:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: erlef/setup-beam@v1
-  #       with:
-  #         otp-version: ${{ env.otp }}
-  #         gleam-version: ${{ env.gleam }}
-  #         rebar3-version: ${{ env.rebar }}
-  #     - uses: oven-sh/setup-bun@v1
-  #     - run: bun install
-  #     - run: gleam test --target javascript --runtime bun
-  #     - run: gleam run --target javascript --runtime bun -- --outdated
+  bun:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ env.otp }}
+          gleam-version: ${{ env.gleam }}
+          rebar3-version: ${{ env.rebar }}
+      - uses: oven-sh/setup-bun@v1
+      - run: bun install
+      - run: gleam test --target javascript --runtime bun
+      - run: gleam run --target javascript --runtime bun -- --outdated
 
-  # deno:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: erlef/setup-beam@v1
-  #       with:
-  #         otp-version: ${{ env.otp }}
-  #         gleam-version: ${{ env.gleam }}
-  #         rebar3-version: ${{ env.rebar }}
-  #     - uses: denoland/setup-deno@v1
-  #       with:
-  #         deno-version: v2.x # Run with latest stable Deno.
-  #     - run: deno install
-  #     - run: gleam test --target javascript --runtime deno
-  #     - run: gleam run --target javascript --runtime deno -- --outdated
+  deno:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ env.otp }}
+          gleam-version: ${{ env.gleam }}
+          rebar3-version: ${{ env.rebar }}
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v2.x # Run with latest stable Deno.
+      - run: deno install
+      - run: gleam test --target javascript --runtime deno
+      - run: gleam run --target javascript --runtime deno -- --outdated

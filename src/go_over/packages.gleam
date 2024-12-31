@@ -14,12 +14,12 @@ pub type Package {
 }
 
 pub fn read_manifest(path: String) -> List(Package) {
-  let res =
+  let manifest =
     simplifile.read(path)
     |> hard_fail("could not parse " <> path)
-  let cleaned = string.replace(res, "\r\n", "\n")
-
-  let manifest = tom.parse(cleaned) |> hard_fail("could not parse " <> path)
+    |> string.replace("\r\n", "\n")
+    |> tom.parse()
+    |> hard_fail("could not parse " <> path)
 
   let packages =
     tom.get_array(manifest, ["packages"])
