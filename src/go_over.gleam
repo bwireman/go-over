@@ -60,10 +60,10 @@ fn spin_up(cfg: Config) -> Result(Config, String) {
 
     let flags =
       Flags(
-        force: force,
-        outdated: outdated,
-        ignore_indirect: ignore_indirect,
-        fake: fake,
+        force:,
+        outdated:,
+        ignore_indirect:,
+        fake:,
         format: config.parse_config_format(format),
       )
 
@@ -173,7 +173,7 @@ pub fn main() {
     Error(e) -> {
       io.println_error(e)
       shellout.exit(0)
-      panic as "how?"
+      panic as "Unreachable, please create an issue in https://github.com/bwireman/go-over if you see this"
     }
     Ok(conf) -> conf
   }

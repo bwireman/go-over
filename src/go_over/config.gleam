@@ -1,6 +1,6 @@
 import gleam/dict
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{type Option, Some}
 import gleam/result.{unwrap}
 import gleam/string
 import go_over/advisories/advisories.{type Advisory}
@@ -8,6 +8,7 @@ import go_over/packages.{type Package}
 import go_over/util/print
 import go_over/util/util.{hard_fail}
 import go_over/warning.{type Warning}
+import gxyz/gxyz_list
 import shellout
 import simplifile
 import tom.{type Toml}
@@ -125,7 +126,7 @@ pub fn filter_dev_dependencies(
   case conf.ignore_dev_dependencies {
     False -> pkgs
     True ->
-      list.filter(pkgs, fn(pkg) { !list.contains(conf.dev_deps, pkg.name) })
+      gxyz_list.reject(pkgs, fn(pkg) { list.contains(conf.dev_deps, pkg.name) })
   }
 }
 
@@ -133,12 +134,14 @@ pub fn filter_advisory_ids(
   conf: Config,
   advisories: List(Advisory),
 ) -> List(Advisory) {
-  list.filter(advisories, fn(adv) { !list.contains(conf.ignore_ids, adv.id) })
+  gxyz_list.reject(advisories, fn(adv) {
+    list.contains(conf.ignore_ids, adv.id)
+  })
 }
 
 pub fn filter_severity(conf: Config, warnings: List(Warning)) -> List(Warning) {
-  list.filter(warnings, fn(w) {
-    !list.contains(conf.ignore_severity, string.lowercase(w.severity))
+  gxyz_list.reject(warnings, fn(w) {
+    list.contains(conf.ignore_severity, string.lowercase(w.severity))
   })
 }
 
@@ -157,7 +160,7 @@ fn toml_as_string(toml: Toml) -> Option(String) {
     _ -> {
       print.warning("could not parse config value " <> string.inspect(toml))
       shellout.exit(1)
-      None
+      panic as "Unreachable, please create an issue in https://github.com/bwireman/go-over if you see this"
     }
   }
 }
