@@ -36,7 +36,7 @@ jobs:
       - run: gleam test --target erlang
       - run: gleam run --target erlang -- --outdated
 
-  windows:
+  windows-erlang:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -46,6 +46,22 @@ jobs:
           gleam-version: ${{ env.gleam }}
           rebar3-version: ${{ env.rebar }}
       - run: gleam run --target erlang -- --outdated
+
+  windows-node:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ env.otp }}
+          gleam-version: ${{ env.gleam }}
+          rebar3-version: ${{ env.rebar }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.nodelts }}
+          cache: "npm"
+      - run: yarn install
+      - run: gleam run --target javascript --runtime nodejs -- --outdated
 
   node:
     runs-on: ubuntu-latest
