@@ -1,0 +1,18 @@
+---
+version: 1.2.5
+title: Spin up test: ignore_indirect
+---
+Config(
+  [],
+  True,
+  False,
+  True,
+  False,
+  False,
+  Minimal,
+  False,
+  [],
+  [],
+  [],
+  False,
+)

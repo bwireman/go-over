@@ -1,7 +1,3 @@
-import clip
-import clip/flag
-import clip/help
-import clip/opt
 import gleam/function
 import gleam/int
 import gleam/io
@@ -23,83 +19,6 @@ import gxyz/gxyz_function
 import gxyz/gxyz_tuple
 import shellout
 import simplifile
-
-type Flags {
-  Flags(
-    force: Bool,
-    fake: Bool,
-    outdated: Bool,
-    ignore_indirect: Bool,
-    verbose: Bool,
-    format: option.Option(config.Format),
-  )
-}
-
-fn merge_flags_and_config(flags: Flags, cfg: Config) -> Config {
-  Config(
-    dev_deps: cfg.dev_deps,
-    cache: cfg.cache,
-    force: flags.force,
-    outdated: cfg.outdated || flags.outdated,
-    ignore_indirect: cfg.ignore_indirect || flags.ignore_indirect,
-    fake: flags.fake,
-    verbose: flags.verbose,
-    format: option.unwrap(flags.format, cfg.format),
-    ignore_packages: cfg.ignore_packages,
-    ignore_severity: cfg.ignore_severity,
-    ignore_ids: cfg.ignore_ids,
-    ignore_dev_dependencies: cfg.ignore_dev_dependencies,
-  )
-}
-
-fn spin_up(cfg: Config) -> Result(Config, String) {
-  clip.command({
-    use force <- clip.parameter
-    use outdated <- clip.parameter
-    use ignore_indirect <- clip.parameter
-    use fake <- clip.parameter
-    use verbose <- clip.parameter
-    use format <- clip.parameter
-
-    let flags =
-      Flags(
-        force:,
-        outdated:,
-        ignore_indirect:,
-        fake:,
-        verbose:,
-        format: config.parse_config_format(format),
-      )
-
-    merge_flags_and_config(flags, cfg)
-  })
-  |> clip.flag(flag.help(
-    flag.new("force"),
-    "Force pulling new data even if the cached data is still valid",
-  ))
-  |> clip.flag(flag.help(
-    flag.new("outdated"),
-    "Additionally check if newer versions of dependencies exist",
-  ))
-  |> clip.flag(flag.help(
-    flag.new("ignore_indirect"),
-    "Ignore all warnings for indirect dependencies",
-  ))
-  |> clip.flag(flag.new("fake"))
-  |> clip.flag(flag.help(
-    flag.new("verbose"),
-    "Print progress as packages are checked",
-  ))
-  |> clip.opt(
-    opt.new("format")
-    |> opt.default("")
-    |> opt.help(
-      "Specify the output format of any warnings, [minimal, verbose, json]",
-    ),
-  )
-  |> clip.help(help.custom(config.help))
-  |> clip.run(shellout.arguments())
-}
 
 fn get_vulnerable_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
   advisories.check_for_advisories(pkgs, conf.force || !conf.cache, conf.verbose)
@@ -169,7 +88,9 @@ fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
 }
 
 pub fn main() {
-  let conf = case spin_up(config.read_config("gleam.toml")) {
+  let conf = case
+    config.spin_up(config.read_config("gleam.toml"), shellout.arguments())
+  {
     Error(e) -> {
       io.println_error(e)
       shellout.exit(0)

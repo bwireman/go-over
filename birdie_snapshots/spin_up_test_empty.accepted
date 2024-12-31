@@ -1,0 +1,18 @@
+---
+version: 1.2.5
+title: Spin up test: empty
+---
+Config(
+  [],
+  True,
+  False,
+  False,
+  False,
+  False,
+  Minimal,
+  False,
+  [],
+  [],
+  [],
+  False,
+)
