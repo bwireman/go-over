@@ -4,7 +4,6 @@ title: Spin up test: format=detailed
 ---
 Config(
   [],
-  True,
   False,
   False,
   False,

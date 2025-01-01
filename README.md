@@ -73,10 +73,6 @@ format = "minimal"
 # will additionally check if newer versions of dependencies exist
 # default: false
 outdated = false
-# will ignore all warnings for indirect dependencies
-# default: false
-# DEPRECATED use go-over.ignore.indirect instead
-ignore_indirect = false
 
 [go-over.ignore]
 # will ignore all warnings for indirect dependencies

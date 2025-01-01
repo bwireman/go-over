@@ -4,7 +4,6 @@ title: Spin up test: format=json
 ---
 Config(
   [],
-  True,
   False,
   False,
   False,

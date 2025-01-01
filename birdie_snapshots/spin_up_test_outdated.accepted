@@ -5,7 +5,6 @@ title: Spin up test: outdated
 Config(
   [],
   True,
-  True,
   False,
   False,
   False,
