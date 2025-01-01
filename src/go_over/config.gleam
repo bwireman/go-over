@@ -168,7 +168,14 @@ pub fn parse_config_format(val: String) -> option.Option(Format) {
     "json" -> option.Some(JSON)
     "detailed" -> option.Some(Detailed)
     "minimal" -> option.Some(Minimal)
-    _ -> option.None
+    format -> {
+      print.warning(
+        "Invalid format '"
+        <> format
+        <> "' valid options are ['json', 'detailed', 'minimal'], defaulting to minimal",
+      )
+      option.None
+    }
   }
 }
 
@@ -193,14 +200,17 @@ fn help_message(args: arg_info.ArgInfo) -> String {
   )
   |> arg_info.help_text(
     "go_over",
-    " ____ _____      ____ _   _____  _____
-  / __ `/ __ \\    / __ \\ | / / _ \\/ ___/
- / /_/ / /_/ /   / /_/ / |/ /  __/ /
- \\__, /\\____/____\\____/|___/\\___/_/
-/____/     /_____/
-
-🕵️‍♂️ Audit Erlang & Elixir dependencies, to make sure your gleam projects really ✨ sparkle!",
+    "                       ____ _____      ____ _   _____  _____
+                        / __ `/ __ \\    / __ \\ | / / _ \\/ ___/
+                       / /_/ / /_/ /   / /_/ / |/ /  __/ /
+                       \\__, /\\____/____\\____/|___/\\___/_/
+                      /____/     /_____/
+"
+    |> print.format_high()
+      <> "🕵️‍♂️ Audit Erlang & Elixir dependencies, to make sure your gleam projects really ✨ sparkle!",
   )
+  // ? strip out the pointless leading go_over in the help message
+  |> string.crop(" ")
 }
 
 pub fn merge_flags_and_config(flags: Flags, cfg: Config) -> Config {
