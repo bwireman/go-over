@@ -99,19 +99,38 @@ pub fn main() {
     Ok(conf) -> conf
   }
 
+  let spinner = print.new_spinner("Let's do this!", conf.verbose)
   gxyz_function.ignore_result(
     conf.force,
     gxyz_function.freeze1(simplifile.delete, constants.go_over_path()),
   )
 
+  print.set_text_spinner(spinner, "Reading manifest", conf.verbose)
   let pkgs =
     packages.read_manifest("manifest.toml")
     |> config.filter_dev_dependencies(conf, _)
     |> config.filter_packages(conf, _)
     |> config.filter_indirect(conf, _)
 
+  print.set_text_spinner(
+    spinner,
+    "Checking packages: " <> print.raw("vulnerable", "red"),
+    conf.verbose,
+  )
   let vulnerable_packages = get_vulnerable_packages(pkgs, conf)
+
+  print.set_text_spinner(
+    spinner,
+    "Checking packages: " <> print.raw("retired", "yellow"),
+    conf.verbose,
+  )
   let retired_packages = get_retired_packages(pkgs, conf)
+
+  print.set_text_spinner(
+    spinner,
+    "Checking packages: " <> print.raw("outdated", "brightmagenta"),
+    conf.verbose,
+  )
   let outdated_packages =
     gxyz_function.iff(
       conf.outdated,
@@ -124,13 +143,15 @@ pub fn main() {
     gxyz_function.freeze2(print_warnings, example_warnings, conf),
   )
 
+  print.set_text_spinner(spinner, "Filtering warnings", conf.verbose)
   let warnings =
     list.append(retired_packages, vulnerable_packages)
     |> list.append(outdated_packages)
     |> config.filter_severity(conf, _)
 
+  print.stop_spinner(spinner)
   case warnings {
-    [] -> print.success("All good! ✅")
+    [] -> print.success("✅ No warnings found!")
     vulns -> print_warnings(vulns, conf)
   }
 }

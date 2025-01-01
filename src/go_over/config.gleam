@@ -200,7 +200,7 @@ fn help_message(args: arg_info.ArgInfo) -> String {
   )
   |> arg_info.help_text(
     "go_over",
-    "                       ____ _____      ____ _   _____  _____
+    "                       ____  ____      ____ _   _____  _____
                         / __ `/ __ \\    / __ \\ | / / _ \\/ ___/
                        / /_/ / /_/ /   / /_/ / |/ /  __/ /
                        \\__, /\\____/____\\____/|___/\\___/_/
@@ -269,5 +269,10 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
     |> opt.default(option.None),
   )
   |> clip.help(help.custom(help_message))
-  |> clip.run(argv)
+  |> clip.run(
+    argv
+    |> gxyz_list.reject(string.ends_with(_, ".js"))
+    |> gxyz_list.reject(string.ends_with(_, ".mjs"))
+    |> gxyz_list.reject(string.ends_with(_, ".cjs")),
+  )
 }

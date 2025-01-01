@@ -36,7 +36,7 @@ rm -rf .go-over/outdated
 
 snooze 15
 # shellcheck disable=SC2086
-gleam run $CMD -- --outdated --verbose
+gleam run $CMD -- --outdated
 
 # shellcheck disable=SC2086
 gleam test $CMD
