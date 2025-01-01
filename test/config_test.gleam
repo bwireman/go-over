@@ -39,7 +39,7 @@ pub fn test_spin_up(name: String, argv: List(String)) {
 
 pub fn read_config_test() {
   let empty = test_read_config("test/testdata/gleam/empty.toml")
-  should.be_true(empty.cache)
+  should.be_false(empty.force)
   should.equal(empty.format, config.Minimal)
   should.equal(empty.ignore_packages, [])
   should.equal(empty.ignore_severity, [])
@@ -47,7 +47,7 @@ pub fn read_config_test() {
   should.be_false(empty.ignore_indirect)
 
   let basic = test_read_config("test/testdata/gleam/basic.toml")
-  should.be_false(basic.cache)
+  should.be_true(basic.force)
   should.equal(basic.format, config.Detailed)
   should.equal(basic.ignore_packages, ["a"])
   should.equal(basic.ignore_severity, ["b"])
@@ -55,7 +55,7 @@ pub fn read_config_test() {
   should.be_true(basic.ignore_indirect)
 
   let partial = test_read_config("test/testdata/gleam/partial.toml")
-  should.be_true(partial.cache)
+  should.be_false(partial.force)
   should.equal(partial.format, config.Minimal)
   should.equal(partial.ignore_packages, ["a", "b", "c"])
   should.equal(partial.ignore_severity, [])
@@ -207,6 +207,12 @@ pub fn merge_flags_and_config_test() {
   |> should.equal(config.Config(..empty_conf, ignore_indirect: True))
 
   config.merge_flags_and_config(
+    config.Flags(..empty_flags, force: True),
+    empty_conf,
+  )
+  |> should.equal(config.Config(..empty_conf, force: True))
+
+  config.merge_flags_and_config(
     config.Flags(..empty_flags, format: option.Some(config.JSON)),
     empty_conf,
   )
@@ -230,6 +236,12 @@ pub fn merge_flags_and_config_test() {
     config.Config(..empty_conf, ignore_indirect: True),
   )
   |> should.equal(config.Config(..empty_conf, ignore_indirect: True))
+
+  config.merge_flags_and_config(
+    empty_flags,
+    config.Config(..empty_conf, force: True),
+  )
+  |> should.equal(config.Config(..empty_conf, force: True))
 
   config.merge_flags_and_config(
     empty_flags,

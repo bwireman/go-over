@@ -5,9 +5,8 @@ title: Conf test: test/testdata/gleam/basic.toml
 Config(
   [],
   False,
-  False,
   True,
-  False,
+  True,
   False,
   Detailed,
   False,

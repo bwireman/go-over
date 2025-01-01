@@ -4,7 +4,6 @@ title: Conf test: test/testdata/gleam/full.toml
 ---
 Config(
   ["c"],
-  True,
   False,
   False,
   False,

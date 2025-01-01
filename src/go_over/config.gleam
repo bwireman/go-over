@@ -27,7 +27,6 @@ pub type Format {
 pub type Config {
   Config(
     dev_deps: List(String),
-    cache: Bool,
     outdated: Bool,
     ignore_indirect: Bool,
     force: Bool,
@@ -110,11 +109,9 @@ pub fn read_config(path: String) -> Config {
 
   Config(
     dev_deps: dev_deps,
-    cache: cache,
     outdated: outdated,
     ignore_indirect: ignore_indirect,
-    //read from flags only
-    force: False,
+    force: !cache,
     //read from flags only
     fake: False,
     //read from flags only
@@ -209,8 +206,7 @@ fn help_message(args: arg_info.ArgInfo) -> String {
 pub fn merge_flags_and_config(flags: Flags, cfg: Config) -> Config {
   Config(
     dev_deps: cfg.dev_deps,
-    cache: cfg.cache,
-    force: flags.force,
+    force: flags.force || cfg.force,
     outdated: cfg.outdated || flags.outdated,
     ignore_indirect: cfg.ignore_indirect || flags.ignore_indirect,
     fake: flags.fake,

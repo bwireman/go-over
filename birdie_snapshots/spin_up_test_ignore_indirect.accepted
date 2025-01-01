@@ -4,7 +4,6 @@ title: Spin up test: ignore_indirect
 ---
 Config(
   [],
-  True,
   False,
   True,
   False,

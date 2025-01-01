@@ -4,7 +4,6 @@ title: Spin up test: fake
 ---
 Config(
   [],
-  True,
   False,
   False,
   False,

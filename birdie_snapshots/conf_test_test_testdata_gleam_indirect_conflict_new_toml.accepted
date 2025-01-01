@@ -4,7 +4,6 @@ title: Conf test: test/testdata/gleam/indirect_conflict_new.toml
 ---
 Config(
   [],
-  True,
   False,
   True,
   False,

@@ -4,7 +4,6 @@ title: Spin up test: verbose
 ---
 Config(
   [],
-  True,
   False,
   False,
   False,

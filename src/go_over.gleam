@@ -21,7 +21,7 @@ import shellout
 import simplifile
 
 fn get_vulnerable_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
-  advisories.check_for_advisories(pkgs, conf.force || !conf.cache, conf.verbose)
+  advisories.check_for_advisories(pkgs, conf.force, conf.verbose)
   |> list.map(fn(p) {
     gxyz_tuple.map2_1(p, config.filter_advisory_ids(conf, _))
   })
@@ -32,7 +32,7 @@ fn get_vulnerable_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
 fn get_retired_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
   pkgs
   |> list.map(fn(pkg) {
-    retired.check_retired(pkg, conf.force || !conf.cache, conf.verbose)
+    retired.check_retired(pkg, conf.force, conf.verbose)
     |> option.map(fn(ret) { #(pkg, ret) })
   })
   |> option.values()
@@ -42,7 +42,7 @@ fn get_retired_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
 fn get_outdated_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
   pkgs
   |> list.map(fn(pkg) {
-    case outdated.check_outdated(pkg, conf.force || !conf.cache, conf.verbose) {
+    case outdated.check_outdated(pkg, conf.force, conf.verbose) {
       Some(ret) -> Some(#(pkg, ret))
       None -> None
     }
@@ -68,7 +68,7 @@ fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
       |> function.tap(print_warnings_count)
       |> list.map(warning.format_as_string_minimal)
       |> string.join("")
-      |> io.print_error
+      |> io.print_error()
 
     config.JSON ->
       vulns
@@ -82,7 +82,7 @@ fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
       |> function.tap(print_warnings_count)
       |> list.map(warning.format_as_string)
       |> string.join(constants.long_ass_dashes)
-      |> io.print_error
+      |> io.print_error()
   }
   shellout.exit(1)
 }
@@ -100,7 +100,7 @@ pub fn main() {
   }
 
   gxyz_function.ignore_result(
-    !conf.cache,
+    conf.force,
     gxyz_function.freeze1(simplifile.delete, constants.go_over_path()),
   )
 
