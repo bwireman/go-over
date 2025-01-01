@@ -99,7 +99,7 @@ pub fn main() {
     Ok(conf) -> conf
   }
 
-  let spinner = print.new_spinner("Let's do this", conf.verbose)
+  let spinner = print.new_spinner("Let's do this!", conf.verbose)
   gxyz_function.ignore_result(
     conf.force,
     gxyz_function.freeze1(simplifile.delete, constants.go_over_path()),
@@ -112,13 +112,25 @@ pub fn main() {
     |> config.filter_packages(conf, _)
     |> config.filter_indirect(conf, _)
 
-  print.set_text_spinner(spinner, "Checking vulnerable packages", conf.verbose)
+  print.set_text_spinner(
+    spinner,
+    "Checking packages: " <> print.raw("vulnerable", "red"),
+    conf.verbose,
+  )
   let vulnerable_packages = get_vulnerable_packages(pkgs, conf)
 
-  print.set_text_spinner(spinner, "Checking retired packages", conf.verbose)
+  print.set_text_spinner(
+    spinner,
+    "Checking packages: " <> print.raw("retired", "yellow"),
+    conf.verbose,
+  )
   let retired_packages = get_retired_packages(pkgs, conf)
 
-  print.set_text_spinner(spinner, "Checking outdated packages", conf.verbose)
+  print.set_text_spinner(
+    spinner,
+    "Checking packages: " <> print.raw("outdated", "brightmagenta"),
+    conf.verbose,
+  )
   let outdated_packages =
     gxyz_function.iff(
       conf.outdated,
