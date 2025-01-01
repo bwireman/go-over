@@ -1,15 +1,15 @@
 ---
-version: 1.2.4
+version: 1.2.5
 title: Conf test: test/testdata/gleam/basic.toml
 ---
 Config(
   [],
   False,
-  False,
+  True,
   True,
   False,
-  False,
   Detailed,
+  False,
   ["a"],
   ["b"],
   ["c"],

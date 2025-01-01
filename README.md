@@ -52,7 +52,7 @@ gleam run -m go_over
 Override config values if set
 
 - `--force`: will force pulling new data even if the cached data is still valid
-- `--format=<format>`: specify the output format of any warnings.
+- `--format=<format>`: specify the output format of any warnings
   `["minimal", "detailed", "json"]`
 - `--outdated`: will _additionally_ check if newer versions of dependencies
   exist
@@ -73,10 +73,6 @@ format = "minimal"
 # will additionally check if newer versions of dependencies exist
 # default: false
 outdated = false
-# will ignore all warnings for indirect dependencies
-# default: false
-# DEPRECATED use go-over.ignore.indirect instead
-ignore_indirect = false
 
 [go-over.ignore]
 # will ignore all warnings for indirect dependencies
