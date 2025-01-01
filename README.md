@@ -43,7 +43,7 @@ Bun, Deno & Nodejs are _all_ supported!
 gleam run -m go_over
 ```
 
-### 🎥 Obligatory Asciinema
+### 🎥 Obligatory VHS
 
 ![demo](https://raw.githubusercontent.com/bwireman/go-over/main/images/demo.gif)
 
