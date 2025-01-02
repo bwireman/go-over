@@ -155,7 +155,7 @@ pub fn spin_up_test() {
   let conf = test_spin_up("outdated", ["--outdated"])
   should.be_true(conf.outdated)
 
-  let conf = test_spin_up("ignore_indirect", ["--ignore_indirect"])
+  let conf = test_spin_up("ignore_indirect", ["--ignore-indirect"])
   should.be_true(conf.ignore_indirect)
 
   let conf = test_spin_up("fake", ["--fake"])

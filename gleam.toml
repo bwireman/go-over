@@ -47,10 +47,10 @@ pprint = ">= 1.0.4 and < 2.0.0"
 actions = [
     { command = "./scripts/format.sh", kind = "binary", files = [".mjs", ".js", ".gleam"] },
     { command = "./scripts/update.sh", kind = "binary" },
-    { command = "./scripts/target_test.sh", kind = "binary", args = ["erlang"], files = [".erl", ".gleam", ".toml"] },
-    { command = "./scripts/target_test.sh", kind = "binary", args = ["javascript", "node"], files = [".mjs", ".js", ".gleam", ".toml"] },
-    { command = "./scripts/target_test.sh", kind = "binary", args = ["javascript", "deno"], files = [".mjs", ".js", ".gleam", ".toml"] },
-    { command = "./scripts/target_test.sh", kind = "binary", args = ["javascript", "bun"], files = [".mjs", ".js", ".gleam", ".toml"] },
+    { command = "./scripts/target_test.sh", kind = "binary", args = ["erlang"], files = [".erl", ".gleam", "manifest.toml", "gleam.toml"] },
+    { command = "./scripts/target_test.sh", kind = "binary", args = ["javascript", "node"], files = [".mjs", ".js", ".gleam", "manifest.toml", "gleam.toml"] },
+    { command = "./scripts/target_test.sh", kind = "binary", args = ["javascript", "deno"], files = [".mjs", ".js", ".gleam", "manifest.toml", "gleam.toml"] },
+    { command = "./scripts/target_test.sh", kind = "binary", args = ["javascript", "bun"], files = [".mjs", ".js", ".gleam", "manifest.toml", "gleam.toml"] },
 ]
 
 [go-over]

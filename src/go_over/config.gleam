@@ -252,7 +252,7 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
     "Additionally check if newer versions of dependencies exist",
   ))
   |> clip.flag(flag.help(
-    flag.new("ignore_indirect"),
+    flag.new("ignore-indirect"),
     "Ignore all warnings for indirect dependencies",
   ))
   |> clip.flag(flag.new("fake"))

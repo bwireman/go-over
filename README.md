@@ -49,14 +49,15 @@ gleam run -m go_over
 
 ### 🏴 Flags
 
-Override config values if set
+- `--format` FORMAT: Specify the output format of any warnings, [minimal,
+  verbose, json] (default: None)
+- `--force`: Force pulling new data even if the cached data is still valid
+- `--outdated`: Additionally check if newer versions of dependencies exist
+- `--ignore-indirect`: Ignore all warnings for indirect dependencies
+- `--verbose`: Print progress as packages are checked
+- `--help`,-h: Print help
 
-- `--force`: will force pulling new data even if the cached data is still valid
-- `--format=<format>`: specify the output format of any warnings
-  `["minimal", "detailed", "json"]`
-- `--outdated`: will _additionally_ check if newer versions of dependencies
-  exist
-- `--ignore-indirect`: will ignore all warnings for indirect dependencies
+Flags override config values if set
 
 ### ⚙️ Config
 
