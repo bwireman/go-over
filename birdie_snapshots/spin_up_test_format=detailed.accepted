@@ -1,14 +1,14 @@
 ---
 version: 1.2.5
-title: Conf test: test/testdata/gleam/indirect_new.toml
+title: Spin up test: format=detailed
 ---
 Config(
   [],
   False,
-  True,
   False,
   False,
-  Minimal,
+  False,
+  Detailed,
   False,
   [],
   [],

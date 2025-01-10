@@ -1,9 +1,16 @@
 import gleam/io
+import gxyz/gxyz_function
 import shellout
 
-pub fn progress(msg: String) {
-  shellout.style(msg, with: shellout.color(["brightmagenta"]), custom: [])
-  |> io.println
+pub fn raw(msg: String, color: String) {
+  shellout.style(msg, with: shellout.color([color]), custom: [])
+}
+
+pub fn progress(verbose: Bool, msg: String) {
+  gxyz_function.iff_nil(verbose, fn() {
+    shellout.style(msg, with: shellout.color(["brightmagenta"]), custom: [])
+    |> io.println()
+  })
 }
 
 pub fn format_warning(msg: String) {
@@ -27,16 +34,18 @@ pub fn format_low(msg: String) {
 }
 
 pub fn warning(msg: String) {
-  format_warning(msg)
-  |> io.println
+  msg
+  |> format_warning()
+  |> io.println()
 }
 
 pub fn high(msg: String) {
-  format_high(msg)
-  |> io.println
+  msg
+  |> format_high()
+  |> io.println()
 }
 
 pub fn success(msg: String) {
   shellout.style(msg, with: shellout.color(["brightgreen"]), custom: [])
-  |> io.println
+  |> io.println()
 }

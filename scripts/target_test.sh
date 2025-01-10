@@ -31,7 +31,7 @@ else
 fi
 
 # shellcheck disable=SC2086
-gleam run $CMD -- --force
+gleam run $CMD -- --force --verbose
 rm -rf .go-over/outdated
 
 snooze 15

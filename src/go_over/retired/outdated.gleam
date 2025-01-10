@@ -13,8 +13,11 @@ import go_over/util/util.{hard_fail}
 import gxyz/gxyz_function
 import simplifile
 
-fn pull_outdated(pkg: Package) -> Nil {
-  print.progress("Checking latest version: " <> pkg.name <> " From hex.pm")
+fn pull_outdated(pkg: Package, verbose: Bool) -> Nil {
+  print.progress(
+    verbose,
+    "Checking latest version: " <> pkg.name <> " From hex.pm",
+  )
   let pkg_path = core.outdated_path(pkg)
   let pkg_path_fail = core.pkg_pull_error(pkg, pkg_path)
 
@@ -39,13 +42,18 @@ fn decode_latest_stable_version(
   )(data)
 }
 
-pub fn check_outdated(pkg: Package, force_pull: Bool) -> Option(String) {
+pub fn check_outdated(
+  pkg: Package,
+  force_pull: Bool,
+  verbose: Bool,
+) -> Option(String) {
   pkg
   |> core.outdated_path()
   |> cache.pull_if_not_cached(
     constants.hour,
     force_pull,
-    gxyz_function.freeze1(pull_outdated, pkg),
+    verbose,
+    gxyz_function.freeze2(pull_outdated, pkg, verbose),
     pkg.name <> ": latest stable version",
   )
 

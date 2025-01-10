@@ -11,7 +11,11 @@ import go_over/packages.{Package}
 import go_over/warning.{Warning}
 import pprint
 
-fn test_read_config(p: String) {
+fn empty_conf() {
+  config.read_config("test/testdata/gleam/empty.toml")
+}
+
+pub fn test_read_config(p: String) {
   let body = read_config(p)
 
   body
@@ -21,9 +25,21 @@ fn test_read_config(p: String) {
   body
 }
 
+pub fn test_spin_up(name: String, argv: List(String)) {
+  let conf =
+    config.spin_up(empty_conf(), argv)
+    |> should.be_ok
+
+  conf
+  |> pprint.format()
+  |> birdie.snap("Spin up test: " <> name)
+
+  conf
+}
+
 pub fn read_config_test() {
   let empty = test_read_config("test/testdata/gleam/empty.toml")
-  should.be_true(empty.cache)
+  should.be_false(empty.force)
   should.equal(empty.format, config.Minimal)
   should.equal(empty.ignore_packages, [])
   should.equal(empty.ignore_severity, [])
@@ -31,7 +47,7 @@ pub fn read_config_test() {
   should.be_false(empty.ignore_indirect)
 
   let basic = test_read_config("test/testdata/gleam/basic.toml")
-  should.be_false(basic.cache)
+  should.be_true(basic.force)
   should.equal(basic.format, config.Detailed)
   should.equal(basic.ignore_packages, ["a"])
   should.equal(basic.ignore_severity, ["b"])
@@ -39,7 +55,7 @@ pub fn read_config_test() {
   should.be_true(basic.ignore_indirect)
 
   let partial = test_read_config("test/testdata/gleam/partial.toml")
-  should.be_true(partial.cache)
+  should.be_false(partial.force)
   should.equal(partial.format, config.Minimal)
   should.equal(partial.ignore_packages, ["a", "b", "c"])
   should.equal(partial.ignore_severity, [])
@@ -122,4 +138,133 @@ pub fn filter_severity_test() {
   should.equal(filter_severity(full, [aa, bb]), [])
   should.equal(filter_severity(full, [bb, cc]), [cc])
   should.equal(filter_severity(full, [aa, bb, cc]), [cc])
+}
+
+pub fn spin_up_test() {
+  let conf = test_spin_up("empty", [])
+  should.be_false(conf.force)
+  should.be_false(conf.outdated)
+  should.be_false(conf.ignore_indirect)
+  should.be_false(conf.fake)
+  should.be_false(conf.verbose)
+  should.equal(conf.format, config.Minimal)
+
+  let conf = test_spin_up("force", ["--force"])
+  should.be_true(conf.force)
+
+  let conf = test_spin_up("outdated", ["--outdated"])
+  should.be_true(conf.outdated)
+
+  let conf = test_spin_up("ignore_indirect", ["--ignore-indirect"])
+  should.be_true(conf.ignore_indirect)
+
+  let conf = test_spin_up("fake", ["--fake"])
+  should.be_true(conf.fake)
+
+  let conf = test_spin_up("verbose", ["--verbose"])
+  should.be_true(conf.verbose)
+}
+
+// JS doesn't love the different format values sooo
+@target(erlang)
+pub fn spin_up_format_test() {
+  let conf = test_spin_up("format=minimal", ["--format", "minimal"])
+  should.equal(conf.format, config.Minimal)
+
+  let conf = test_spin_up("format=json", ["--format", "json"])
+  should.equal(conf.format, config.JSON)
+
+  let conf = test_spin_up("format=detailed", ["--format", "detailed"])
+  should.equal(conf.format, config.Detailed)
+}
+
+pub fn merge_flags_and_config_test() {
+  let empty_conf = empty_conf()
+  let empty_flags =
+    config.Flags(
+      force: False,
+      fake: False,
+      outdated: False,
+      ignore_indirect: False,
+      verbose: False,
+      format: option.None,
+    )
+
+  config.merge_flags_and_config(empty_flags, empty_conf)
+  |> should.equal(empty_conf)
+
+  // FLAG
+  config.merge_flags_and_config(
+    config.Flags(..empty_flags, outdated: True),
+    empty_conf,
+  )
+  |> should.equal(config.Config(..empty_conf, outdated: True))
+
+  config.merge_flags_and_config(
+    config.Flags(..empty_flags, ignore_indirect: True),
+    empty_conf,
+  )
+  |> should.equal(config.Config(..empty_conf, ignore_indirect: True))
+
+  config.merge_flags_and_config(
+    config.Flags(..empty_flags, force: True),
+    empty_conf,
+  )
+  |> should.equal(config.Config(..empty_conf, force: True))
+
+  config.merge_flags_and_config(
+    config.Flags(..empty_flags, format: option.Some(config.JSON)),
+    empty_conf,
+  )
+  |> should.equal(config.Config(..empty_conf, format: config.JSON))
+
+  config.merge_flags_and_config(
+    config.Flags(..empty_flags, format: option.Some(config.Detailed)),
+    empty_conf,
+  )
+  |> should.equal(config.Config(..empty_conf, format: config.Detailed))
+
+  // CONF
+  config.merge_flags_and_config(
+    empty_flags,
+    config.Config(..empty_conf, outdated: True),
+  )
+  |> should.equal(config.Config(..empty_conf, outdated: True))
+
+  config.merge_flags_and_config(
+    empty_flags,
+    config.Config(..empty_conf, ignore_indirect: True),
+  )
+  |> should.equal(config.Config(..empty_conf, ignore_indirect: True))
+
+  config.merge_flags_and_config(
+    empty_flags,
+    config.Config(..empty_conf, force: True),
+  )
+  |> should.equal(config.Config(..empty_conf, force: True))
+
+  config.merge_flags_and_config(
+    empty_flags,
+    config.Config(..empty_conf, format: config.JSON),
+  )
+  |> should.equal(config.Config(..empty_conf, format: config.JSON))
+
+  config.merge_flags_and_config(
+    empty_flags,
+    config.Config(..empty_conf, format: config.Detailed),
+  )
+  |> should.equal(config.Config(..empty_conf, format: config.Detailed))
+
+  // BOTH
+  config.merge_flags_and_config(
+    config.Flags(..empty_flags, format: option.Some(config.JSON)),
+    config.Config(..empty_conf, format: config.Minimal),
+  )
+  |> should.equal(config.Config(..empty_conf, format: config.JSON))
+
+  config.merge_flags_and_config(
+    config.Flags(..empty_flags, format: option.Some(config.Detailed)),
+    config.Config(..empty_conf, format: config.Minimal),
+  )
+  |> should.equal(config.Config(..empty_conf, format: config.Detailed))
 }

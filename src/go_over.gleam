@@ -4,7 +4,6 @@ import gleam/io
 import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
-import gleam/result
 import gleam/string
 import go_over/advisories/advisories
 import go_over/config.{type Config, Config}
@@ -13,7 +12,7 @@ import go_over/retired/outdated
 import go_over/retired/retired
 import go_over/util/constants
 import go_over/util/print
-import go_over/util/util.{has_flag}
+import go_over/util/spinner
 import go_over/warning.{
   type Warning, Direct, Indirect, Retired, Vulnerable, Warning,
 }
@@ -22,56 +21,8 @@ import gxyz/gxyz_tuple
 import shellout
 import simplifile
 
-type Flags {
-  Flags(
-    force: Bool,
-    fake: Bool,
-    outdated: Bool,
-    ignore_indirect: Bool,
-    format: option.Option(config.Format),
-  )
-}
-
-fn merge_flags_and_config(flags: Flags, cfg: Config) -> Config {
-  Config(
-    dev_deps: cfg.dev_deps,
-    cache: cfg.cache,
-    force: flags.force,
-    outdated: cfg.outdated || flags.outdated,
-    ignore_indirect: cfg.ignore_indirect || flags.ignore_indirect,
-    fake: flags.fake,
-    format: option.unwrap(flags.format, cfg.format),
-    ignore_packages: cfg.ignore_packages,
-    ignore_severity: cfg.ignore_severity,
-    ignore_ids: cfg.ignore_ids,
-    ignore_dev_dependencies: cfg.ignore_dev_dependencies,
-  )
-}
-
-fn spin_up(cfg: Config) -> Config {
-  let args = shellout.arguments()
-
-  let format =
-    list.find(args, string.starts_with(_, "--format"))
-    |> result.try(string.split_once(_, "="))
-    |> result.map(gxyz_tuple.at2_1)
-    |> result.map(config.parse_config_format)
-    |> option.from_result()
-
-  let flags =
-    Flags(
-      force: has_flag(args, "force"),
-      outdated: has_flag(args, "outdated"),
-      ignore_indirect: has_flag(args, "ignore-indirect"),
-      fake: has_flag(args, "fake"),
-      format: format,
-    )
-
-  merge_flags_and_config(flags, cfg)
-}
-
 fn get_vulnerable_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
-  advisories.check_for_advisories(pkgs, conf.force || !conf.cache)
+  advisories.check_for_advisories(pkgs, conf.force, conf.verbose)
   |> list.map(fn(p) {
     gxyz_tuple.map2_1(p, config.filter_advisory_ids(conf, _))
   })
@@ -82,7 +33,7 @@ fn get_vulnerable_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
 fn get_retired_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
   pkgs
   |> list.map(fn(pkg) {
-    retired.check_retired(pkg, conf.force || !conf.cache)
+    retired.check_retired(pkg, conf.force, conf.verbose)
     |> option.map(fn(ret) { #(pkg, ret) })
   })
   |> option.values()
@@ -92,7 +43,7 @@ fn get_retired_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
 fn get_outdated_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
   pkgs
   |> list.map(fn(pkg) {
-    case outdated.check_outdated(pkg, conf.force || !conf.cache) {
+    case outdated.check_outdated(pkg, conf.force, conf.verbose) {
       Some(ret) -> Some(#(pkg, ret))
       None -> None
     }
@@ -118,7 +69,7 @@ fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
       |> function.tap(print_warnings_count)
       |> list.map(warning.format_as_string_minimal)
       |> string.join("")
-      |> io.print_error
+      |> io.print_error()
 
     config.JSON ->
       vulns
@@ -132,26 +83,55 @@ fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
       |> function.tap(print_warnings_count)
       |> list.map(warning.format_as_string)
       |> string.join(constants.long_ass_dashes)
-      |> io.print_error
+      |> io.print_error()
   }
   shellout.exit(1)
 }
 
 pub fn main() {
-  let conf = spin_up(config.read_config("gleam.toml"))
+  let conf = case
+    config.spin_up(config.read_config("gleam.toml"), shellout.arguments())
+  {
+    Error(e) -> {
+      io.println_error(e)
+      shellout.exit(0)
+      panic as "Unreachable, please create an issue in https://github.com/bwireman/go-over if you see this"
+    }
+    Ok(conf) -> conf
+  }
+
+  let spinner = spinner.new_spinner("Let's do this!", conf.verbose)
   gxyz_function.ignore_result(
-    !conf.cache,
+    conf.force,
     gxyz_function.freeze1(simplifile.delete, constants.go_over_path()),
   )
 
+  spinner.set_text_spinner(spinner, "Reading manifest", conf.verbose)
   let pkgs =
     packages.read_manifest("manifest.toml")
     |> config.filter_dev_dependencies(conf, _)
     |> config.filter_packages(conf, _)
     |> config.filter_indirect(conf, _)
 
+  spinner.set_text_spinner(
+    spinner,
+    "Checking packages: " <> print.raw("vulnerable", "red"),
+    conf.verbose,
+  )
   let vulnerable_packages = get_vulnerable_packages(pkgs, conf)
+
+  spinner.set_text_spinner(
+    spinner,
+    "Checking packages: " <> print.raw("retired", "yellow"),
+    conf.verbose,
+  )
   let retired_packages = get_retired_packages(pkgs, conf)
+
+  spinner.set_text_spinner(
+    spinner,
+    "Checking packages: " <> print.raw("outdated", "brightmagenta"),
+    conf.verbose,
+  )
   let outdated_packages =
     gxyz_function.iff(
       conf.outdated,
@@ -164,13 +144,15 @@ pub fn main() {
     gxyz_function.freeze2(print_warnings, example_warnings, conf),
   )
 
+  spinner.set_text_spinner(spinner, "Filtering warnings", conf.verbose)
   let warnings =
     list.append(retired_packages, vulnerable_packages)
     |> list.append(outdated_packages)
     |> config.filter_severity(conf, _)
 
+  spinner.stop_spinner(spinner)
   case warnings {
-    [] -> print.success("All good! ✅")
+    [] -> print.success("✅ No warnings found!")
     vulns -> print_warnings(vulns, conf)
   }
 }

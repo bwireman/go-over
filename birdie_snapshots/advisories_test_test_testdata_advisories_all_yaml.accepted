@@ -1,5 +1,5 @@
 ---
-version: 1.2.4
+version: 1.2.5
 title: Advisories test: test/testdata/advisories/all.yaml
 file: ./test/advisories_test.gleam
 test_name: read_adv_test

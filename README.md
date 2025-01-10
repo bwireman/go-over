@@ -43,20 +43,21 @@ Bun, Deno & Nodejs are _all_ supported!
 gleam run -m go_over
 ```
 
-### 🎥 Obligatory Asciinema
+### 🎥 Obligatory VHS
 
 ![demo](https://raw.githubusercontent.com/bwireman/go-over/main/images/demo.gif)
 
 ### 🏴 Flags
 
-Override config values if set
+- `--format` FORMAT: Specify the output format of any warnings, [minimal,
+  verbose, json] (default: None)
+- `--force`: Force pulling new data even if the cached data is still valid
+- `--outdated`: Additionally check if newer versions of dependencies exist
+- `--ignore-indirect`: Ignore all warnings for indirect dependencies
+- `--verbose`: Print progress as packages are checked
+- `--help`,-h: Print help
 
-- `--force`: will force pulling new data even if the cached data is still valid
-- `--format=<format>`: specify the output format of any warnings.
-  `["minimal", "detailed", "json"]`
-- `--outdated`: will _additionally_ check if newer versions of dependencies
-  exist
-- `--ignore-indirect`: will ignore all warnings for indirect dependencies
+Flags override config values if set
 
 ### ⚙️ Config
 
@@ -73,10 +74,6 @@ format = "minimal"
 # will additionally check if newer versions of dependencies exist
 # default: false
 outdated = false
-# will ignore all warnings for indirect dependencies
-# default: false
-# DEPRECATED use go-over.ignore.indirect instead
-ignore_indirect = false
 
 [go-over.ignore]
 # will ignore all warnings for indirect dependencies

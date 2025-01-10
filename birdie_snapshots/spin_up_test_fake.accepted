@@ -1,13 +1,13 @@
 ---
 version: 1.2.5
-title: Conf test: test/testdata/gleam/indirect_new.toml
+title: Spin up test: fake
 ---
 Config(
   [],
   False,
+  False,
+  False,
   True,
-  False,
-  False,
   Minimal,
   False,
   [],
