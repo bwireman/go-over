@@ -188,7 +188,7 @@ pub fn merge_flags_and_config_test() {
       ignore_indirect: False,
       verbose: False,
       format: option.None,
-      local: True,
+      global: False,
     )
 
   config.merge_flags_and_config(empty_flags, empty_conf)
@@ -212,6 +212,12 @@ pub fn merge_flags_and_config_test() {
     empty_conf,
   )
   |> should.equal(config.Config(..empty_conf, force: True))
+
+  config.merge_flags_and_config(
+    config.Flags(..empty_flags, global: True),
+    empty_conf,
+  )
+  |> should.equal(config.Config(..empty_conf, local: False))
 
   config.merge_flags_and_config(
     config.Flags(..empty_flags, format: option.Some(config.JSON)),
@@ -246,6 +252,12 @@ pub fn merge_flags_and_config_test() {
 
   config.merge_flags_and_config(
     empty_flags,
+    config.Config(..empty_conf, local: False),
+  )
+  |> should.equal(config.Config(..empty_conf, local: False))
+
+  config.merge_flags_and_config(
+    empty_flags,
     config.Config(..empty_conf, format: config.JSON),
   )
   |> should.equal(config.Config(..empty_conf, format: config.JSON))
@@ -268,4 +280,28 @@ pub fn merge_flags_and_config_test() {
     config.Config(..empty_conf, format: config.Minimal),
   )
   |> should.equal(config.Config(..empty_conf, format: config.Detailed))
+
+  config.merge_flags_and_config(
+    config.Flags(..empty_flags, global: False),
+    config.Config(..empty_conf, local: True),
+  )
+  |> should.equal(config.Config(..empty_conf, local: True))
+
+  config.merge_flags_and_config(
+    config.Flags(..empty_flags, global: True),
+    config.Config(..empty_conf, local: False),
+  )
+  |> should.equal(config.Config(..empty_conf, local: False))
+
+  config.merge_flags_and_config(
+    config.Flags(..empty_flags, global: True),
+    config.Config(..empty_conf, local: True),
+  )
+  |> should.equal(config.Config(..empty_conf, local: False))
+
+  config.merge_flags_and_config(
+    config.Flags(..empty_flags, global: False),
+    config.Config(..empty_conf, local: False),
+  )
+  |> should.equal(config.Config(..empty_conf, local: False))
 }

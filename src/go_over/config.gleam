@@ -47,7 +47,7 @@ pub type Flags {
     fake: Bool,
     outdated: Bool,
     ignore_indirect: Bool,
-    local: Bool,
+    global: Bool,
     verbose: Bool,
     format: option.Option(Format),
   )
@@ -220,6 +220,11 @@ fn help_message(args: arg_info.ArgInfo) -> String {
 }
 
 pub fn merge_flags_and_config(flags: Flags, cfg: Config) -> Config {
+  let local = case flags.global {
+    True -> False
+    False -> cfg.local
+  }
+
   Config(
     dev_deps: cfg.dev_deps,
     force: flags.force || cfg.force,
@@ -227,7 +232,7 @@ pub fn merge_flags_and_config(flags: Flags, cfg: Config) -> Config {
     ignore_indirect: cfg.ignore_indirect || flags.ignore_indirect,
     fake: flags.fake,
     verbose: flags.verbose,
-    local: flags.local && cfg.local,
+    local:,
     format: option.unwrap(flags.format, cfg.format),
     ignore_packages: cfg.ignore_packages,
     ignore_severity: cfg.ignore_severity,
@@ -254,7 +259,7 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
         fake:,
         verbose:,
         format:,
-        local: !global,
+        global: global,
       ),
       cfg,
     )
