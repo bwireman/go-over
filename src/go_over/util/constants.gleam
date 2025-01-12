@@ -1,3 +1,4 @@
+import directories
 import filepath
 import go_over/util/util.{hard_fail}
 import simplifile
@@ -10,8 +11,14 @@ pub const advisories_repo = "mirego/elixir-security-advisories"
 
 pub const long_ass_dashes = "\n-----------------------------------------------\n"
 
-pub fn go_over_path() -> String {
-  simplifile.current_directory()
-  |> hard_fail("could not get current path")
+pub fn go_over_path(local: Bool) -> String {
+  case local {
+    False ->
+      directories.home_dir()
+      |> hard_fail("could not get current path")
+    True ->
+      simplifile.current_directory()
+      |> hard_fail("could not get current path")
+  }
   |> filepath.join(".go-over")
 }

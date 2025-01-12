@@ -188,6 +188,7 @@ pub fn merge_flags_and_config_test() {
       ignore_indirect: False,
       verbose: False,
       format: option.None,
+      local: True,
     )
 
   config.merge_flags_and_config(empty_flags, empty_conf)

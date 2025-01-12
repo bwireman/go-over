@@ -33,6 +33,7 @@ pub type Config {
     fake: Bool,
     format: Format,
     verbose: Bool,
+    local: Bool,
     ignore_packages: List(String),
     ignore_severity: List(String),
     ignore_ids: List(String),
@@ -46,6 +47,7 @@ pub type Flags {
     fake: Bool,
     outdated: Bool,
     ignore_indirect: Bool,
+    local: Bool,
     verbose: Bool,
     format: option.Option(Format),
   )
@@ -77,6 +79,9 @@ pub fn read_config(path: String) -> Config {
     tom.get_string(go_over, ["format"])
     |> unwrap("minimal")
     |> string.lowercase()
+  let local =
+    tom.get_bool(go_over, ["local"])
+    |> unwrap(True)
 
   let ignore_indirect =
     tom.get_bool(ignore, ["indirect"])
@@ -116,6 +121,7 @@ pub fn read_config(path: String) -> Config {
     fake: False,
     //read from flags only
     verbose: False,
+    local: local,
     format: parse_config_format(format) |> option.unwrap(Minimal),
     ignore_packages: list.map(packages, toml_as_string) |> option.values,
     ignore_severity: list.map(severity, toml_as_string) |> option.values,
@@ -217,10 +223,11 @@ pub fn merge_flags_and_config(flags: Flags, cfg: Config) -> Config {
   Config(
     dev_deps: cfg.dev_deps,
     force: flags.force || cfg.force,
-    outdated: cfg.outdated || flags.outdated,
+    outdated: flags.outdated || cfg.outdated,
     ignore_indirect: cfg.ignore_indirect || flags.ignore_indirect,
     fake: flags.fake,
     verbose: flags.verbose,
+    local: flags.local && cfg.local,
     format: option.unwrap(flags.format, cfg.format),
     ignore_packages: cfg.ignore_packages,
     ignore_severity: cfg.ignore_severity,
@@ -234,12 +241,21 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
     use force <- clip.parameter
     use outdated <- clip.parameter
     use ignore_indirect <- clip.parameter
+    use global <- clip.parameter
     use fake <- clip.parameter
     use verbose <- clip.parameter
     use format <- clip.parameter
 
     merge_flags_and_config(
-      Flags(force:, outdated:, ignore_indirect:, fake:, verbose:, format:),
+      Flags(
+        force:,
+        outdated:,
+        ignore_indirect:,
+        fake:,
+        verbose:,
+        format:,
+        local: !global,
+      ),
       cfg,
     )
   })
@@ -254,6 +270,10 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
   |> clip.flag(flag.help(
     flag.new("ignore-indirect"),
     "Ignore all warnings for indirect dependencies",
+  ))
+  |> clip.flag(flag.help(
+    flag.new("global"),
+    "cache all info in $HOME directory instead of locally",
   ))
   |> clip.flag(flag.new("fake"))
   |> clip.flag(flag.help(

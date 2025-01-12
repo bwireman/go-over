@@ -10,9 +10,9 @@ import go_over/util/util.{hard_fail}
 import gxyz/gxyz_function
 import simplifile
 
-fn pull_retired(pkg: Package, verbose: Bool) -> Nil {
+fn pull_retired(pkg: Package, verbose: Bool, local: Bool) -> Nil {
   print.progress(verbose, "Checking: " <> pkg.name <> " From hex.pm")
-  let pkg_path = core.release_path(pkg)
+  let pkg_path = core.release_path(pkg, local)
   let pkg_path_fail = core.pkg_pull_error(pkg, pkg_path)
 
   let _ = simplifile.delete(pkg_path)
@@ -22,7 +22,7 @@ fn pull_retired(pkg: Package, verbose: Bool) -> Nil {
   let resp = core.do_pull_hex(pkg, core.release_url(pkg))
 
   pkg
-  |> core.release_filename()
+  |> core.release_filename(local)
   |> simplifile.write(resp)
   |> hard_fail(pkg_path_fail)
 }
@@ -31,18 +31,19 @@ pub fn check_retired(
   pkg: Package,
   force_pull: Bool,
   verbose: Bool,
+  local: Bool,
 ) -> Option(ReleaseRetirement) {
   pkg
-  |> core.release_path()
+  |> core.release_path(local)
   |> cache.pull_if_not_cached(
     constants.hour,
     force_pull,
     verbose,
-    gxyz_function.freeze2(pull_retired, pkg, verbose),
+    gxyz_function.freeze3(pull_retired, pkg, verbose, local),
     pkg.name <> ":" <> pkg.version_raw,
   )
 
-  let cached_file_name = core.release_filename(pkg)
+  let cached_file_name = core.release_filename(pkg, local)
   let resp =
     cached_file_name
     |> simplifile.read()

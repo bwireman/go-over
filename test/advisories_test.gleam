@@ -8,7 +8,7 @@ import simplifile
 pub fn check_for_advisories_test() {
   let assert [#(pkg, [adv1, adv2])] =
     read_manifest("test/testdata/manifest/known_vulnerable.toml")
-    |> check_for_advisories(False, False)
+    |> check_for_advisories(False, False, True)
 
   should.equal(pkg.name, "phoenix")
   should.equal(adv1.name, "phoenix")

@@ -13,12 +13,12 @@ import go_over/util/util.{hard_fail}
 import gxyz/gxyz_function
 import simplifile
 
-fn pull_outdated(pkg: Package, verbose: Bool) -> Nil {
+fn pull_outdated(pkg: Package, verbose: Bool, local: Bool) -> Nil {
   print.progress(
     verbose,
     "Checking latest version: " <> pkg.name <> " From hex.pm",
   )
-  let pkg_path = core.outdated_path(pkg)
+  let pkg_path = core.outdated_path(pkg, local)
   let pkg_path_fail = core.pkg_pull_error(pkg, pkg_path)
 
   let _ = simplifile.delete(pkg_path)
@@ -28,7 +28,7 @@ fn pull_outdated(pkg: Package, verbose: Bool) -> Nil {
   let resp = core.do_pull_hex(pkg, core.package_url(pkg))
 
   pkg
-  |> core.outdated_filename
+  |> core.outdated_filename(local)
   |> simplifile.write(resp)
   |> hard_fail(pkg_path_fail)
 }
@@ -46,18 +46,19 @@ pub fn check_outdated(
   pkg: Package,
   force_pull: Bool,
   verbose: Bool,
+  local: Bool,
 ) -> Option(String) {
   pkg
-  |> core.outdated_path()
+  |> core.outdated_path(local)
   |> cache.pull_if_not_cached(
     constants.hour,
     force_pull,
     verbose,
-    gxyz_function.freeze2(pull_outdated, pkg, verbose),
+    gxyz_function.freeze3(pull_outdated, pkg, verbose, local),
     pkg.name <> ": latest stable version",
   )
 
-  let cached_file_name = core.outdated_filename(pkg)
+  let cached_file_name = core.outdated_filename(pkg, local)
   let resp =
     cached_file_name
     |> simplifile.read()

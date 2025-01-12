@@ -10,6 +10,7 @@ Config(
   False,
   Json,
   False,
+  True,
   [],
   [],
   [],

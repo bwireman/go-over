@@ -22,7 +22,7 @@ import shellout
 import simplifile
 
 fn get_vulnerable_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
-  advisories.check_for_advisories(pkgs, conf.force, conf.verbose)
+  advisories.check_for_advisories(pkgs, conf.force, conf.verbose, conf.local)
   |> list.map(fn(p) {
     gxyz_tuple.map2_1(p, config.filter_advisory_ids(conf, _))
   })
@@ -33,7 +33,7 @@ fn get_vulnerable_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
 fn get_retired_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
   pkgs
   |> list.map(fn(pkg) {
-    retired.check_retired(pkg, conf.force, conf.verbose)
+    retired.check_retired(pkg, conf.force, conf.verbose, conf.local)
     |> option.map(fn(ret) { #(pkg, ret) })
   })
   |> option.values()
@@ -43,7 +43,7 @@ fn get_retired_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
 fn get_outdated_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
   pkgs
   |> list.map(fn(pkg) {
-    case outdated.check_outdated(pkg, conf.force, conf.verbose) {
+    case outdated.check_outdated(pkg, conf.force, conf.verbose, conf.local) {
       Some(ret) -> Some(#(pkg, ret))
       None -> None
     }
@@ -103,7 +103,7 @@ pub fn main() {
   let spinner = spinner.new_spinner("Let's do this!", conf.verbose)
   gxyz_function.ignore_result(
     conf.force,
-    gxyz_function.freeze1(simplifile.delete, constants.go_over_path()),
+    gxyz_function.freeze1(simplifile.delete, constants.go_over_path(conf.local)),
   )
 
   spinner.set_text_spinner(spinner, "Reading manifest", conf.verbose)
