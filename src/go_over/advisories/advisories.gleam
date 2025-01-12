@@ -20,8 +20,8 @@ pub type Advisory {
   )
 }
 
-fn path() -> String {
-  go_over_path()
+fn path(global: Bool) -> String {
+  go_over_path(global)
   |> filepath.join("mirego-elixir-security-advisories")
 }
 
@@ -49,8 +49,8 @@ fn read_adv(path: String) -> Advisory {
   )
 }
 
-fn read_all_adv() -> List(Advisory) {
-  let packages_path = filepath.join(path(), "packages")
+fn read_all_adv(global: Bool) -> List(Advisory) {
+  let packages_path = filepath.join(path(global), "packages")
 
   let packages =
     hard_fail(
@@ -98,21 +98,21 @@ fn is_vulnerable(
   |> option.values
 }
 
-fn delete_and_clone(verbose: Bool) -> Nil {
-  let p = path()
+fn delete_and_clone(verbose: Bool, global: Bool) -> Nil {
+  let p = path(global)
 
   // ? File may or may not exist
   let _ = simplifile.delete(p)
   print.progress(verbose, "Cloning: " <> constants.advisories_repo <> "...")
 
-  path()
+  path(global)
   |> simplifile.create_directory_all()
-  |> hard_fail("could not create directory at " <> path())
+  |> hard_fail("could not create directory at " <> path(global))
 
   util.retry_cmd("git", [
     "clone",
     "https://github.com/" <> constants.advisories_repo <> ".git",
-    path(),
+    path(global),
   ])
   |> hard_fail("could not clone " <> constants.advisories_repo)
 
@@ -128,17 +128,18 @@ pub fn check_for_advisories(
   packages: List(packages.Package),
   force_pull: Bool,
   verbose: Bool,
+  global: Bool,
 ) -> List(#(Package, List(Advisory))) {
   cache.pull_if_not_cached(
-    path(),
+    path(global),
     six_hours,
     force_pull,
     verbose,
-    gxyz_function.freeze1(delete_and_clone, verbose),
+    gxyz_function.freeze2(delete_and_clone, verbose, global),
     constants.advisories_repo,
   )
 
-  let advisories = read_all_adv()
+  let advisories = read_all_adv(global)
 
   list.map(packages, fn(pkg) {
     case is_vulnerable(pkg, advisories) {

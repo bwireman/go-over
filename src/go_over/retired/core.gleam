@@ -5,15 +5,15 @@ import go_over/packages.{type Package}
 import go_over/util/constants
 import go_over/util/util.{hard_fail}
 
-pub fn release_path(pkg: packages.Package) -> String {
-  constants.go_over_path()
+pub fn release_path(pkg: packages.Package, global: Bool) -> String {
+  constants.go_over_path(global)
   |> filepath.join("deps")
   |> filepath.join(pkg.name)
   |> filepath.join(pkg.version_raw)
 }
 
-pub fn outdated_path(pkg: packages.Package) -> String {
-  constants.go_over_path()
+pub fn outdated_path(pkg: packages.Package, global: Bool) -> String {
+  constants.go_over_path(global)
   |> filepath.join("outdated")
   |> filepath.join(pkg.name)
   |> filepath.join(pkg.version_raw)
@@ -26,15 +26,15 @@ pub fn pkg_pull_error(pkg: packages.Package, pkg_path: String) {
   <> pkg_path
 }
 
-pub fn release_filename(pkg) -> String {
+pub fn release_filename(pkg, global: Bool) -> String {
   pkg
-  |> release_path
+  |> release_path(global)
   |> filepath.join("resp.json")
 }
 
-pub fn outdated_filename(pkg) -> String {
+pub fn outdated_filename(pkg, global: Bool) -> String {
   pkg
-  |> outdated_path
+  |> outdated_path(global)
   |> filepath.join("outdated-resp.json")
 }
 

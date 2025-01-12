@@ -68,6 +68,10 @@ Optional settings that can be added to your project's `gleam.toml`
 # disables caching if false
 # default: true
 cache = true
+# if true all cached data will be stored in user's home directory
+# allowing cache to be shared between projects
+# default: false
+global = false
 # sets output format for warnings ["minimal", "detailed", "json"]
 # default: "minimal"
 format = "minimal"
