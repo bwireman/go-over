@@ -11,12 +11,12 @@ pub const advisories_repo = "mirego/elixir-security-advisories"
 
 pub const long_ass_dashes = "\n-----------------------------------------------\n"
 
-pub fn go_over_path(local: Bool) -> String {
-  case local {
-    False ->
+pub fn go_over_path(global: Bool) -> String {
+  case global {
+    True ->
       directories.home_dir()
       |> hard_fail("could not get current path")
-    True ->
+    False ->
       simplifile.current_directory()
       |> hard_fail("could not get current path")
   }

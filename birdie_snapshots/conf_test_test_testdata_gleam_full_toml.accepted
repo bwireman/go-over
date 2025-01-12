@@ -10,7 +10,7 @@ Config(
   False,
   Minimal,
   False,
-  True,
+  False,
   ["a", "b"],
   ["a", "b"],
   ["a", "b"],

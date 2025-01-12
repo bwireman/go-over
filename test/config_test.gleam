@@ -217,7 +217,7 @@ pub fn merge_flags_and_config_test() {
     config.Flags(..empty_flags, global: True),
     empty_conf,
   )
-  |> should.equal(config.Config(..empty_conf, local: False))
+  |> should.equal(config.Config(..empty_conf, global: True))
 
   config.merge_flags_and_config(
     config.Flags(..empty_flags, format: option.Some(config.JSON)),
@@ -252,9 +252,9 @@ pub fn merge_flags_and_config_test() {
 
   config.merge_flags_and_config(
     empty_flags,
-    config.Config(..empty_conf, local: False),
+    config.Config(..empty_conf, global: True),
   )
-  |> should.equal(config.Config(..empty_conf, local: False))
+  |> should.equal(config.Config(..empty_conf, global: True))
 
   config.merge_flags_and_config(
     empty_flags,
@@ -283,25 +283,25 @@ pub fn merge_flags_and_config_test() {
 
   config.merge_flags_and_config(
     config.Flags(..empty_flags, global: False),
-    config.Config(..empty_conf, local: True),
+    config.Config(..empty_conf, global: False),
   )
-  |> should.equal(config.Config(..empty_conf, local: True))
+  |> should.equal(config.Config(..empty_conf, global: False))
 
   config.merge_flags_and_config(
     config.Flags(..empty_flags, global: True),
-    config.Config(..empty_conf, local: False),
+    config.Config(..empty_conf, global: True),
   )
-  |> should.equal(config.Config(..empty_conf, local: False))
+  |> should.equal(config.Config(..empty_conf, global: True))
 
   config.merge_flags_and_config(
     config.Flags(..empty_flags, global: True),
-    config.Config(..empty_conf, local: True),
+    config.Config(..empty_conf, global: False),
   )
-  |> should.equal(config.Config(..empty_conf, local: False))
+  |> should.equal(config.Config(..empty_conf, global: True))
 
   config.merge_flags_and_config(
     config.Flags(..empty_flags, global: False),
-    config.Config(..empty_conf, local: False),
+    config.Config(..empty_conf, global: True),
   )
-  |> should.equal(config.Config(..empty_conf, local: False))
+  |> should.equal(config.Config(..empty_conf, global: True))
 }

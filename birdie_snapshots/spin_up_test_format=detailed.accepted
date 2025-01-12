@@ -10,7 +10,7 @@ Config(
   False,
   Detailed,
   False,
-  True,
+  False,
   [],
   [],
   [],

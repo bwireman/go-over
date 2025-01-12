@@ -6,7 +6,7 @@ import clip/opt
 import gleam/dict
 import gleam/list
 import gleam/option.{type Option, Some}
-import gleam/result.{unwrap}
+import gleam/result
 import gleam/string
 import go_over/advisories/advisories.{type Advisory}
 import go_over/packages.{type Package}
@@ -33,7 +33,7 @@ pub type Config {
     fake: Bool,
     format: Format,
     verbose: Bool,
-    local: Bool,
+    global: Bool,
     ignore_packages: List(String),
     ignore_severity: List(String),
     ignore_ids: List(String),
@@ -60,28 +60,28 @@ pub fn read_config(path: String) -> Config {
     tom.parse(res) |> hard_fail("could not read config file at " <> path)
   let dev_deps =
     tom.get_table(gleam, ["dev-dependencies"])
-    |> unwrap(dict.new())
+    |> result.unwrap(dict.new())
     |> dict.keys()
 
   let go_over =
     tom.get_table(gleam, ["go-over"])
-    |> unwrap(dict.new())
+    |> result.unwrap(dict.new())
   let ignore =
     tom.get_table(go_over, ["ignore"])
-    |> unwrap(dict.new())
+    |> result.unwrap(dict.new())
   let cache =
     tom.get_bool(go_over, ["cache"])
-    |> unwrap(True)
+    |> result.unwrap(True)
   let outdated =
     tom.get_bool(go_over, ["outdated"])
-    |> unwrap(False)
+    |> result.unwrap(False)
   let format =
     tom.get_string(go_over, ["format"])
-    |> unwrap("minimal")
+    |> result.unwrap("minimal")
     |> string.lowercase()
-  let local =
-    tom.get_bool(go_over, ["local"])
-    |> unwrap(True)
+  let global =
+    tom.get_bool(go_over, ["global"])
+    |> result.unwrap(False)
 
   let ignore_indirect =
     tom.get_bool(ignore, ["indirect"])
@@ -101,32 +101,32 @@ pub fn read_config(path: String) -> Config {
 
   let packages =
     tom.get_array(ignore, ["packages"])
-    |> unwrap([])
+    |> result.unwrap([])
   let severity =
     tom.get_array(ignore, ["severity"])
-    |> unwrap([])
+    |> result.unwrap([])
   let ids =
     tom.get_array(ignore, ["ids"])
-    |> unwrap([])
+    |> result.unwrap([])
   let ignore_dev_dependencies =
     tom.get_bool(ignore, ["dev_dependencies"])
-    |> unwrap(False)
+    |> result.unwrap(False)
 
   Config(
-    dev_deps: dev_deps,
-    outdated: outdated,
-    ignore_indirect: ignore_indirect,
+    dev_deps:,
+    outdated:,
+    ignore_indirect:,
     force: !cache,
     //read from flags only
     fake: False,
     //read from flags only
     verbose: False,
-    local: local,
+    global:,
     format: parse_config_format(format) |> option.unwrap(Minimal),
-    ignore_packages: list.map(packages, toml_as_string) |> option.values,
-    ignore_severity: list.map(severity, toml_as_string) |> option.values,
-    ignore_ids: list.map(ids, toml_as_string) |> option.values,
-    ignore_dev_dependencies: ignore_dev_dependencies,
+    ignore_packages: list.map(packages, toml_as_string) |> option.values(),
+    ignore_severity: list.map(severity, toml_as_string) |> option.values(),
+    ignore_ids: list.map(ids, toml_as_string) |> option.values(),
+    ignore_dev_dependencies:,
   )
 }
 
@@ -211,6 +211,7 @@ fn help_message(args: arg_info.ArgInfo) -> String {
                        / /_/ / /_/ /   / /_/ / |/ /  __/ /
                        \\__, /\\____/____\\____/|___/\\___/_/
                       /____/     /_____/
+version 2.4.1
 "
     |> print.format_high()
       <> "🕵️‍♂️ Audit Erlang & Elixir dependencies, to make sure your gleam projects really ✨ sparkle!",
@@ -220,9 +221,9 @@ fn help_message(args: arg_info.ArgInfo) -> String {
 }
 
 pub fn merge_flags_and_config(flags: Flags, cfg: Config) -> Config {
-  let local = case flags.global {
-    True -> False
-    False -> cfg.local
+  let global = case flags.global {
+    True -> True
+    False -> cfg.global
   }
 
   Config(
@@ -232,7 +233,7 @@ pub fn merge_flags_and_config(flags: Flags, cfg: Config) -> Config {
     ignore_indirect: cfg.ignore_indirect || flags.ignore_indirect,
     fake: flags.fake,
     verbose: flags.verbose,
-    local:,
+    global:,
     format: option.unwrap(flags.format, cfg.format),
     ignore_packages: cfg.ignore_packages,
     ignore_severity: cfg.ignore_severity,
@@ -259,7 +260,7 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
         fake:,
         verbose:,
         format:,
-        global: global,
+        global:,
       ),
       cfg,
     )
@@ -278,7 +279,7 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
   ))
   |> clip.flag(flag.help(
     flag.new("global"),
-    "cache all info in $HOME directory instead of locally",
+    "Cache data globally in user's home directory for use by multiple projects",
   ))
   |> clip.flag(flag.new("fake"))
   |> clip.flag(flag.help(

@@ -54,7 +54,7 @@ actions = [
 
 [go-over]
 cache = true
-local = false
+global = true
 format = "minimal"
 outdated = false
 

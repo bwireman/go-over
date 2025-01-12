@@ -1,6 +1,6 @@
 Output images/demo.gif
 Set FontSize 14
-Set PlaybackSpeed 1.25
+Set PlaybackSpeed 1.35
 Set TypingSpeed 75ms
 Set FontFamily 'JetBrains Mono'
 Set Margin 15
@@ -9,7 +9,9 @@ Set BorderRadius 12
 
 # Setup
 Hide
-Type `rm -rf .go-over/ && clear`
+Type `rm -rf .go-over/`
+Enter
+Type `rm -rf ~/.go-over/ && clear`
 Enter
 Show
 
@@ -21,7 +23,7 @@ Sleep 10s
 Type clear
 Enter
 
-Type "# check for retired, vulnerable or additionally outdated packages"
+Type "# check for retired, vulnerable (& optionally outdated) packages"
 Enter
 Sleep 5s
 Type `gleam run -m go_over -- --outdated`
