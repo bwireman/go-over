@@ -15,10 +15,10 @@ pub fn go_over_path(global: Bool) -> String {
   case global {
     True ->
       directories.home_dir()
-      |> hard_fail("could not get current path")
+      |> hard_fail("could not get home directory")
     False ->
       simplifile.current_directory()
-      |> hard_fail("could not get current path")
+      |> hard_fail("could not get current directory")
   }
   |> filepath.join(".go-over")
 }
