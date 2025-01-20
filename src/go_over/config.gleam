@@ -209,7 +209,7 @@ fn help_message(args: arg_info.ArgInfo) -> String {
                        / /_/ / /_/ /   / /_/ / |/ /  __/ /
                        \\__, /\\____/____\\____/|___/\\___/_/
                       /____/     /_____/
-version 2.4.1
+version 2.4.2
 "
     |> print.format_high()
       <> "🕵️‍♂️ Audit Erlang & Elixir dependencies, to make sure your gleam projects really ✨ sparkle!",
