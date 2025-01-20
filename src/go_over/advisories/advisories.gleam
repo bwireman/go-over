@@ -6,8 +6,9 @@ import go_over/packages.{type Package}
 import go_over/util/cache
 import go_over/util/constants.{go_over_path, six_hours}
 import go_over/util/print
-import go_over/util/util.{hard_fail}
-import gxyz/gxyz_function
+import go_over/util/util
+import gxyz/cli
+import gxyz/function
 import simplifile
 
 pub type Advisory {
@@ -34,11 +35,11 @@ pub fn read(
 fn read_adv(path: String) -> Advisory {
   let body =
     simplifile.read(path)
-    |> hard_fail("could not read adv file at: " <> path)
+    |> cli.hard_fail_with_msg("could not read adv file at: " <> path)
 
   let #(id, name, severity, desc, versions) =
     read(body)
-    |> hard_fail("could not parse advisory file: " <> path)
+    |> cli.hard_fail_with_msg("could not parse advisory file: " <> path)
 
   Advisory(
     id: id,
@@ -53,7 +54,7 @@ fn read_all_adv(global: Bool) -> List(Advisory) {
   let packages_path = filepath.join(path(global), "packages")
 
   let packages =
-    hard_fail(
+    cli.hard_fail_with_msg(
       simplifile.read_directory(packages_path),
       "could not read " <> packages_path,
     )
@@ -62,7 +63,7 @@ fn read_all_adv(global: Bool) -> List(Advisory) {
     let dir_path = filepath.join(packages_path, dir)
 
     let adv_names =
-      hard_fail(
+      cli.hard_fail_with_msg(
         simplifile.read_directory(dir_path),
         "could not read " <> dir_path,
       )
@@ -107,14 +108,14 @@ fn delete_and_clone(verbose: Bool, global: Bool) -> Nil {
 
   path(global)
   |> simplifile.create_directory_all()
-  |> hard_fail("could not create directory at " <> path(global))
+  |> cli.hard_fail_with_msg("could not create directory at " <> path(global))
 
   util.retry_cmd("git", [
     "clone",
     "https://github.com/" <> constants.advisories_repo <> ".git",
     path(global),
   ])
-  |> hard_fail("could not clone " <> constants.advisories_repo)
+  |> cli.hard_fail_with_msg("could not clone " <> constants.advisories_repo)
 
   [
     ".git", ".gitignore", ".github", "config", "lib", ".formatter.exs",
@@ -135,7 +136,7 @@ pub fn check_for_advisories(
     six_hours,
     force_pull,
     verbose,
-    gxyz_function.freeze2(delete_and_clone, verbose, global),
+    function.freeze2(delete_and_clone, verbose, global),
     constants.advisories_repo,
   )
 

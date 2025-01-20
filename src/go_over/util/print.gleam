@@ -1,5 +1,5 @@
 import gleam/io
-import gxyz/gxyz_function
+import gxyz/function
 import shellout
 
 pub fn raw(msg: String, color: String) {
@@ -7,7 +7,7 @@ pub fn raw(msg: String, color: String) {
 }
 
 pub fn progress(verbose: Bool, msg: String) {
-  gxyz_function.iff_nil(verbose, fn() {
+  function.iff_nil(verbose, fn() {
     shellout.style(msg, with: shellout.color(["brightmagenta"]), custom: [])
     |> io.println()
   })

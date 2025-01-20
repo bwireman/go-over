@@ -4,7 +4,7 @@ import gleam/int
 import gleam/order
 import gleam/result
 import go_over/util/print
-import go_over/util/util.{hard_fail}
+import gxyz/cli
 import simplifile
 
 fn cache_name(path: String) -> String {
@@ -51,12 +51,12 @@ pub fn pull_if_not_cached(
         |> int.to_string()
 
       simplifile.create_directory_all(path)
-      |> hard_fail("could not write cache file for " <> path)
+      |> cli.hard_fail_with_msg("could not write cache file for " <> path)
 
       path
       |> cache_name()
       |> simplifile.write(now)
-      |> hard_fail("could not write cache file for " <> path)
+      |> cli.hard_fail_with_msg("could not write cache file for " <> path)
 
       Nil
     }

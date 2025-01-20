@@ -16,18 +16,16 @@ import go_over/util/spinner
 import go_over/warning.{
   type Warning, Direct, Indirect, Retired, Vulnerable, Warning,
 }
-import gxyz/gxyz_function
-import gxyz/gxyz_tuple
+import gxyz/function as gfunction
+import gxyz/tuple
 import shellout
 import simplifile
 
 fn get_vulnerable_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
   advisories.check_for_advisories(pkgs, conf.force, conf.verbose, conf.global)
-  |> list.map(fn(p) {
-    gxyz_tuple.map2_1(p, config.filter_advisory_ids(conf, _))
-  })
-  |> list.filter(fn(p) { gxyz_tuple.at2_1(p) == [] })
-  |> list.flat_map(gxyz_tuple.apply_from2(_, warning.adv_to_warning))
+  |> list.map(fn(p) { tuple.map2_1(p, config.filter_advisory_ids(conf, _)) })
+  |> list.filter(fn(p) { tuple.at2_1(p) == [] })
+  |> list.flat_map(tuple.apply_from2(_, warning.adv_to_warning))
 }
 
 fn get_retired_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
@@ -37,7 +35,7 @@ fn get_retired_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
     |> option.map(fn(ret) { #(pkg, ret) })
   })
   |> option.values()
-  |> list.map(gxyz_tuple.apply_from2(_, warning.retired_to_warning))
+  |> list.map(tuple.apply_from2(_, warning.retired_to_warning))
 }
 
 fn get_outdated_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
@@ -49,7 +47,7 @@ fn get_outdated_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
     }
   })
   |> option.values()
-  |> list.map(gxyz_tuple.apply_from2(_, warning.outdated_to_warning))
+  |> list.map(tuple.apply_from2(_, warning.outdated_to_warning))
 }
 
 fn print_warnings_count(vulns: List(Warning)) -> Nil {
@@ -101,12 +99,9 @@ pub fn main() {
   }
 
   let spinner = spinner.new_spinner("Let's do this!", conf.verbose)
-  gxyz_function.ignore_result(
+  gfunction.ignore_result(
     conf.force,
-    gxyz_function.freeze1(
-      simplifile.delete,
-      constants.go_over_path(conf.global),
-    ),
+    gfunction.freeze1(simplifile.delete, constants.go_over_path(conf.global)),
   )
 
   spinner.set_text_spinner(spinner, "Reading manifest", conf.verbose)
@@ -136,15 +131,15 @@ pub fn main() {
     conf.verbose,
   )
   let outdated_packages =
-    gxyz_function.iff(
+    gfunction.iff(
       conf.outdated,
-      gxyz_function.freeze2(get_outdated_packages, pkgs, conf),
+      gfunction.freeze2(get_outdated_packages, pkgs, conf),
       [],
     )
 
-  gxyz_function.iff_nil(
+  gfunction.iff_nil(
     conf.fake,
-    gxyz_function.freeze2(print_warnings, example_warnings, conf),
+    gfunction.freeze2(print_warnings, example_warnings, conf),
   )
 
   spinner.set_text_spinner(spinner, "Filtering warnings", conf.verbose)

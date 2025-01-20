@@ -1,17 +1,5 @@
 import delay
-import go_over/util/print
 import shellout
-
-pub fn hard_fail(res: Result(a, b), msg: String) -> a {
-  case res {
-    Ok(val) -> val
-    _ -> {
-      print.warning("Error: " <> msg)
-      shellout.exit(1)
-      panic as "Unreachable, please create an issue in https://github.com/bwireman/go-over if you see this"
-    }
-  }
-}
 
 pub fn retry_cmd(
   cmd: String,

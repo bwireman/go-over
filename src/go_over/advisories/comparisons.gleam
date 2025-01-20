@@ -2,7 +2,7 @@ import gleam/list
 import gleam/order
 import gleam/string
 import gleamsver.{type SemVer}
-import go_over/util/util.{hard_fail}
+import gxyz/cli
 
 type CurriedComparator =
   fn(SemVer) -> Bool
@@ -11,10 +11,10 @@ pub fn parse(ver: String) -> SemVer {
   let parsed =
     string.split(ver, " ")
     |> list.last
-    |> hard_fail("could not parse " <> ver)
+    |> cli.hard_fail_with_msg("could not parse " <> ver)
 
   gleamsver.parse(parsed)
-  |> hard_fail("could not parse " <> parsed)
+  |> cli.hard_fail_with_msg("could not parse " <> parsed)
 }
 
 pub fn get_comparator(ver: String) -> CurriedComparator {
@@ -38,7 +38,7 @@ fn do_get_comparator(ver: String) -> CurriedComparator {
   let op =
     string.split(ver, " ")
     |> list.first
-    |> hard_fail("could not parse " <> ver)
+    |> cli.hard_fail_with_msg("could not parse " <> ver)
 
   let semver = parse(ver)
   case op {

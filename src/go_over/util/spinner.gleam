@@ -3,7 +3,7 @@ import gleam/io
 @target(erlang)
 import gleam/list
 import gleam/option
-import gxyz/gxyz_function
+import gxyz/function
 import spinner
 
 // --- SPINNER ---
@@ -13,7 +13,7 @@ fn little_guy(msg: String) {
 
 @target(erlang)
 pub fn new_spinner(msg: String, verbose: Bool) {
-  gxyz_function.iff(
+  function.iff(
     !verbose,
     fn() {
       spinner.new(little_guy(msg))
@@ -27,7 +27,7 @@ pub fn new_spinner(msg: String, verbose: Bool) {
 
 @target(javascript)
 pub fn new_spinner(msg: String, verbose: Bool) {
-  gxyz_function.iff_nil(!verbose, fn() {
+  function.iff_nil(!verbose, fn() {
     little_guy(msg)
     |> io.println()
   })
@@ -50,7 +50,7 @@ pub fn set_text_spinner(
   msg: String,
   verbose: Bool,
 ) {
-  gxyz_function.iff_nil(!verbose, fn() {
+  function.iff_nil(!verbose, fn() {
     little_guy(msg)
     |> io.println()
   })

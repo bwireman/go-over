@@ -11,9 +11,9 @@ import gleam/string
 import go_over/advisories/advisories.{type Advisory}
 import go_over/packages.{type Package}
 import go_over/util/print
-import go_over/util/util.{hard_fail}
 import go_over/warning.{type Warning}
-import gxyz/gxyz_list
+import gxyz/cli
+import gxyz/list as glist
 import shellout
 import simplifile
 import tom.{type Toml}
@@ -55,9 +55,11 @@ pub type Flags {
 
 pub fn read_config(path: String) -> Config {
   let res =
-    simplifile.read(path) |> hard_fail("could not read config file at " <> path)
+    simplifile.read(path)
+    |> cli.hard_fail_with_msg("could not read config file at " <> path)
   let gleam =
-    tom.parse(res) |> hard_fail("could not read config file at " <> path)
+    tom.parse(res)
+    |> cli.hard_fail_with_msg("could not read config file at " <> path)
   let dev_deps =
     tom.get_table(gleam, ["dev-dependencies"])
     |> result.unwrap(dict.new())
@@ -131,9 +133,7 @@ pub fn read_config(path: String) -> Config {
 }
 
 pub fn filter_packages(conf: Config, pkgs: List(Package)) -> List(Package) {
-  gxyz_list.reject(pkgs, fn(pkg) {
-    list.contains(conf.ignore_packages, pkg.name)
-  })
+  glist.reject(pkgs, fn(pkg) { list.contains(conf.ignore_packages, pkg.name) })
 }
 
 pub fn filter_indirect(conf: Config, pkgs: List(Package)) -> List(Package) {
@@ -150,7 +150,7 @@ pub fn filter_dev_dependencies(
   case conf.ignore_dev_dependencies {
     False -> pkgs
     True ->
-      gxyz_list.reject(pkgs, fn(pkg) { list.contains(conf.dev_deps, pkg.name) })
+      glist.reject(pkgs, fn(pkg) { list.contains(conf.dev_deps, pkg.name) })
   }
 }
 
@@ -158,13 +158,11 @@ pub fn filter_advisory_ids(
   conf: Config,
   advisories: List(Advisory),
 ) -> List(Advisory) {
-  gxyz_list.reject(advisories, fn(adv) {
-    list.contains(conf.ignore_ids, adv.id)
-  })
+  glist.reject(advisories, fn(adv) { list.contains(conf.ignore_ids, adv.id) })
 }
 
 pub fn filter_severity(conf: Config, warnings: List(Warning)) -> List(Warning) {
-  gxyz_list.reject(warnings, fn(w) {
+  glist.reject(warnings, fn(w) {
     list.contains(conf.ignore_severity, string.lowercase(w.severity))
   })
 }
@@ -201,7 +199,7 @@ fn help_message(args: arg_info.ArgInfo) -> String {
   arg_info.ArgInfo(
     named: args.named,
     positional: args.positional,
-    flags: gxyz_list.reject(args.flags, fn(f) { f.name == "fake" }),
+    flags: glist.reject(args.flags, fn(f) { f.name == "fake" }),
     subcommands: args.subcommands,
   )
   |> arg_info.help_text(
@@ -295,10 +293,5 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
     |> opt.default(option.None),
   )
   |> clip.help(help.custom(help_message))
-  |> clip.run(
-    argv
-    |> gxyz_list.reject(string.ends_with(_, ".js"))
-    |> gxyz_list.reject(string.ends_with(_, ".mjs"))
-    |> gxyz_list.reject(string.ends_with(_, ".cjs")),
-  )
+  |> clip.run(cli.strip_js_from_argv(argv))
 }

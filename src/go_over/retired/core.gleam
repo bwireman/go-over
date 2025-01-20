@@ -3,7 +3,8 @@ import gleam/hexpm.{type ReleaseRetirement}
 import gleam/option.{Some}
 import go_over/packages.{type Package}
 import go_over/util/constants
-import go_over/util/util.{hard_fail}
+import go_over/util/util
+import gxyz/cli
 
 pub fn release_path(pkg: packages.Package, global: Bool) -> String {
   constants.go_over_path(global)
@@ -56,5 +57,7 @@ pub fn release_url(pkg: Package) {
 
 pub fn do_pull_hex(pkg: Package, url: String) -> String {
   util.retry_cmd("curl", ["-sf", url])
-  |> hard_fail("request to hex.pm for package: " <> pkg.name <> " failed")
+  |> cli.hard_fail_with_msg(
+    "request to hex.pm for package: " <> pkg.name <> " failed",
+  )
 }

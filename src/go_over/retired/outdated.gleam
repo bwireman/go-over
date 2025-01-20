@@ -9,8 +9,8 @@ import go_over/retired/core
 import go_over/util/cache
 import go_over/util/constants
 import go_over/util/print
-import go_over/util/util.{hard_fail}
-import gxyz/gxyz_function
+import gxyz/cli
+import gxyz/function as gfunction
 import simplifile
 
 fn pull_outdated(pkg: Package, verbose: Bool, global: Bool) -> Nil {
@@ -23,14 +23,14 @@ fn pull_outdated(pkg: Package, verbose: Bool, global: Bool) -> Nil {
 
   let _ = simplifile.delete(pkg_path)
   simplifile.create_directory_all(pkg_path)
-  |> hard_fail(pkg_path_fail)
+  |> cli.hard_fail_with_msg(pkg_path_fail)
 
   let resp = core.do_pull_hex(pkg, core.package_url(pkg))
 
   pkg
   |> core.outdated_filename(global)
   |> simplifile.write(resp)
-  |> hard_fail(pkg_path_fail)
+  |> cli.hard_fail_with_msg(pkg_path_fail)
 }
 
 fn decode_latest_stable_version(
@@ -54,7 +54,7 @@ pub fn check_outdated(
     constants.hour,
     force_pull,
     verbose,
-    gxyz_function.freeze3(pull_outdated, pkg, verbose, global),
+    gfunction.freeze3(pull_outdated, pkg, verbose, global),
     pkg.name <> ": latest stable version",
   )
 
@@ -62,17 +62,17 @@ pub fn check_outdated(
   let resp =
     cached_file_name
     |> simplifile.read()
-    |> hard_fail("failed to read " <> cached_file_name)
+    |> cli.hard_fail_with_msg("failed to read " <> cached_file_name)
 
   {
-    use latest_version <- option.map(hard_fail(
+    use latest_version <- option.map(cli.hard_fail_with_msg(
       json.decode(resp, decode_latest_stable_version),
       "failed to parse " <> cached_file_name,
     ))
 
     let latest_semver =
       gleamsver.parse(latest_version)
-      |> hard_fail("failed to parse: " <> cached_file_name)
+      |> cli.hard_fail_with_msg("failed to parse: " <> cached_file_name)
 
     case gleamsver.compare(latest_semver, pkg.version) {
       order.Gt -> option.Some(latest_version)

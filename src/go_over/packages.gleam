@@ -4,7 +4,7 @@ import gleam/option.{Some}
 import gleam/string
 import gleamsver.{type SemVer}
 import go_over/util/print.{warning}
-import go_over/util/util.{hard_fail}
+import gxyz/cli
 import shellout
 import simplifile
 import tom
@@ -16,17 +16,19 @@ pub type Package {
 pub fn read_manifest(path: String) -> List(Package) {
   let manifest =
     simplifile.read(path)
-    |> hard_fail("could not parse " <> path)
+    |> cli.hard_fail_with_msg("could not parse " <> path)
     |> string.replace("\r\n", "\n")
     |> tom.parse()
-    |> hard_fail("could not parse " <> path)
+    |> cli.hard_fail_with_msg("could not parse " <> path)
 
   let packages =
     tom.get_array(manifest, ["packages"])
-    |> hard_fail("could not parse " <> path <> " value: packages")
+    |> cli.hard_fail_with_msg("could not parse " <> path <> " value: packages")
   let requirements =
     tom.get_table(manifest, ["requirements"])
-    |> hard_fail("could not parse " <> path <> " value: requirements")
+    |> cli.hard_fail_with_msg(
+      "could not parse " <> path <> " value: requirements",
+    )
   let required_packages = dict.keys(requirements)
 
   list.map(packages, fn(p) {
@@ -34,13 +36,17 @@ pub fn read_manifest(path: String) -> List(Package) {
       tom.InlineTable(t) -> {
         let name =
           tom.get_string(t, ["name"])
-          |> hard_fail("could not parse package: " <> string.inspect(t))
+          |> cli.hard_fail_with_msg(
+            "could not parse package: " <> string.inspect(t),
+          )
         let ver =
           tom.get_string(t, ["version"])
-          |> hard_fail("could not parse package: " <> string.inspect(t))
+          |> cli.hard_fail_with_msg(
+            "could not parse package: " <> string.inspect(t),
+          )
         let semver =
           gleamsver.parse(ver)
-          |> hard_fail("could not parse package version: " <> ver)
+          |> cli.hard_fail_with_msg("could not parse package version: " <> ver)
 
         Some(Package(name, semver, ver, list.contains(required_packages, name)))
       }

@@ -6,8 +6,8 @@ import go_over/retired/core
 import go_over/util/cache
 import go_over/util/constants
 import go_over/util/print
-import go_over/util/util.{hard_fail}
-import gxyz/gxyz_function
+import gxyz/cli
+import gxyz/function
 import simplifile
 
 fn pull_retired(pkg: Package, verbose: Bool, global: Bool) -> Nil {
@@ -17,14 +17,14 @@ fn pull_retired(pkg: Package, verbose: Bool, global: Bool) -> Nil {
 
   let _ = simplifile.delete(pkg_path)
   simplifile.create_directory_all(pkg_path)
-  |> hard_fail(pkg_path_fail)
+  |> cli.hard_fail_with_msg(pkg_path_fail)
 
   let resp = core.do_pull_hex(pkg, core.release_url(pkg))
 
   pkg
   |> core.release_filename(global)
   |> simplifile.write(resp)
-  |> hard_fail(pkg_path_fail)
+  |> cli.hard_fail_with_msg(pkg_path_fail)
 }
 
 pub fn check_retired(
@@ -39,7 +39,7 @@ pub fn check_retired(
     constants.hour,
     force_pull,
     verbose,
-    gxyz_function.freeze3(pull_retired, pkg, verbose, global),
+    function.freeze3(pull_retired, pkg, verbose, global),
     pkg.name <> ":" <> pkg.version_raw,
   )
 
@@ -47,11 +47,11 @@ pub fn check_retired(
   let resp =
     cached_file_name
     |> simplifile.read()
-    |> hard_fail("failed to read " <> cached_file_name)
+    |> cli.hard_fail_with_msg("failed to read " <> cached_file_name)
 
   let release =
     json.parse(resp, hexpm.release_decoder())
-    |> hard_fail("failed to parse " <> cached_file_name)
+    |> cli.hard_fail_with_msg("failed to parse " <> cached_file_name)
 
   release.retirement
 }
