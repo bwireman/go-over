@@ -1,8 +1,10 @@
-import gleam/dynamic.{type DecodeError, type Dynamic, DecodeError} as dyn
-import gleam/function
+import gleam/dynamic.{type DecodeError, type Dynamic} as dyn
+import gleam/dynamic/decode
 import gleam/json
+import gleam/list
 import gleam/option.{type Option}
 import gleam/order
+import gleam/result
 import gleamsver
 import go_over/packages.{type Package}
 import go_over/retired/core
@@ -36,10 +38,19 @@ fn pull_outdated(pkg: Package, verbose: Bool, global: Bool) -> Nil {
 fn decode_latest_stable_version(
   data: Dynamic,
 ) -> Result(Option(String), List(DecodeError)) {
-  dyn.decode1(
-    function.identity,
-    dyn.field("latest_stable_version", dyn.optional(dyn.string)),
-  )(data)
+  let decoder = {
+    use latest_stable_version <- decode.field(
+      "latest_stable_version",
+      decode.optional(decode.string),
+    )
+    decode.success(latest_stable_version)
+  }
+
+  data
+  |> decode.run(decoder)
+  |> result.map_error(
+    list.map(_, fn(og) { dyn.DecodeError(og.expected, og.found, og.path) }),
+  )
 }
 
 pub fn check_outdated(
