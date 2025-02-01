@@ -10,7 +10,7 @@ Config(
   fake: False,
   format: Minimal,
   verbose: False,
-  global: False,
+  global: True,
   ignore_packages: [],
   ignore_severity: [],
   ignore_ids: [],

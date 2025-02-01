@@ -4,13 +4,13 @@ title: Conf test: test/testdata/gleam/basic.toml_Node
 ---
 Config(
   dev_deps: [],
-  outdated: False,
+  outdated: True,
   ignore_indirect: True,
   force: True,
   fake: False,
   format: Detailed,
   verbose: False,
-  global: False,
+  global: True,
   ignore_packages: ["a"],
   ignore_severity: ["b"],
   ignore_ids: ["c"],

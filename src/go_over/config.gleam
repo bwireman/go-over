@@ -76,30 +76,18 @@ pub fn read_config(path: String) -> Config {
     |> result.unwrap(True)
   let outdated =
     tom.get_bool(go_over, ["outdated"])
-    |> result.unwrap(False)
+    |> result.unwrap(True)
   let format =
     tom.get_string(go_over, ["format"])
     |> result.unwrap("minimal")
     |> string.lowercase()
   let global =
     tom.get_bool(go_over, ["global"])
-    |> result.unwrap(False)
+    |> result.unwrap(True)
 
   let ignore_indirect =
     tom.get_bool(ignore, ["indirect"])
-    |> result.lazy_unwrap(fn() {
-      case tom.get_bool(go_over, ["ignore_indirect"]) {
-        Ok(value) -> {
-          print.high(
-            "Warning: `go-over.ignore_indirect` is deprecated, use `go-over.ignore.indirect` instead",
-          )
-
-          value
-        }
-
-        Error(_) -> False
-      }
-    })
+    |> result.unwrap(False)
 
   let packages =
     tom.get_array(ignore, ["packages"])
@@ -209,7 +197,7 @@ fn help_message(args: arg_info.ArgInfo) -> String {
                        / /_/ / /_/ /   / /_/ / |/ /  __/ /
                        \\__, /\\____/____\\____/|___/\\___/_/
                       /____/     /_____/
-version 2.4.2
+version 3.0.0
 "
     |> print.format_high()
       <> "🕵️‍♂️ Audit Erlang & Elixir dependencies, to make sure your gleam projects really ✨ sparkle!",

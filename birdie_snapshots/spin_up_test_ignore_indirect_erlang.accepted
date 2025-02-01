@@ -4,13 +4,13 @@ title: Spin up test: ignore_indirect_Erlang
 ---
 Config(
   [],
-  False,
+  True,
   True,
   False,
   False,
   Minimal,
   False,
-  False,
+  True,
   [],
   [],
   [],

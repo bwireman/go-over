@@ -4,13 +4,13 @@ title: Spin up test: verbose_Erlang
 ---
 Config(
   [],
-  False,
+  True,
   False,
   False,
   False,
   Minimal,
   True,
-  False,
+  True,
   [],
   [],
   [],

@@ -4,13 +4,13 @@ title: Spin up test: format=minimal_Erlang
 ---
 Config(
   [],
-  False,
+  True,
   False,
   False,
   False,
   Minimal,
   False,
-  False,
+  True,
   [],
   [],
   [],

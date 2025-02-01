@@ -4,13 +4,13 @@ title: Spin up test: format=json_Erlang
 ---
 Config(
   [],
-  False,
+  True,
   False,
   False,
   False,
   Json,
   False,
-  False,
+  True,
   [],
   [],
   [],

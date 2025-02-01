@@ -50,19 +50,8 @@ pub fn read_config_test() {
   should.equal(partial.ignore_ids, [])
   should.be_false(partial.ignore_indirect)
 
-  let indirect_old = test_read_config("test/testdata/gleam/indirect_old.toml")
-  should.be_true(indirect_old.ignore_indirect)
-
   let indirect_new = test_read_config("test/testdata/gleam/indirect_new.toml")
   should.be_true(indirect_new.ignore_indirect)
-
-  let indirect_conflict_old =
-    test_read_config("test/testdata/gleam/indirect_conflict_old.toml")
-  should.be_false(indirect_conflict_old.ignore_indirect)
-
-  let indirect_conflict_new =
-    test_read_config("test/testdata/gleam/indirect_conflict_new.toml")
-  should.be_true(indirect_conflict_new.ignore_indirect)
 }
 
 pub fn filter_dev_deps_test() {
@@ -131,7 +120,7 @@ pub fn filter_severity_test() {
 pub fn spin_up_test() {
   let conf = test_spin_up("empty", [])
   should.be_false(conf.force)
-  should.be_false(conf.outdated)
+  should.be_true(conf.outdated)
   should.be_false(conf.ignore_indirect)
   should.be_false(conf.fake)
   should.be_false(conf.verbose)

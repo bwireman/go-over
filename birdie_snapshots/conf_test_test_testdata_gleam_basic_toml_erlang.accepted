@@ -4,13 +4,13 @@ title: Conf test: test/testdata/gleam/basic.toml_Erlang
 ---
 Config(
   [],
-  False,
+  True,
   True,
   True,
   False,
   Detailed,
   False,
-  False,
+  True,
   ["a"],
   ["b"],
   ["c"],

@@ -1,5 +1,0 @@
-[go-over]
-ignore_indirect = true
-
-[go-over.ignore]
-indirect = false

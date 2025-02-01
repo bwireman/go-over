@@ -4,13 +4,13 @@ title: Spin up test: format=minimal_Deno
 ---
 Config(
   dev_deps: [],
-  outdated: False,
+  outdated: True,
   ignore_indirect: False,
   force: False,
   fake: False,
   format: Minimal,
   verbose: False,
-  global: False,
+  global: True,
   ignore_packages: [],
   ignore_severity: [],
   ignore_ids: [],
