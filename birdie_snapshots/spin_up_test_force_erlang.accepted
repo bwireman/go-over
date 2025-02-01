@@ -1,0 +1,18 @@
+---
+version: 1.2.5
+title: Spin up test: force_Erlang
+---
+Config(
+  [],
+  False,
+  False,
+  True,
+  False,
+  Minimal,
+  False,
+  False,
+  [],
+  [],
+  [],
+  False,
+)

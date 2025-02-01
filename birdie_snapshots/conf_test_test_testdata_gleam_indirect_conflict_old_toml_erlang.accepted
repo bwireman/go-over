@@ -1,0 +1,18 @@
+---
+version: 1.2.5
+title: Conf test: test/testdata/gleam/indirect_conflict_old.toml_Erlang
+---
+Config(
+  [],
+  False,
+  False,
+  False,
+  False,
+  Minimal,
+  False,
+  False,
+  [],
+  [],
+  [],
+  False,
+)

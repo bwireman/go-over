@@ -1,0 +1,18 @@
+---
+version: 1.2.5
+title: Conf test: test/testdata/gleam/indirect_new.toml_Deno
+---
+Config(
+  dev_deps: [],
+  outdated: False,
+  ignore_indirect: True,
+  force: False,
+  fake: False,
+  format: Minimal,
+  verbose: False,
+  global: False,
+  ignore_packages: [],
+  ignore_severity: [],
+  ignore_ids: [],
+  ignore_dev_dependencies: False,
+)

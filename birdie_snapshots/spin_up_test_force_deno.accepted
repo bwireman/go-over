@@ -1,0 +1,18 @@
+---
+version: 1.2.5
+title: Spin up test: force_Deno
+---
+Config(
+  dev_deps: [],
+  outdated: False,
+  ignore_indirect: False,
+  force: True,
+  fake: False,
+  format: Minimal,
+  verbose: False,
+  global: False,
+  ignore_packages: [],
+  ignore_severity: [],
+  ignore_ids: [],
+  ignore_dev_dependencies: False,
+)

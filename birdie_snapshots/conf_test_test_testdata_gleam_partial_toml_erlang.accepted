@@ -1,0 +1,18 @@
+---
+version: 1.2.5
+title: Conf test: test/testdata/gleam/partial.toml_Erlang
+---
+Config(
+  [],
+  False,
+  False,
+  False,
+  False,
+  Minimal,
+  False,
+  False,
+  ["a", "b", "c"],
+  [],
+  [],
+  False,
+)

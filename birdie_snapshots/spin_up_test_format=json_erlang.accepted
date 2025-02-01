@@ -1,0 +1,18 @@
+---
+version: 1.2.5
+title: Spin up test: format=json_Erlang
+---
+Config(
+  [],
+  False,
+  False,
+  False,
+  False,
+  Json,
+  False,
+  False,
+  [],
+  [],
+  [],
+  False,
+)

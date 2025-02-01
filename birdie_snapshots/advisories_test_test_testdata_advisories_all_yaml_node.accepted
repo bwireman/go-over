@@ -1,0 +1,17 @@
+---
+version: 1.2.5
+title: Advisories test: test/testdata/advisories/all.yaml_Node
+---
+#(
+  "id",
+  "package",
+  "severity",
+  "title",
+  [
+    ">= 0.1.0, <= 1.0.0",
+    "= 2.0.0",
+    "= 2.0",
+    "= 2",
+    "<= 3.0.0",
+  ],
+)

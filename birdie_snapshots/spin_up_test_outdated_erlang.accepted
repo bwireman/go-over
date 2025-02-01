@@ -1,0 +1,18 @@
+---
+version: 1.2.5
+title: Spin up test: outdated_Erlang
+---
+Config(
+  [],
+  True,
+  False,
+  False,
+  False,
+  Minimal,
+  False,
+  False,
+  [],
+  [],
+  [],
+  False,
+)

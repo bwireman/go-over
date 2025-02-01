@@ -1,0 +1,18 @@
+---
+version: 1.2.5
+title: Conf test: test/testdata/gleam/basic.toml_Erlang
+---
+Config(
+  [],
+  False,
+  True,
+  True,
+  False,
+  Detailed,
+  False,
+  False,
+  ["a"],
+  ["b"],
+  ["c"],
+  False,
+)

@@ -1,0 +1,18 @@
+---
+version: 1.2.5
+title: Spin up test: fake_Bun
+---
+Config(
+  dev_deps: [],
+  outdated: False,
+  ignore_indirect: False,
+  force: False,
+  fake: True,
+  format: Minimal,
+  verbose: False,
+  global: False,
+  ignore_packages: [],
+  ignore_severity: [],
+  ignore_ids: [],
+  ignore_dev_dependencies: False,
+)

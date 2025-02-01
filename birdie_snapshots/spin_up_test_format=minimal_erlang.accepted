@@ -1,0 +1,18 @@
+---
+version: 1.2.5
+title: Spin up test: format=minimal_Erlang
+---
+Config(
+  [],
+  False,
+  False,
+  False,
+  False,
+  Minimal,
+  False,
+  False,
+  [],
+  [],
+  [],
+  False,
+)

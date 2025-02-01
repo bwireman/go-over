@@ -1,4 +1,3 @@
-import birdie
 import gleam/option.{None}
 import gleamsver.{parse}
 import gleeunit/should
@@ -9,32 +8,21 @@ import go_over/config.{
 }
 import go_over/packages.{Package}
 import go_over/warning.{Warning}
-import pprint
+import go_over_test
 
 fn empty_conf() {
   config.read_config("test/testdata/gleam/empty.toml")
 }
 
 pub fn test_read_config(p: String) {
-  let body = read_config(p)
-
-  body
-  |> pprint.format()
-  |> birdie.snap("Conf test: " <> p)
-
-  body
+  read_config(p)
+  |> go_over_test.birdie_snap("Conf test: " <> p)
 }
 
 pub fn test_spin_up(name: String, argv: List(String)) {
-  let conf =
-    config.spin_up(empty_conf(), argv)
-    |> should.be_ok
-
-  conf
-  |> pprint.format()
-  |> birdie.snap("Spin up test: " <> name)
-
-  conf
+  config.spin_up(empty_conf(), argv)
+  |> should.be_ok()
+  |> go_over_test.birdie_snap("Spin up test: " <> name)
 }
 
 pub fn read_config_test() {
@@ -165,8 +153,6 @@ pub fn spin_up_test() {
   should.be_true(conf.verbose)
 }
 
-// JS doesn't love the different format values sooo
-@target(erlang)
 pub fn spin_up_format_test() {
   let conf = test_spin_up("format=minimal", ["--format", "minimal"])
   should.equal(conf.format, config.Minimal)

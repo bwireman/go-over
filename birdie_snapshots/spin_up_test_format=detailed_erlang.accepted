@@ -1,0 +1,18 @@
+---
+version: 1.2.5
+title: Spin up test: format=detailed_Erlang
+---
+Config(
+  [],
+  False,
+  False,
+  False,
+  False,
+  Detailed,
+  False,
+  False,
+  [],
+  [],
+  [],
+  False,
+)

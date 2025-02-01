@@ -1,0 +1,18 @@
+---
+version: 1.2.5
+title: Conf test: test/testdata/gleam/indirect_old.toml_Erlang
+---
+Config(
+  [],
+  False,
+  True,
+  False,
+  False,
+  Minimal,
+  False,
+  False,
+  [],
+  [],
+  [],
+  False,
+)
