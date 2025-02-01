@@ -5,4 +5,4 @@ cd "$(dirname "$0")/.."
 
 gleam update
 gleam run -- --outdated
-yarn upgrade --ignore-scripts -A --check-files
+npm upgrade --ignore-scripts -A --check-files

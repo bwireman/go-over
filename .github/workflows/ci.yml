@@ -60,7 +60,7 @@ jobs:
         with:
           node-version: ${{ env.nodelts }}
           cache: "npm"
-      - run: yarn install
+      - run: npm install
       - run: gleam run --target javascript --runtime nodejs -- --outdated
 
   node:
@@ -80,7 +80,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
-      - run: yarn install
+      - run: npm install
       - run: gleam test --target javascript --runtime nodejs
       - run: gleam run --target javascript --runtime nodejs -- --outdated
 
