@@ -57,7 +57,7 @@ fn print_warnings_count(vulns: List(Warning)) -> Nil {
     <> " WARNING(s) FOUND!"
     <> constants.long_ass_dashes
   }
-  |> io.print_error
+  |> io.print_error()
 }
 
 fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {

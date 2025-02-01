@@ -96,7 +96,7 @@ fn is_vulnerable(
       }
     }
   })
-  |> option.values
+  |> option.values()
 }
 
 fn delete_and_clone(verbose: Bool, global: Bool) -> Nil {
@@ -148,5 +148,5 @@ pub fn check_for_advisories(
       vulns -> Some(#(pkg, vulns))
     }
   })
-  |> option.values
+  |> option.values()
 }

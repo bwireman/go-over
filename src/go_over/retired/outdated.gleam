@@ -90,5 +90,5 @@ pub fn check_outdated(
       _ -> option.None
     }
   }
-  |> option.flatten
+  |> option.flatten()
 }
