@@ -15,12 +15,14 @@ fn empty_conf() {
 }
 
 pub fn test_read_config(p: String) {
-  read_config(p)
+  p
+  |> read_config()
   |> go_over_test.birdie_snap("Conf test: " <> p)
 }
 
 pub fn test_spin_up(name: String, argv: List(String)) {
-  config.spin_up(empty_conf(), argv)
+  empty_conf()
+  |> config.spin_up(argv)
   |> should.be_ok()
   |> go_over_test.birdie_snap("Spin up test: " <> name)
 }

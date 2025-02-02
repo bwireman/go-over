@@ -3,7 +3,8 @@ import go_over/packages.{read_manifest}
 import go_over_test
 
 fn test_read_manifest(p: String) {
-  read_manifest(p)
+  p
+  |> read_manifest()
   |> go_over_test.birdie_snap("Manifest test: " <> p)
 }
 
