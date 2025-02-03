@@ -18,6 +18,8 @@ import shellout
 import simplifile
 import tom.{type Toml}
 
+const default_rejected_licenses = []
+
 pub type Format {
   Minimal
   Detailed
@@ -83,9 +85,17 @@ pub fn read_config(path: String) -> Config {
     tom.get_string(go_over, ["format"])
     |> result.unwrap("minimal")
     |> string.lowercase()
+  let check_licenses =
+    tom.get_bool(go_over, ["check_licenses"])
+    |> result.unwrap(False)
   let global =
     tom.get_bool(go_over, ["global"])
     |> result.unwrap(True)
+  let rejected_licenses =
+    tom.get_array(go_over, ["rejected_licenses"])
+    |> result.map(list.map(_, toml_as_string))
+    |> result.map(option.values)
+    |> result.unwrap(default_rejected_licenses)
 
   let ignore_indirect =
     tom.get_bool(ignore, ["indirect"])
@@ -114,8 +124,8 @@ pub fn read_config(path: String) -> Config {
     //read from flags only
     verbose: False,
     global:,
-    check_licenses: True,
-    rejected_licenses: [],
+    check_licenses:,
+    rejected_licenses:,
     format: parse_config_format(format) |> option.unwrap(Minimal),
     ignore_packages: list.map(packages, toml_as_string) |> option.values(),
     ignore_severity: list.map(severity, toml_as_string) |> option.values(),
@@ -223,7 +233,7 @@ pub fn merge_flags_and_config(flags: Flags, cfg: Config) -> Config {
     ignore_indirect: cfg.ignore_indirect || flags.ignore_indirect,
     fake: flags.fake,
     verbose: flags.verbose,
-    check_licenses: True,
+    check_licenses: cfg.check_licenses,
     rejected_licenses: [],
     global:,
     format: option.unwrap(flags.format, cfg.format),

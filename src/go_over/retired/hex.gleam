@@ -13,7 +13,6 @@ import go_over/util/constants
 import go_over/util/print
 import gxyz/cli
 import gxyz/function as gfunction
-import gxyz/list as glist
 import simplifile
 
 type HexInfo {
@@ -102,7 +101,7 @@ fn check_outdated(
 }
 
 fn check_licenses(licenses: List(String), reject: List(String)) -> List(String) {
-  glist.reject(licenses, list.contains(reject, _))
+  list.filter(licenses, list.contains(reject, _))
 }
 
 pub type HexWarningSource {
@@ -117,7 +116,7 @@ pub fn get_hex_info(
   global: Bool,
   rejected_licenses: List(String),
 ) {
-  let info = pull(pkg, force_pull, verbose, global )
+  let info = pull(pkg, force_pull, verbose, global)
   let cached_file_name = core.outdated_filename(pkg, global)
 
   let outdated =

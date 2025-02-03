@@ -11,6 +11,8 @@ Config(
   format: Detailed,
   verbose: False,
   global: True,
+  check_licenses: False,
+  rejected_licenses: [],
   ignore_packages: ["a"],
   ignore_severity: ["b"],
   ignore_ids: ["c"],

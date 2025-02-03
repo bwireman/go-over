@@ -11,6 +11,8 @@ Config(
   Minimal,
   False,
   True,
+  False,
+  [],
   ["a", "b", "c"],
   [],
   [],

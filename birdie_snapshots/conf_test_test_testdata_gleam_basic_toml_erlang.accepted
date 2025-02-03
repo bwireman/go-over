@@ -11,6 +11,8 @@ Config(
   Detailed,
   False,
   True,
+  False,
+  [],
   ["a"],
   ["b"],
   ["c"],
