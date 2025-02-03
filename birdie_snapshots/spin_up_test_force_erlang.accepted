@@ -2,19 +2,22 @@
 version: 1.2.5
 title: Spin up test: force_Erlang
 ---
-Config(
-  [],
-  True,
-  False,
-  True,
-  False,
-  Minimal,
-  False,
-  True,
-  False,
-  [],
-  [],
-  [],
-  [],
-  False,
+#(
+  ["--force"],
+  Config(
+    [],
+    True,
+    False,
+    True,
+    False,
+    Minimal,
+    False,
+    True,
+    False,
+    [],
+    [],
+    [],
+    [],
+    False,
+  ),
 )

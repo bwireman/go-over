@@ -2,19 +2,22 @@
 version: 1.2.5
 title: Spin up test: format=detailed_Erlang
 ---
-Config(
-  [],
-  True,
-  False,
-  False,
-  False,
-  Detailed,
-  False,
-  True,
-  False,
-  [],
-  [],
-  [],
-  [],
-  False,
+#(
+  ["--format", "detailed"],
+  Config(
+    [],
+    True,
+    False,
+    False,
+    False,
+    Detailed,
+    False,
+    True,
+    False,
+    [],
+    [],
+    [],
+    [],
+    False,
+  ),
 )

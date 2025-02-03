@@ -82,7 +82,8 @@ pub fn read_adv_test() {
   let assert Ok(body) = simplifile.read("test/testdata/advisories/all.yaml")
   read(body)
   |> should.be_ok()
-  |> go_over_test.birdie_snap(
+  |> go_over_test.birdie_snap_with_input(
+    body,
     "Advisories test: test/testdata/advisories/all.yaml",
   )
 }

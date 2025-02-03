@@ -2,19 +2,22 @@
 version: 1.2.5
 title: Spin up test: fake_Bun
 ---
-Config(
-  dev_deps: [],
-  outdated: True,
-  ignore_indirect: False,
-  force: False,
-  fake: True,
-  format: Minimal,
-  verbose: False,
-  global: True,
-  check_licenses: False,
-  rejected_licenses: [],
-  ignore_packages: [],
-  ignore_severity: [],
-  ignore_ids: [],
-  ignore_dev_dependencies: False,
+#(
+  ["--fake"],
+  Config(
+    dev_deps: [],
+    outdated: True,
+    ignore_indirect: False,
+    force: False,
+    fake: True,
+    format: Minimal,
+    verbose: False,
+    global: True,
+    check_licenses: False,
+    rejected_licenses: [],
+    ignore_packages: [],
+    ignore_severity: [],
+    ignore_ids: [],
+    ignore_dev_dependencies: False,
+  ),
 )

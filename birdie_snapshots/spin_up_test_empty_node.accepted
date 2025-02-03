@@ -2,19 +2,22 @@
 version: 1.2.5
 title: Spin up test: empty_Node
 ---
-Config(
-  dev_deps: [],
-  outdated: True,
-  ignore_indirect: False,
-  force: False,
-  fake: False,
-  format: Minimal,
-  verbose: False,
-  global: True,
-  check_licenses: False,
-  rejected_licenses: [],
-  ignore_packages: [],
-  ignore_severity: [],
-  ignore_ids: [],
-  ignore_dev_dependencies: False,
+#(
+  [],
+  Config(
+    dev_deps: [],
+    outdated: True,
+    ignore_indirect: False,
+    force: False,
+    fake: False,
+    format: Minimal,
+    verbose: False,
+    global: True,
+    check_licenses: False,
+    rejected_licenses: [],
+    ignore_packages: [],
+    ignore_severity: [],
+    ignore_ids: [],
+    ignore_dev_dependencies: False,
+  ),
 )

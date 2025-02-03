@@ -2,19 +2,22 @@
 version: 1.2.5
 title: Spin up test: empty_Erlang
 ---
-Config(
+#(
   [],
-  True,
-  False,
-  False,
-  False,
-  Minimal,
-  False,
-  True,
-  False,
-  [],
-  [],
-  [],
-  [],
-  False,
+  Config(
+    [],
+    True,
+    False,
+    False,
+    False,
+    Minimal,
+    False,
+    True,
+    False,
+    [],
+    [],
+    [],
+    [],
+    False,
+  ),
 )

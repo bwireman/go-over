@@ -2,19 +2,22 @@
 version: 1.2.5
 title: Spin up test: format=json_Erlang
 ---
-Config(
-  [],
-  True,
-  False,
-  False,
-  False,
-  Json,
-  False,
-  True,
-  False,
-  [],
-  [],
-  [],
-  [],
-  False,
+#(
+  ["--format", "json"],
+  Config(
+    [],
+    True,
+    False,
+    False,
+    False,
+    Json,
+    False,
+    True,
+    False,
+    [],
+    [],
+    [],
+    [],
+    False,
+  ),
 )

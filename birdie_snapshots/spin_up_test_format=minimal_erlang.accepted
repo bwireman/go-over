@@ -2,19 +2,22 @@
 version: 1.2.5
 title: Spin up test: format=minimal_Erlang
 ---
-Config(
-  [],
-  True,
-  False,
-  False,
-  False,
-  Minimal,
-  False,
-  True,
-  False,
-  [],
-  [],
-  [],
-  [],
-  False,
+#(
+  ["--format", "minimal"],
+  Config(
+    [],
+    True,
+    False,
+    False,
+    False,
+    Minimal,
+    False,
+    True,
+    False,
+    [],
+    [],
+    [],
+    [],
+    False,
+  ),
 )

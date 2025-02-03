@@ -2,19 +2,22 @@
 version: 1.2.5
 title: Spin up test: fake_Erlang
 ---
-Config(
-  [],
-  True,
-  False,
-  False,
-  True,
-  Minimal,
-  False,
-  True,
-  False,
-  [],
-  [],
-  [],
-  [],
-  False,
+#(
+  ["--fake"],
+  Config(
+    [],
+    True,
+    False,
+    False,
+    True,
+    Minimal,
+    False,
+    True,
+    False,
+    [],
+    [],
+    [],
+    [],
+    False,
+  ),
 )

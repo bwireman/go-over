@@ -2,19 +2,22 @@
 version: 1.2.5
 title: Spin up test: verbose_Erlang
 ---
-Config(
-  [],
-  True,
-  False,
-  False,
-  False,
-  Minimal,
-  True,
-  True,
-  False,
-  [],
-  [],
-  [],
-  [],
-  False,
+#(
+  ["--verbose"],
+  Config(
+    [],
+    True,
+    False,
+    False,
+    False,
+    Minimal,
+    True,
+    True,
+    False,
+    [],
+    [],
+    [],
+    [],
+    False,
+  ),
 )

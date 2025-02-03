@@ -24,7 +24,7 @@ pub fn test_spin_up(name: String, argv: List(String)) {
   empty_conf()
   |> config.spin_up(argv)
   |> should.be_ok()
-  |> go_over_test.birdie_snap("Spin up test: " <> name)
+  |> go_over_test.birdie_snap_with_input(argv, "Spin up test: " <> name)
 }
 
 pub fn read_config_test() {

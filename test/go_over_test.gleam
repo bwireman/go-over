@@ -18,3 +18,9 @@ pub fn birdie_snap(value: a, name: String) -> a {
 
   value
 }
+
+pub fn birdie_snap_with_input(value: a, input: b, name: String) -> a {
+  birdie_snap(#(input, value), name)
+
+  value
+}

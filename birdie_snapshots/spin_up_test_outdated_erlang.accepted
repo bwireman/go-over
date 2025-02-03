@@ -2,19 +2,22 @@
 version: 1.2.5
 title: Spin up test: outdated_Erlang
 ---
-Config(
-  [],
-  True,
-  False,
-  False,
-  False,
-  Minimal,
-  False,
-  True,
-  False,
-  [],
-  [],
-  [],
-  [],
-  False,
+#(
+  ["--outdated"],
+  Config(
+    [],
+    True,
+    False,
+    False,
+    False,
+    Minimal,
+    False,
+    True,
+    False,
+    [],
+    [],
+    [],
+    [],
+    False,
+  ),
 )
