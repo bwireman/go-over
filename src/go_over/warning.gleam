@@ -91,6 +91,18 @@ pub fn outdated_to_warning(pkg: Package, new_version: String) -> Warning {
   )
 }
 
+pub fn rejected_license_to_warning(pkg: Package, license: String) -> Warning {
+  Warning(
+    None,
+    pkg.name,
+    pkg.version_raw,
+    "Rejected License found: " <> license,
+    Outdated,
+    "rejected-license",
+    dep_code_from_bool(pkg.direct),
+  )
+}
+
 pub fn format_as_string(w: Warning) -> String {
   [
     "ID: " <> option.unwrap(w.advisory_id, "null"),

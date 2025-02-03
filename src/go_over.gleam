@@ -8,7 +8,7 @@ import gleam/string
 import go_over/advisories/advisories
 import go_over/config.{type Config, Config}
 import go_over/packages.{type Package}
-import go_over/retired/outdated
+import go_over/retired/hex
 import go_over/retired/retired
 import go_over/util/constants
 import go_over/util/print
@@ -21,14 +21,14 @@ import gxyz/tuple
 import shellout
 import simplifile
 
-fn get_vulnerable_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
+fn get_vulnerable_warnings(pkgs: List(Package), conf: Config) -> List(Warning) {
   advisories.check_for_advisories(pkgs, conf.force, conf.verbose, conf.global)
   |> list.map(fn(p) { tuple.map2_1(p, config.filter_advisory_ids(conf, _)) })
   |> list.filter(fn(p) { tuple.at2_1(p) == [] })
   |> list.flat_map(tuple.apply_from2(_, warning.adv_to_warning))
 }
 
-fn get_retired_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
+fn get_retired_warnings(pkgs: List(Package), conf: Config) -> List(Warning) {
   pkgs
   |> list.map(fn(pkg) {
     retired.check_retired(pkg, conf.force, conf.verbose, conf.global)
@@ -38,16 +38,35 @@ fn get_retired_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
   |> list.map(tuple.apply_from2(_, warning.retired_to_warning))
 }
 
-fn get_outdated_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
-  pkgs
-  |> list.map(fn(pkg) {
-    case outdated.check_outdated(pkg, conf.force, conf.verbose, conf.global) {
-      Some(ret) -> Some(#(pkg, ret))
-      None -> None
-    }
+fn get_hex_warnings(pkgs: List(Package), conf: Config) -> List(Warning) {
+  list.map(pkgs, fn(pkg) {
+    #(
+      pkg,
+      hex.get_hex_info(
+        pkg,
+        conf.force,
+        conf.verbose,
+        conf.global,
+        conf.rejected_licenses,
+      ),
+    )
+  })
+  |> list.flat_map(fn(info) {
+    let #(pkg, sources) = info
+
+    list.map(sources, fn(source) {
+      case source, conf.outdated, conf.check_licenses {
+        hex.Outdated(new_version), True, _ ->
+          Some(warning.outdated_to_warning(pkg, new_version))
+
+        hex.RejectedLicense(name), _, True ->
+          Some(warning.rejected_license_to_warning(pkg, name))
+
+        _, _, _ -> None
+      }
+    })
   })
   |> option.values()
-  |> list.map(tuple.apply_from2(_, warning.outdated_to_warning))
 }
 
 fn print_warnings_count(vulns: List(Warning)) -> Nil {
@@ -116,24 +135,24 @@ pub fn main() {
     "Checking packages: " <> print.raw("vulnerable", "red"),
     conf.verbose,
   )
-  let vulnerable_packages = get_vulnerable_packages(pkgs, conf)
+  let vulnerable_warnings = get_vulnerable_warnings(pkgs, conf)
 
   spinner.set_text_spinner(
     spinner,
     "Checking packages: " <> print.raw("retired", "yellow"),
     conf.verbose,
   )
-  let retired_packages = get_retired_packages(pkgs, conf)
+  let retired_warnings = get_retired_warnings(pkgs, conf)
 
   spinner.set_text_spinner(
     spinner,
     "Checking packages: " <> print.raw("outdated", "brightmagenta"),
     conf.verbose,
   )
-  let outdated_packages =
+  let hex_warnings =
     gfunction.iff(
-      conf.outdated,
-      gfunction.freeze2(get_outdated_packages, pkgs, conf),
+      conf.outdated || conf.check_licenses,
+      gfunction.freeze2(get_hex_warnings, pkgs, conf),
       [],
     )
 
@@ -144,8 +163,8 @@ pub fn main() {
 
   spinner.set_text_spinner(spinner, "Filtering warnings", conf.verbose)
   let warnings =
-    list.append(retired_packages, vulnerable_packages)
-    |> list.append(outdated_packages)
+    list.append(retired_warnings, vulnerable_warnings)
+    |> list.append(hex_warnings)
     |> config.filter_severity(conf, _)
 
   spinner.stop_spinner(spinner)
