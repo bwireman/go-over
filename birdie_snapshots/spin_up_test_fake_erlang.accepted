@@ -6,7 +6,7 @@ title: Spin up test: fake_Erlang
   ["--fake"],
   Config(
     [],
-    True,
+    False,
     False,
     False,
     True,

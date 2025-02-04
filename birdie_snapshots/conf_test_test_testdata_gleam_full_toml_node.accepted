@@ -4,7 +4,7 @@ title: Conf test: test/testdata/gleam/full.toml_Node
 ---
 Config(
   dev_deps: ["c"],
-  outdated: True,
+  outdated: False,
   ignore_indirect: False,
   force: False,
   fake: False,

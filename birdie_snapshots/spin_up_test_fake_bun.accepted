@@ -6,7 +6,7 @@ title: Spin up test: fake_Bun
   ["--fake"],
   Config(
     dev_deps: [],
-    outdated: True,
+    outdated: False,
     ignore_indirect: False,
     force: False,
     fake: True,

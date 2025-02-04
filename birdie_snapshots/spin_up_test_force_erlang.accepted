@@ -6,7 +6,7 @@ title: Spin up test: force_Erlang
   ["--force"],
   Config(
     [],
-    True,
+    False,
     False,
     True,
     False,

@@ -6,7 +6,7 @@ title: Spin up test: format=detailed_Erlang
   ["--format", "detailed"],
   Config(
     [],
-    True,
+    False,
     False,
     False,
     False,

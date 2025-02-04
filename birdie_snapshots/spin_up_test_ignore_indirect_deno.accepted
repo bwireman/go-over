@@ -6,7 +6,7 @@ title: Spin up test: ignore_indirect_Deno
   ["--ignore-indirect"],
   Config(
     dev_deps: [],
-    outdated: True,
+    outdated: False,
     ignore_indirect: True,
     force: False,
     fake: False,

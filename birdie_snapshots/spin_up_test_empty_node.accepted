@@ -6,7 +6,7 @@ title: Spin up test: empty_Node
   [],
   Config(
     dev_deps: [],
-    outdated: True,
+    outdated: False,
     ignore_indirect: False,
     force: False,
     fake: False,

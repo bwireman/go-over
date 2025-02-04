@@ -6,7 +6,7 @@ title: Spin up test: format=minimal_Node
   ["--format", "minimal"],
   Config(
     dev_deps: [],
-    outdated: True,
+    outdated: False,
     ignore_indirect: False,
     force: False,
     fake: False,

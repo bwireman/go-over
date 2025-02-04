@@ -6,7 +6,7 @@ title: Spin up test: format=json_Erlang
   ["--format", "json"],
   Config(
     [],
-    True,
+    False,
     False,
     False,
     False,

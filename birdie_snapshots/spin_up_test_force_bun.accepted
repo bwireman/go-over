@@ -6,7 +6,7 @@ title: Spin up test: force_Bun
   ["--force"],
   Config(
     dev_deps: [],
-    outdated: True,
+    outdated: False,
     ignore_indirect: False,
     force: True,
     fake: False,

@@ -6,7 +6,7 @@ title: Spin up test: empty_Erlang
   [],
   Config(
     [],
-    True,
+    False,
     False,
     False,
     False,

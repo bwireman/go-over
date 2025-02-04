@@ -122,7 +122,7 @@ pub fn filter_severity_test() {
 pub fn spin_up_test() {
   let conf = test_spin_up("empty", [])
   should.be_false(conf.force)
-  should.be_true(conf.outdated)
+  should.be_false(conf.outdated)
   should.be_false(conf.ignore_indirect)
   should.be_false(conf.fake)
   should.be_false(conf.verbose)

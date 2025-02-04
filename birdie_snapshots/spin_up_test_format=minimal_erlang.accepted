@@ -6,7 +6,7 @@ title: Spin up test: format=minimal_Erlang
   ["--format", "minimal"],
   Config(
     [],
-    True,
+    False,
     False,
     False,
     False,

@@ -4,7 +4,7 @@ title: Conf test: test/testdata/gleam/indirect_new.toml_Erlang
 ---
 Config(
   [],
-  True,
+  False,
   True,
   False,
   False,

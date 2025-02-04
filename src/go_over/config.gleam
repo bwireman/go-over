@@ -75,7 +75,7 @@ pub fn read_config(path: String) -> Config {
     |> result.unwrap(True)
   let outdated =
     tom.get_bool(go_over, ["outdated"])
-    |> result.unwrap(True)
+    |> result.unwrap(False)
   let format =
     tom.get_string(go_over, ["format"])
     |> result.unwrap("minimal")

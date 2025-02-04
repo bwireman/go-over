@@ -4,7 +4,7 @@ title: Conf test: test/testdata/gleam/indirect_new.toml_Bun
 ---
 Config(
   dev_deps: [],
-  outdated: True,
+  outdated: False,
   ignore_indirect: True,
   force: False,
   fake: False,

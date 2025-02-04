@@ -6,7 +6,7 @@ title: Spin up test: ignore_indirect_Erlang
   ["--ignore-indirect"],
   Config(
     [],
-    True,
+    False,
     True,
     False,
     False,
