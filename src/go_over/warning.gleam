@@ -12,6 +12,7 @@ pub type WarningReasonCode {
   Retired
   Vulnerable
   Outdated
+  RejectedLicense(name: String)
 }
 
 fn warning_reason_code_as_string(w: WarningReasonCode) -> String {
@@ -19,6 +20,7 @@ fn warning_reason_code_as_string(w: WarningReasonCode) -> String {
     Retired -> "Retired"
     Vulnerable -> "Vulnerable"
     Outdated -> "Outdated"
+    RejectedLicense(name) -> "Rejected License (" <> name <> ")"
   }
 }
 
@@ -45,7 +47,7 @@ pub type Warning {
   Warning(
     advisory_id: Option(String),
     package: String,
-    version: String,
+    version: Option(String),
     reason: String,
     warning_reason_code: WarningReasonCode,
     severity: String,
@@ -58,7 +60,7 @@ pub fn adv_to_warning(pkg: Package, advisories: List(Advisory)) -> List(Warning)
     Warning(
       Some(adv.id),
       pkg.name,
-      pkg.version_raw,
+      Some(pkg.version_raw),
       adv.description,
       Vulnerable,
       string.lowercase(adv.severity),
@@ -71,7 +73,7 @@ pub fn retired_to_warning(pkg: Package, ret: ReleaseRetirement) -> Warning {
   Warning(
     None,
     pkg.name,
-    pkg.version_raw,
+    Some(pkg.version_raw),
     core.print_ret(ret),
     Retired,
     "package-retired (" <> hexpm.retirement_reason_to_string(ret.reason) <> ")",
@@ -83,7 +85,7 @@ pub fn outdated_to_warning(pkg: Package, new_version: String) -> Warning {
   Warning(
     None,
     pkg.name,
-    pkg.version_raw,
+    Some(pkg.version_raw),
     new_version <> " exists",
     Outdated,
     "package-outdated",
@@ -95,7 +97,7 @@ pub fn rejected_license_to_warning(pkg: Package, license: String) -> Warning {
   Warning(
     None,
     pkg.name,
-    pkg.version_raw,
+    None,
     "Rejected License found: " <> license,
     Outdated,
     "rejected-license",
@@ -107,7 +109,7 @@ pub fn format_as_string(w: Warning) -> String {
   [
     "ID: " <> option.unwrap(w.advisory_id, "null"),
     "Package: " <> w.package,
-    "Version: " <> w.version,
+    "Version: " <> option.unwrap(w.version, "null"),
     "WarningReason: " <> warning_reason_code_as_string(w.warning_reason_code),
     "Dependency Type: " <> dep_code_as_string(w.dep),
     "Severity: " <> string.lowercase(w.severity),
@@ -118,17 +120,22 @@ pub fn format_as_string(w: Warning) -> String {
 }
 
 pub fn format_as_string_minimal(w: Warning) -> String {
-  color(
-    w,
-    w.package <> "-" <> w.version <> ": " <> string.lowercase(w.severity),
-  )
+  case w.version {
+    option.Some(version) ->
+      color(
+        w,
+        w.package <> "-" <> version <> ": " <> string.lowercase(w.severity),
+      )
+
+    option.None -> color(w, w.package <> ": " <> string.lowercase(w.severity))
+  }
 }
 
 pub fn format_as_json(w: Warning) -> Json {
   object([
     #("id", json.nullable(w.advisory_id, string)),
     #("package", string(w.package)),
-    #("version", string(w.version)),
+    #("version", json.nullable(w.version, string)),
     #(
       "warning_reason",
       string(warning_reason_code_as_string(w.warning_reason_code)),
@@ -142,7 +149,7 @@ pub fn format_as_json(w: Warning) -> Json {
 fn color(w: Warning, str: String) {
   case string.lowercase(w.severity) {
     "critical" -> print.format_critical(str)
-    "high" -> print.format_high(str)
+    "high" | "rejected-license" -> print.format_high(str)
     "moderate" | "package-outdated" -> print.format_moderate(str)
     "low" -> print.format_low(str)
     _ -> print.format_warning(str)

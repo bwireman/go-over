@@ -186,11 +186,19 @@ pub fn main() {
 }
 
 const example_warnings = [
-  Warning(None, "fake", "x.y.z", "Retired", Vulnerable, "Critical", Direct),
+  Warning(
+    None,
+    "fake",
+    Some("x.y.z"),
+    "Retired",
+    Vulnerable,
+    "Critical",
+    Direct,
+  ),
   Warning(
     None,
     "another_fake",
-    "1.2.3",
+    Some("1.2.3"),
     "Vulnerable",
     Vulnerable,
     "High",
@@ -199,20 +207,37 @@ const example_warnings = [
   Warning(
     None,
     "and_another",
-    "4.5.6",
+    Some("4.5.6"),
     "Vulnerable",
     Vulnerable,
     "Moderate",
     Direct,
   ),
-  Warning(None, "one_more", "7.8.9", "Vulnerable", Vulnerable, "LOW", Indirect),
+  Warning(
+    None,
+    "one_more",
+    Some("7.8.9"),
+    "Vulnerable",
+    Vulnerable,
+    "LOW",
+    Indirect,
+  ),
   Warning(
     None,
     "this_one_was_retired",
-    "10.11.12",
+    Some("10.11.12"),
     "Retired",
     Retired,
     "Package Retired",
+    Indirect,
+  ),
+  Warning(
+    None,
+    "rejected_license",
+    None,
+    "Retired",
+    Retired,
+    "Rejected License",
     Indirect,
   ),
 ]
