@@ -144,15 +144,26 @@ pub fn main() {
   )
   let retired_warnings = get_retired_warnings(pkgs, conf)
 
-  spinner.set_text_spinner(
-    spinner,
-    "Checking packages: " <> print.raw("outdated", "brightmagenta"),
-    conf.verbose,
-  )
   let hex_warnings =
     gfunction.iff(
       conf.outdated || list.length(conf.allowed_licenses) > 0,
-      gfunction.freeze2(get_hex_warnings, pkgs, conf),
+      fn() {
+        let msg = case conf.outdated, list.length(conf.allowed_licenses) > 0 {
+          True, True -> "outdated & licenses"
+          True, False -> "outdated"
+          False, True -> "licenses"
+          False, False ->
+            panic as "Unreachable, please create an issue in https://github.com/bwireman/go-over if you see this"
+        }
+
+        spinner.set_text_spinner(
+          spinner,
+          "Checking packages: " <> print.raw(msg, "brightmagenta"),
+          conf.verbose,
+        )
+
+        get_hex_warnings(pkgs, conf)
+      },
       [],
     )
 
