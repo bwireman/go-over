@@ -1,0 +1,23 @@
+---
+version: 1.2.5
+title: Warning string rejected_license_to_warning_Erlang
+---
+#(
+  #(
+    Package(
+      "package for warning tests",
+      SemVer(1, 2, 3, "pre", "build"),
+      "pre1.2.3-build",
+      True,
+    ),
+    "closed-source-crap",
+  ),
+  "[33mID: null
+Package: package for warning tests
+Version: null
+WarningReason: Outdated
+Dependency Type: Direct
+Severity: rejected-license
+Reason: Rejected License found: closed-source-crap
+[0m[K",
+)

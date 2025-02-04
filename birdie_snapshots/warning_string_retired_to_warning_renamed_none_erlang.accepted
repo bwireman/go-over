@@ -1,0 +1,23 @@
+---
+version: 1.2.5
+title: Warning string retired_to_warning_renamed_none_Erlang
+---
+#(
+  #(
+    Package(
+      "package for warning tests",
+      SemVer(1, 2, 3, "pre", "build"),
+      "pre1.2.3-build",
+      True,
+    ),
+    ReleaseRetirement(Renamed, None),
+  ),
+  "[31mID: null
+Package: package for warning tests
+Version: pre1.2.3-build
+WarningReason: Retired
+Dependency Type: Direct
+Severity: package-retired (renamed)
+Reason: renamed
+[0m[K",
+)

@@ -1,0 +1,25 @@
+---
+version: 1.2.5
+title: Warning json retired_to_warning_other_none_Node
+---
+#(
+  #(
+    Package(
+      name: "package for warning tests",
+      version: SemVer(
+        major: 1,
+        minor: 2,
+        patch: 3,
+        pre: "pre",
+        build: "build",
+      ),
+      version_raw: "pre1.2.3-build",
+      direct: True,
+    ),
+    ReleaseRetirement(
+      reason: OtherReason,
+      message: None,
+    ),
+  ),
+  "{"id":null,"package":"package for warning tests","version":"pre1.2.3-build","warning_reason":"Retired","dependency_type":"Direct","severity":"package-retired (other)","reason":"other"}",
+)

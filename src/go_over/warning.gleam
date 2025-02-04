@@ -86,7 +86,7 @@ pub fn outdated_to_warning(pkg: Package, new_version: String) -> Warning {
     None,
     pkg.name,
     Some(pkg.version_raw),
-    new_version <> " exists",
+    "New Version: '" <> new_version <> "' exists",
     Outdated,
     "package-outdated",
     dep_code_from_bool(pkg.direct),

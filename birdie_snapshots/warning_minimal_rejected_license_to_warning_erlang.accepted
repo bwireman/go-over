@@ -1,0 +1,17 @@
+---
+version: 1.2.5
+title: Warning minimal rejected_license_to_warning_Erlang
+---
+#(
+  #(
+    Package(
+      "package for warning tests",
+      SemVer(1, 2, 3, "pre", "build"),
+      "pre1.2.3-build",
+      True,
+    ),
+    "closed-source-crap",
+  ),
+  "[33mpackage for warning tests: rejected-license
+[0m[K",
+)

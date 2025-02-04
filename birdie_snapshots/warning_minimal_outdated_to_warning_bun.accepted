@@ -1,0 +1,23 @@
+---
+version: 1.2.5
+title: Warning minimal outdated_to_warning_Bun
+---
+#(
+  #(
+    Package(
+      name: "package for warning tests",
+      version: SemVer(
+        major: 1,
+        minor: 2,
+        patch: 3,
+        pre: "pre",
+        build: "build",
+      ),
+      version_raw: "pre1.2.3-build",
+      direct: True,
+    ),
+    "1.2.3",
+  ),
+  "[34mpackage for warning tests-pre1.2.3-build: package-outdated
+[0m[K",
+)

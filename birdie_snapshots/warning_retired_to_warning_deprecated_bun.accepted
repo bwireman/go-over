@@ -1,0 +1,33 @@
+---
+version: 1.2.5
+title: Warning retired_to_warning_deprecated_Bun
+---
+#(
+  #(
+    Package(
+      name: "package for warning tests",
+      version: SemVer(
+        major: 1,
+        minor: 2,
+        patch: 3,
+        pre: "pre",
+        build: "build",
+      ),
+      version_raw: "pre1.2.3-build",
+      direct: True,
+    ),
+    ReleaseRetirement(
+      reason: Deprecated,
+      message: Some("It's an example man"),
+    ),
+  ),
+  Warning(
+    advisory_id: None,
+    package: "package for warning tests",
+    version: Some("pre1.2.3-build"),
+    reason: "deprecated: It's an example man",
+    warning_reason_code: Retired,
+    severity: "package-retired (deprecated)",
+    dep: Direct,
+  ),
+)

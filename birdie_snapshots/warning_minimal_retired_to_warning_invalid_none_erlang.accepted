@@ -1,0 +1,17 @@
+---
+version: 1.2.5
+title: Warning minimal retired_to_warning_invalid_none_Erlang
+---
+#(
+  #(
+    Package(
+      "package for warning tests",
+      SemVer(1, 2, 3, "pre", "build"),
+      "pre1.2.3-build",
+      True,
+    ),
+    ReleaseRetirement(Invalid, None),
+  ),
+  "[31mpackage for warning tests-pre1.2.3-build: package-retired (invalid)
+[0m[K",
+)
