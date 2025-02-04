@@ -25,7 +25,7 @@ fn pull_outdated(pkg: Package, verbose: Bool, global: Bool) -> Nil {
     verbose,
     "Checking latest version: " <> pkg.name <> " From hex.pm",
   )
-  let pkg_path = core.outdated_path(pkg, global)
+  let pkg_path = core.hex_info_path(pkg, global)
   let pkg_path_fail = core.pkg_pull_error(pkg, pkg_path)
 
   let _ = simplifile.delete(pkg_path)
@@ -35,7 +35,7 @@ fn pull_outdated(pkg: Package, verbose: Bool, global: Bool) -> Nil {
   let resp = core.do_pull_hex(pkg, core.package_url(pkg))
 
   pkg
-  |> core.outdated_filename(global)
+  |> core.hex_info_filename(global)
   |> simplifile.write(resp)
   |> cli.hard_fail_with_msg(pkg_path_fail)
 }
@@ -64,7 +64,7 @@ fn decode_latest_stable_version_and_licenses(
 
 fn pull(pkg: Package, force_pull: Bool, verbose: Bool, global: Bool) {
   pkg
-  |> core.outdated_path(global)
+  |> core.hex_info_path(global)
   |> cache.pull_if_not_cached(
     constants.hour,
     force_pull,
@@ -73,7 +73,7 @@ fn pull(pkg: Package, force_pull: Bool, verbose: Bool, global: Bool) {
     pkg.name <> ": latest stable version",
   )
 
-  let cached_file_name = core.outdated_filename(pkg, global)
+  let cached_file_name = core.hex_info_filename(pkg, global)
 
   let resp =
     cached_file_name
@@ -118,7 +118,7 @@ pub fn get_hex_info(
   allowed_licenses: List(String),
 ) {
   let info = pull(pkg, force_pull, verbose, global)
-  let cached_file_name = core.outdated_filename(pkg, global)
+  let cached_file_name = core.hex_info_filename(pkg, global)
 
   let outdated =
     info.latest_stable_version

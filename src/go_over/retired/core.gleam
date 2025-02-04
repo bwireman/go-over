@@ -13,9 +13,9 @@ pub fn release_path(pkg: packages.Package, global: Bool) -> String {
   |> filepath.join(pkg.version_raw)
 }
 
-pub fn outdated_path(pkg: packages.Package, global: Bool) -> String {
+pub fn hex_info_path(pkg: packages.Package, global: Bool) -> String {
   constants.go_over_path(global)
-  |> filepath.join("outdated")
+  |> filepath.join("hex-info")
   |> filepath.join(pkg.name)
   |> filepath.join(pkg.version_raw)
 }
@@ -33,10 +33,10 @@ pub fn release_filename(pkg, global: Bool) -> String {
   |> filepath.join("resp.json")
 }
 
-pub fn outdated_filename(pkg, global: Bool) -> String {
+pub fn hex_info_filename(pkg, global: Bool) -> String {
   pkg
-  |> outdated_path(global)
-  |> filepath.join("outdated-resp.json")
+  |> hex_info_path(global)
+  |> filepath.join("hex-info-resp.json")
 }
 
 pub fn print_ret(ret: ReleaseRetirement) -> String {
