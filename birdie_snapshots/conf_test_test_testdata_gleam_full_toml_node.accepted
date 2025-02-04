@@ -12,7 +12,7 @@ Config(
   verbose: False,
   global: True,
   check_licenses: False,
-  rejected_licenses: [],
+  allowed_licenses: [],
   ignore_packages: ["a", "b"],
   ignore_severity: ["a", "b"],
   ignore_ids: ["a", "b"],

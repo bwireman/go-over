@@ -47,7 +47,7 @@ fn get_hex_warnings(pkgs: List(Package), conf: Config) -> List(Warning) {
         conf.force,
         conf.verbose,
         conf.global,
-        conf.rejected_licenses,
+        conf.allowed_licenses,
       ),
     )
   })

@@ -14,7 +14,7 @@ title: Spin up test: fake_Bun
     verbose: False,
     global: True,
     check_licenses: False,
-    rejected_licenses: [],
+    allowed_licenses: [],
     ignore_packages: [],
     ignore_severity: [],
     ignore_ids: [],

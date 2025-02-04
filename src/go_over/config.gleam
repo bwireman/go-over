@@ -18,8 +18,6 @@ import shellout
 import simplifile
 import tom.{type Toml}
 
-const default_rejected_licenses = []
-
 pub type Format {
   Minimal
   Detailed
@@ -37,7 +35,7 @@ pub type Config {
     verbose: Bool,
     global: Bool,
     check_licenses: Bool,
-    rejected_licenses: List(String),
+    allowed_licenses: List(String),
     ignore_packages: List(String),
     ignore_severity: List(String),
     ignore_ids: List(String),
@@ -72,9 +70,7 @@ pub fn read_config(path: String) -> Config {
   let go_over =
     tom.get_table(gleam, ["go-over"])
     |> result.unwrap(dict.new())
-  let ignore =
-    tom.get_table(go_over, ["ignore"])
-    |> result.unwrap(dict.new())
+
   let cache =
     tom.get_bool(go_over, ["cache"])
     |> result.unwrap(True)
@@ -91,16 +87,18 @@ pub fn read_config(path: String) -> Config {
   let global =
     tom.get_bool(go_over, ["global"])
     |> result.unwrap(True)
-  let rejected_licenses =
-    tom.get_array(go_over, ["rejected_licenses"])
+  let allowed_licenses =
+    tom.get_array(go_over, ["allowed_licenses"])
     |> result.map(list.map(_, toml_as_string))
     |> result.map(option.values)
-    |> result.unwrap(default_rejected_licenses)
+    |> result.unwrap([])
 
+  let ignore =
+    tom.get_table(go_over, ["ignore"])
+    |> result.unwrap(dict.new())
   let ignore_indirect =
     tom.get_bool(ignore, ["indirect"])
     |> result.unwrap(False)
-
   let packages =
     tom.get_array(ignore, ["packages"])
     |> result.unwrap([])
@@ -125,7 +123,7 @@ pub fn read_config(path: String) -> Config {
     verbose: False,
     global:,
     check_licenses:,
-    rejected_licenses:,
+    allowed_licenses:,
     format: parse_config_format(format) |> option.unwrap(Minimal),
     ignore_packages: list.map(packages, toml_as_string) |> option.values(),
     ignore_severity: list.map(severity, toml_as_string) |> option.values(),
@@ -234,7 +232,7 @@ pub fn merge_flags_and_config(flags: Flags, cfg: Config) -> Config {
     fake: flags.fake,
     verbose: flags.verbose,
     check_licenses: cfg.check_licenses,
-    rejected_licenses: [],
+    allowed_licenses: cfg.allowed_licenses,
     global:,
     format: option.unwrap(flags.format, cfg.format),
     ignore_packages: cfg.ignore_packages,
