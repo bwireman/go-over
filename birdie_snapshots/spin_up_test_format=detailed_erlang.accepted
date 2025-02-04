@@ -13,7 +13,6 @@ title: Spin up test: format=detailed_Erlang
     Detailed,
     False,
     True,
-    False,
     [],
     [],
     [],

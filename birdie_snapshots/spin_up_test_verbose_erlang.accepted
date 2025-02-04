@@ -13,7 +13,6 @@ title: Spin up test: verbose_Erlang
     Minimal,
     True,
     True,
-    False,
     [],
     [],
     [],

@@ -34,7 +34,6 @@ pub type Config {
     format: Format,
     verbose: Bool,
     global: Bool,
-    check_licenses: Bool,
     allowed_licenses: List(String),
     ignore_packages: List(String),
     ignore_severity: List(String),
@@ -81,9 +80,6 @@ pub fn read_config(path: String) -> Config {
     tom.get_string(go_over, ["format"])
     |> result.unwrap("minimal")
     |> string.lowercase()
-  let check_licenses =
-    tom.get_bool(go_over, ["check_licenses"])
-    |> result.unwrap(False)
   let global =
     tom.get_bool(go_over, ["global"])
     |> result.unwrap(True)
@@ -122,7 +118,6 @@ pub fn read_config(path: String) -> Config {
     //read from flags only
     verbose: False,
     global:,
-    check_licenses:,
     allowed_licenses:,
     format: parse_config_format(format) |> option.unwrap(Minimal),
     ignore_packages: list.map(packages, toml_as_string) |> option.values(),
@@ -231,7 +226,6 @@ pub fn merge_flags_and_config(flags: Flags, cfg: Config) -> Config {
     ignore_indirect: cfg.ignore_indirect || flags.ignore_indirect,
     fake: flags.fake,
     verbose: flags.verbose,
-    check_licenses: cfg.check_licenses,
     allowed_licenses: cfg.allowed_licenses,
     global:,
     format: option.unwrap(flags.format, cfg.format),

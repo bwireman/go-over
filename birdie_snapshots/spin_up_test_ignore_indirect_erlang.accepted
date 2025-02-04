@@ -13,7 +13,6 @@ title: Spin up test: ignore_indirect_Erlang
     Minimal,
     False,
     True,
-    False,
     [],
     [],
     [],

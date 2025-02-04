@@ -13,7 +13,6 @@ title: Spin up test: outdated_Erlang
     Minimal,
     False,
     True,
-    False,
     [],
     [],
     [],

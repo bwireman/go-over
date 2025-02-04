@@ -13,7 +13,6 @@ title: Spin up test: format=json_Erlang
     Json,
     False,
     True,
-    False,
     [],
     [],
     [],

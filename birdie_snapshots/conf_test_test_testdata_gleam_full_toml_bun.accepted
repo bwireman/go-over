@@ -11,7 +11,6 @@ Config(
   format: Minimal,
   verbose: False,
   global: True,
-  check_licenses: False,
   allowed_licenses: [],
   ignore_packages: ["a", "b"],
   ignore_severity: ["a", "b"],

@@ -55,7 +55,7 @@ fn get_hex_warnings(pkgs: List(Package), conf: Config) -> List(Warning) {
     let #(pkg, sources) = info
 
     list.map(sources, fn(source) {
-      case source, conf.outdated, conf.check_licenses {
+      case source, conf.outdated, list.length(conf.allowed_licenses) > 0 {
         hex.Outdated(new_version), True, _ ->
           Some(warning.outdated_to_warning(pkg, new_version))
 
@@ -151,7 +151,7 @@ pub fn main() {
   )
   let hex_warnings =
     gfunction.iff(
-      conf.outdated || conf.check_licenses,
+      conf.outdated || list.length(conf.allowed_licenses) > 0,
       gfunction.freeze2(get_hex_warnings, pkgs, conf),
       [],
     )

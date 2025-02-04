@@ -13,7 +13,6 @@ title: Spin up test: fake_Erlang
     Minimal,
     False,
     True,
-    False,
     [],
     [],
     [],

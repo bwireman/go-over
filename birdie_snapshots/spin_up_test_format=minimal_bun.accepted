@@ -13,7 +13,6 @@ title: Spin up test: format=minimal_Bun
     format: Minimal,
     verbose: False,
     global: True,
-    check_licenses: False,
     allowed_licenses: [],
     ignore_packages: [],
     ignore_severity: [],

@@ -13,7 +13,6 @@ title: Spin up test: force_Erlang
     Minimal,
     False,
     True,
-    False,
     [],
     [],
     [],
