@@ -1,0 +1,25 @@
+---
+version: 1.2.5
+title: Deno: warning_format_as_json@retired_to_warning_renamed
+---
+#(
+  #(
+    Package(
+      name: "package for warning tests",
+      version: SemVer(
+        major: 1,
+        minor: 2,
+        patch: 3,
+        pre: "pre",
+        build: "build",
+      ),
+      version_raw: "pre1.2.3-build",
+      direct: True,
+    ),
+    ReleaseRetirement(
+      reason: Renamed,
+      message: Some("It's an example man"),
+    ),
+  ),
+  "{"id":null,"package":"package for warning tests","version":"pre1.2.3-build","warning_reason":"Retired","dependency_type":"Direct","severity":"package-retired (renamed)","reason":"renamed: It's an example man"}",
+)

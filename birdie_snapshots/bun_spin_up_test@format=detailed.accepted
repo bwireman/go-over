@@ -1,0 +1,22 @@
+---
+version: 1.2.5
+title: Bun: spin_up_test@format=detailed
+---
+#(
+  ["--format", "detailed"],
+  Config(
+    dev_deps: [],
+    outdated: False,
+    ignore_indirect: False,
+    force: False,
+    fake: False,
+    format: Detailed,
+    verbose: False,
+    global: True,
+    allowed_licenses: [],
+    ignore_packages: [],
+    ignore_severity: [],
+    ignore_ids: [],
+    ignore_dev_dependencies: False,
+  ),
+)

@@ -1,0 +1,17 @@
+---
+version: 1.2.5
+title: Deno: decode_latest_stable_version_and_licenses@test/testdata/hex/multi_license.json
+---
+#(
+  "{
+  "meta": {
+    "licenses": ["foo", "BAR", "baz"]
+  },
+  "latest_stable_version": "2.1.0"
+}
+",
+  Ok(HexInfo(
+    latest_stable_version: Some("2.1.0"),
+    licenses: ["foo", "BAR", "baz"],
+  )),
+)

@@ -1,0 +1,30 @@
+---
+version: 1.2.5
+title: Erlang: advisories_test@test/testdata/advisories/all.yaml
+---
+#(
+  "id: id
+package: package
+severity: severity
+title: title
+vulnerable_version_ranges:
+  - ">= 0.1.0, <= 1.0.0"
+  - "= 2.0.0"
+  - "= 2.0"
+  - "= 2"
+  - "<= 3.0.0"
+",
+  #(
+    "id",
+    "package",
+    "severity",
+    "title",
+    [
+      ">= 0.1.0, <= 1.0.0",
+      "= 2.0.0",
+      "= 2.0",
+      "= 2",
+      "<= 3.0.0",
+    ],
+  ),
+)

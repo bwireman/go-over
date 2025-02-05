@@ -1,0 +1,19 @@
+---
+version: 1.2.5
+title: Node: conf_test@test/testdata/gleam/partial.toml
+---
+Config(
+  dev_deps: [],
+  outdated: False,
+  ignore_indirect: False,
+  force: False,
+  fake: False,
+  format: Minimal,
+  verbose: False,
+  global: True,
+  allowed_licenses: [],
+  ignore_packages: ["a", "b", "c"],
+  ignore_severity: [],
+  ignore_ids: [],
+  ignore_dev_dependencies: False,
+)

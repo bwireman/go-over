@@ -16,11 +16,11 @@ import gxyz/function as gfunction
 import gxyz/list as glist
 import simplifile
 
-type HexInfo {
+pub type HexInfo {
   HexInfo(latest_stable_version: Option(String), licenses: List(String))
 }
 
-fn pull_outdated(pkg: Package, verbose: Bool, global: Bool) -> Nil {
+fn pull_hex_info(pkg: Package, verbose: Bool, global: Bool) -> Nil {
   print.progress(
     verbose,
     "Checking latest version: " <> pkg.name <> " From hex.pm",
@@ -40,7 +40,7 @@ fn pull_outdated(pkg: Package, verbose: Bool, global: Bool) -> Nil {
   |> cli.hard_fail_with_msg(pkg_path_fail)
 }
 
-fn decode_latest_stable_version_and_licenses(
+pub fn decode_latest_stable_version_and_licenses(
   data: Dynamic,
 ) -> Result(HexInfo, List(DecodeError)) {
   let decoder = {
@@ -69,7 +69,7 @@ fn pull(pkg: Package, force_pull: Bool, verbose: Bool, global: Bool) {
     constants.hour,
     force_pull,
     verbose,
-    gfunction.freeze3(pull_outdated, pkg, verbose, global),
+    gfunction.freeze3(pull_hex_info, pkg, verbose, global),
     pkg.name <> ": latest stable version",
   )
 

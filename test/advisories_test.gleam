@@ -84,6 +84,6 @@ pub fn read_adv_test() {
   |> should.be_ok()
   |> go_over_test.birdie_snap_with_input(
     body,
-    "Advisories test: test/testdata/advisories/all.yaml",
+    "advisories_test@test/testdata/advisories/all.yaml",
   )
 }

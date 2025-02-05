@@ -1,0 +1,19 @@
+---
+version: 1.2.5
+title: Node: conf_test@test/testdata/gleam/full.toml
+---
+Config(
+  dev_deps: ["c"],
+  outdated: False,
+  ignore_indirect: False,
+  force: False,
+  fake: False,
+  format: Minimal,
+  verbose: False,
+  global: True,
+  allowed_licenses: [],
+  ignore_packages: ["a", "b"],
+  ignore_severity: ["a", "b"],
+  ignore_ids: ["a", "b"],
+  ignore_dev_dependencies: True,
+)

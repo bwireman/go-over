@@ -1,0 +1,14 @@
+---
+version: 1.2.5
+title: Erlang: decode_latest_stable_version_and_licenses@test/testdata/hex/version_null.json
+---
+#(
+  "{
+  "meta": {
+    "licenses": ["bin"]
+  },
+  "latest_stable_version": null
+}
+",
+  Ok(HexInfo(None, ["bin"])),
+)

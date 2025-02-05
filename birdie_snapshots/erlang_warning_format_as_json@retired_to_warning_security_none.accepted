@@ -1,0 +1,16 @@
+---
+version: 1.2.5
+title: Erlang: warning_format_as_json@retired_to_warning_security_none
+---
+#(
+  #(
+    Package(
+      "package for warning tests",
+      SemVer(1, 2, 3, "pre", "build"),
+      "pre1.2.3-build",
+      True,
+    ),
+    ReleaseRetirement(Security, None),
+  ),
+  "{"id":null,"package":"package for warning tests","version":"pre1.2.3-build","warning_reason":"Retired","dependency_type":"Direct","severity":"package-retired (security)","reason":"security"}",
+)

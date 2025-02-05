@@ -1,0 +1,5 @@
+---
+version: 1.2.5
+title: Erlang: manifest_test@test/testdata/manifest/empty.toml
+---
+[]

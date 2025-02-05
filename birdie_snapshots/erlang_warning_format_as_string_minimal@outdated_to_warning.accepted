@@ -1,0 +1,17 @@
+---
+version: 1.2.5
+title: Erlang: warning_format_as_string_minimal@outdated_to_warning
+---
+#(
+  #(
+    Package(
+      "package for warning tests",
+      SemVer(1, 2, 3, "pre", "build"),
+      "pre1.2.3-build",
+      True,
+    ),
+    "1.2.3",
+  ),
+  "[34mpackage for warning tests-pre1.2.3-build: package-outdated
+[0m[K",
+)

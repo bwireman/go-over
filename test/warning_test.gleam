@@ -9,22 +9,22 @@ import go_over/warning.{type Warning}
 import go_over_test
 
 pub fn to_warning_format(name: String, input: a, warning: Warning) {
-  go_over_test.birdie_snap_with_input(warning, input, "Warning " <> name)
+  go_over_test.birdie_snap_with_input(warning, input, "warning@" <> name)
   go_over_test.birdie_snap_with_input(
     warning.format_as_json(warning)
       |> json.to_string(),
     input,
-    "Warning json " <> name,
+    "warning_format_as_json@" <> name,
   )
   go_over_test.birdie_snap_with_input(
     warning.format_as_string(warning),
     input,
-    "Warning string " <> name,
+    "warning_format_as_string@" <> name,
   )
   go_over_test.birdie_snap_with_input(
     warning.format_as_string_minimal(warning),
     input,
-    "Warning minimal " <> name,
+    "warning_format_as_string_minimal@" <> name,
   )
 }
 

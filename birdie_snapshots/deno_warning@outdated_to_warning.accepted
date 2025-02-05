@@ -1,0 +1,30 @@
+---
+version: 1.2.5
+title: Deno: warning@outdated_to_warning
+---
+#(
+  #(
+    Package(
+      name: "package for warning tests",
+      version: SemVer(
+        major: 1,
+        minor: 2,
+        patch: 3,
+        pre: "pre",
+        build: "build",
+      ),
+      version_raw: "pre1.2.3-build",
+      direct: True,
+    ),
+    "1.2.3",
+  ),
+  Warning(
+    advisory_id: None,
+    package: "package for warning tests",
+    version: Some("pre1.2.3-build"),
+    reason: "New Version: '1.2.3' exists",
+    warning_reason_code: Outdated,
+    severity: "package-outdated",
+    dep: Direct,
+  ),
+)

@@ -1,0 +1,19 @@
+---
+version: 1.2.5
+title: Bun: conf_test@test/testdata/gleam/basic.toml
+---
+Config(
+  dev_deps: [],
+  outdated: False,
+  ignore_indirect: True,
+  force: True,
+  fake: False,
+  format: Detailed,
+  verbose: False,
+  global: True,
+  allowed_licenses: [],
+  ignore_packages: ["a"],
+  ignore_severity: ["b"],
+  ignore_ids: ["c"],
+  ignore_dev_dependencies: False,
+)
