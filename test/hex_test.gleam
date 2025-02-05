@@ -9,10 +9,9 @@ fn parse(path: String) {
     simplifile.read(path)
     |> should.be_ok()
 
-  let parsed = json.decode(input, hex.decode_latest_stable_version_and_licenses)
-
-  go_over_test.birdie_snap_with_input(
-    parsed,
+  input
+  |> json.decode(hex.decode_latest_stable_version_and_licenses)
+  |> go_over_test.birdie_snap_with_input(
     input,
     "decode_latest_stable_version_and_licenses@" <> path,
   )
