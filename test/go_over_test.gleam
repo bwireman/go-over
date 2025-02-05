@@ -14,7 +14,7 @@ pub fn birdie_snap(value: a, name: String) -> a {
     pprint.BitArraysAsString,
     pprint.Labels,
   ))
-  |> birdie.snap(pprint.format(platform.runtime()) <> ": " <> name)
+  |> birdie.snap(pprint.format(platform.runtime()) <> "@" <> name)
 
   value
 }

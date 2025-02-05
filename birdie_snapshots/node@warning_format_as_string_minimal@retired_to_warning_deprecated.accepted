@@ -1,0 +1,26 @@
+---
+version: 1.2.5
+title: Node@warning_format_as_string_minimal@retired_to_warning_deprecated
+---
+#(
+  #(
+    Package(
+      name: "package for warning tests",
+      version: SemVer(
+        major: 1,
+        minor: 2,
+        patch: 3,
+        pre: "pre",
+        build: "build",
+      ),
+      version_raw: "pre1.2.3-build",
+      direct: True,
+    ),
+    ReleaseRetirement(
+      reason: Deprecated,
+      message: Some("It's an example man"),
+    ),
+  ),
+  "[31mpackage for warning tests-pre1.2.3-build: package-retired (deprecated)
+[0m[K",
+)

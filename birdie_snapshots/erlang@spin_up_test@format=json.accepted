@@ -1,0 +1,22 @@
+---
+version: 1.2.5
+title: Erlang@spin_up_test@format=json
+---
+#(
+  ["--format", "json"],
+  Config(
+    [],
+    False,
+    False,
+    False,
+    False,
+    Json,
+    False,
+    True,
+    [],
+    [],
+    [],
+    [],
+    False,
+  ),
+)

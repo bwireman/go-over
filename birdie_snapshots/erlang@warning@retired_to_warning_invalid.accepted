@@ -1,0 +1,27 @@
+---
+version: 1.2.5
+title: Erlang@warning@retired_to_warning_invalid
+---
+#(
+  #(
+    Package(
+      "package for warning tests",
+      SemVer(1, 2, 3, "pre", "build"),
+      "pre1.2.3-build",
+      True,
+    ),
+    ReleaseRetirement(
+      Invalid,
+      Some("It's an example man"),
+    ),
+  ),
+  Warning(
+    None,
+    "package for warning tests",
+    Some("pre1.2.3-build"),
+    "invalid: It's an example man",
+    Retired,
+    "package-retired (invalid)",
+    Direct,
+  ),
+)

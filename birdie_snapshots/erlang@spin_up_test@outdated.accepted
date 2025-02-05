@@ -1,0 +1,22 @@
+---
+version: 1.2.5
+title: Erlang@spin_up_test@outdated
+---
+#(
+  ["--outdated"],
+  Config(
+    [],
+    True,
+    False,
+    False,
+    False,
+    Minimal,
+    False,
+    True,
+    [],
+    [],
+    [],
+    [],
+    False,
+  ),
+)
