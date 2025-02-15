@@ -101,10 +101,6 @@ fn check_outdated(
   }
 }
 
-fn check_licenses(licenses: List(String), allowed: List(String)) -> List(String) {
-  glist.reject(licenses, list.contains(allowed, _))
-}
-
 pub type HexWarningSource {
   RejectedLicense(name: String)
   Outdated(new_version: String)
@@ -127,7 +123,7 @@ pub fn get_hex_info(
     |> option.map(Outdated)
 
   let rejected_licenses =
-    check_licenses(info.licenses, allowed_licenses)
+    glist.reject_contains(info.licenses, allowed_licenses)
     |> list.map(RejectedLicense)
 
   case outdated {

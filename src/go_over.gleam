@@ -5,11 +5,9 @@ import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
 import gleam/string
-import go_over/advisories/advisories
 import go_over/config.{type Config, Config}
-import go_over/packages.{type Package}
-import go_over/retired/hex
-import go_over/retired/retired
+import go_over/packages
+import go_over/sources
 import go_over/util/constants
 import go_over/util/print
 import go_over/util/spinner
@@ -17,57 +15,8 @@ import go_over/warning.{
   type Warning, Direct, Indirect, Retired, Vulnerable, Warning,
 }
 import gxyz/function as gfunction
-import gxyz/tuple
 import shellout
 import simplifile
-
-fn get_vulnerable_warnings(pkgs: List(Package), conf: Config) -> List(Warning) {
-  advisories.check_for_advisories(pkgs, conf.force, conf.verbose, conf.global)
-  |> list.map(fn(p) { tuple.map2_1(p, config.filter_advisory_ids(conf, _)) })
-  |> list.filter(fn(p) { tuple.at2_1(p) == [] })
-  |> list.flat_map(tuple.apply_from2(_, warning.adv_to_warning))
-}
-
-fn get_retired_warnings(pkgs: List(Package), conf: Config) -> List(Warning) {
-  pkgs
-  |> list.map(fn(pkg) {
-    retired.check_retired(pkg, conf.force, conf.verbose, conf.global)
-    |> option.map(fn(ret) { #(pkg, ret) })
-  })
-  |> option.values()
-  |> list.map(tuple.apply_from2(_, warning.retired_to_warning))
-}
-
-fn get_hex_warnings(pkgs: List(Package), conf: Config) -> List(Warning) {
-  list.map(pkgs, fn(pkg) {
-    #(
-      pkg,
-      hex.get_hex_info(
-        pkg,
-        conf.force,
-        conf.verbose,
-        conf.global,
-        conf.allowed_licenses,
-      ),
-    )
-  })
-  |> list.flat_map(fn(info) {
-    let #(pkg, sources) = info
-
-    list.map(sources, fn(source) {
-      case source, conf.outdated, list.length(conf.allowed_licenses) > 0 {
-        hex.Outdated(new_version), True, _ ->
-          Some(warning.outdated_to_warning(pkg, new_version))
-
-        hex.RejectedLicense(name), _, True ->
-          Some(warning.rejected_license_to_warning(pkg, name))
-
-        _, _, _ -> None
-      }
-    })
-  })
-  |> option.values()
-}
 
 fn print_warnings_count(vulns: List(Warning)) -> Nil {
   {
@@ -135,14 +84,14 @@ pub fn main() {
     "Checking packages: " <> print.raw("vulnerable", "red"),
     conf.verbose,
   )
-  let vulnerable_warnings = get_vulnerable_warnings(pkgs, conf)
+  let vulnerable_warnings = sources.get_vulnerable_warnings(pkgs, conf)
 
   spinner.set_text_spinner(
     spinner,
     "Checking packages: " <> print.raw("retired", "yellow"),
     conf.verbose,
   )
-  let retired_warnings = get_retired_warnings(pkgs, conf)
+  let retired_warnings = sources.get_retired_warnings(pkgs, conf)
 
   let hex_warnings =
     gfunction.iff(
@@ -162,7 +111,7 @@ pub fn main() {
           conf.verbose,
         )
 
-        get_hex_warnings(pkgs, conf)
+        sources.get_hex_warnings(pkgs, conf)
       },
       [],
     )
