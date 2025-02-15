@@ -1,10 +1,19 @@
 import birdie
 import gleeunit
-import platform
 import pprint
 
 pub fn main() {
   gleeunit.main()
+}
+
+@target(erlang)
+fn runtime() {
+  "Erlang"
+}
+
+@target(javascript)
+fn runtime() {
+  "Javascript"
 }
 
 pub fn birdie_snap(value: a, name: String) -> a {
@@ -14,7 +23,7 @@ pub fn birdie_snap(value: a, name: String) -> a {
     pprint.BitArraysAsString,
     pprint.Labels,
   ))
-  |> birdie.snap(pprint.format(platform.runtime()) <> "@" <> name)
+  |> birdie.snap(runtime() <> "@" <> name)
 
   value
 }
