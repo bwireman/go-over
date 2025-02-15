@@ -1,0 +1,22 @@
+---
+version: 1.2.5
+title: Erlang@spin_up_test@ignore_indirect
+---
+#(
+  ["--ignore-indirect"],
+  Config(
+    [],
+    False,
+    True,
+    False,
+    False,
+    Minimal,
+    False,
+    True,
+    [],
+    [],
+    [],
+    [],
+    False,
+  ),
+)

@@ -1,0 +1,20 @@
+---
+version: 1.2.5
+title: Erlang@warning_format_as_string_minimal@retired_to_warning_renamed
+---
+#(
+  #(
+    Package(
+      "package for warning tests",
+      SemVer(1, 2, 3, "pre", "build"),
+      "pre1.2.3-build",
+      True,
+    ),
+    ReleaseRetirement(
+      Renamed,
+      Some("It's an example man"),
+    ),
+  ),
+  "[31mpackage for warning tests-pre1.2.3-build: package-retired (renamed)
+[0m[K",
+)

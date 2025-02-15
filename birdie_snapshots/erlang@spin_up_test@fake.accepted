@@ -1,0 +1,22 @@
+---
+version: 1.2.5
+title: Erlang@spin_up_test@fake
+---
+#(
+  ["--fake"],
+  Config(
+    [],
+    False,
+    False,
+    False,
+    True,
+    Minimal,
+    False,
+    True,
+    [],
+    [],
+    [],
+    [],
+    False,
+  ),
+)

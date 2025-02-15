@@ -1,16 +1,11 @@
-import birdie
 import gleeunit/should
 import go_over/packages.{read_manifest}
-import pprint
+import go_over_test
 
-fn test_read_manifest(p: String) {
-  let body = read_manifest(p)
-
-  body
-  |> pprint.format()
-  |> birdie.snap("Manifest test: " <> p)
-
-  body
+fn test_read_manifest(path: String) {
+  path
+  |> read_manifest()
+  |> go_over_test.birdie_snap("manifest_test@" <> path)
 }
 
 pub fn read_manifest_test() {

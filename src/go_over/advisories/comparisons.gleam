@@ -10,7 +10,7 @@ type CurriedComparator =
 pub fn parse(ver: String) -> SemVer {
   let parsed =
     string.split(ver, " ")
-    |> list.last
+    |> list.last()
     |> cli.hard_fail_with_msg("could not parse " <> ver)
 
   gleamsver.parse(parsed)
@@ -37,7 +37,7 @@ pub fn get_comparator(ver: String) -> CurriedComparator {
 fn do_get_comparator(ver: String) -> CurriedComparator {
   let op =
     string.split(ver, " ")
-    |> list.first
+    |> list.first()
     |> cli.hard_fail_with_msg("could not parse " <> ver)
 
   let semver = parse(ver)

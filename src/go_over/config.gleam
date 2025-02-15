@@ -34,6 +34,7 @@ pub type Config {
     format: Format,
     verbose: Bool,
     global: Bool,
+    allowed_licenses: List(String),
     ignore_packages: List(String),
     ignore_severity: List(String),
     ignore_ids: List(String),
@@ -68,9 +69,7 @@ pub fn read_config(path: String) -> Config {
   let go_over =
     tom.get_table(gleam, ["go-over"])
     |> result.unwrap(dict.new())
-  let ignore =
-    tom.get_table(go_over, ["ignore"])
-    |> result.unwrap(dict.new())
+
   let cache =
     tom.get_bool(go_over, ["cache"])
     |> result.unwrap(True)
@@ -83,24 +82,19 @@ pub fn read_config(path: String) -> Config {
     |> string.lowercase()
   let global =
     tom.get_bool(go_over, ["global"])
-    |> result.unwrap(False)
+    |> result.unwrap(True)
+  let allowed_licenses =
+    tom.get_array(go_over, ["allowed_licenses"])
+    |> result.map(list.map(_, toml_as_string))
+    |> result.map(option.values)
+    |> result.unwrap([])
 
+  let ignore =
+    tom.get_table(go_over, ["ignore"])
+    |> result.unwrap(dict.new())
   let ignore_indirect =
     tom.get_bool(ignore, ["indirect"])
-    |> result.lazy_unwrap(fn() {
-      case tom.get_bool(go_over, ["ignore_indirect"]) {
-        Ok(value) -> {
-          print.high(
-            "Warning: `go-over.ignore_indirect` is deprecated, use `go-over.ignore.indirect` instead",
-          )
-
-          value
-        }
-
-        Error(_) -> False
-      }
-    })
-
+    |> result.unwrap(False)
   let packages =
     tom.get_array(ignore, ["packages"])
     |> result.unwrap([])
@@ -124,6 +118,7 @@ pub fn read_config(path: String) -> Config {
     //read from flags only
     verbose: False,
     global:,
+    allowed_licenses:,
     format: parse_config_format(format) |> option.unwrap(Minimal),
     ignore_packages: list.map(packages, toml_as_string) |> option.values(),
     ignore_severity: list.map(severity, toml_as_string) |> option.values(),
@@ -133,7 +128,7 @@ pub fn read_config(path: String) -> Config {
 }
 
 pub fn filter_packages(conf: Config, pkgs: List(Package)) -> List(Package) {
-  glist.reject(pkgs, fn(pkg) { list.contains(conf.ignore_packages, pkg.name) })
+  glist.reject_contains_tap(pkgs, fn(pkg) { pkg.name }, conf.ignore_packages)
 }
 
 pub fn filter_indirect(conf: Config, pkgs: List(Package)) -> List(Package) {
@@ -149,8 +144,7 @@ pub fn filter_dev_dependencies(
 ) -> List(Package) {
   case conf.ignore_dev_dependencies {
     False -> pkgs
-    True ->
-      glist.reject(pkgs, fn(pkg) { list.contains(conf.dev_deps, pkg.name) })
+    True -> glist.reject_contains_tap(pkgs, fn(pkg) { pkg.name }, conf.dev_deps)
   }
 }
 
@@ -158,13 +152,15 @@ pub fn filter_advisory_ids(
   conf: Config,
   advisories: List(Advisory),
 ) -> List(Advisory) {
-  glist.reject(advisories, fn(adv) { list.contains(conf.ignore_ids, adv.id) })
+  glist.reject_contains_tap(advisories, fn(adv) { adv.id }, conf.ignore_ids)
 }
 
 pub fn filter_severity(conf: Config, warnings: List(Warning)) -> List(Warning) {
-  glist.reject(warnings, fn(w) {
-    list.contains(conf.ignore_severity, string.lowercase(w.severity))
-  })
+  glist.reject_contains_tap(
+    warnings,
+    fn(w) { string.lowercase(w.severity) },
+    conf.ignore_severity,
+  )
 }
 
 pub fn parse_config_format(val: String) -> option.Option(Format) {
@@ -209,10 +205,10 @@ fn help_message(args: arg_info.ArgInfo) -> String {
                        / /_/ / /_/ /   / /_/ / |/ /  __/ /
                        \\__, /\\____/____\\____/|___/\\___/_/
                       /____/     /_____/
-version 2.4.2
+version 3.0.0
 "
     |> print.format_high()
-      <> "🕵️‍♂️ Audit Erlang & Elixir dependencies, to make sure your gleam projects really ✨ sparkle!",
+      <> "🕵️ Audit Erlang & Elixir dependencies, to make sure your gleam projects really ✨ sparkle!",
   )
   // ? strip out the pointless leading go_over in the help message
   |> string.crop(" ")
@@ -231,6 +227,7 @@ pub fn merge_flags_and_config(flags: Flags, cfg: Config) -> Config {
     ignore_indirect: cfg.ignore_indirect || flags.ignore_indirect,
     fake: flags.fake,
     verbose: flags.verbose,
+    allowed_licenses: cfg.allowed_licenses,
     global:,
     format: option.unwrap(flags.format, cfg.format),
     ignore_packages: cfg.ignore_packages,

@@ -1,0 +1,23 @@
+---
+version: 1.2.5
+title: Erlang@warning_format_as_string@retired_to_warning_other_none
+---
+#(
+  #(
+    Package(
+      "package for warning tests",
+      SemVer(1, 2, 3, "pre", "build"),
+      "pre1.2.3-build",
+      True,
+    ),
+    ReleaseRetirement(OtherReason, None),
+  ),
+  "[31mID: null
+Package: package for warning tests
+Version: pre1.2.3-build
+WarningReason: Retired
+Dependency Type: Direct
+Severity: package-retired (other)
+Reason: other
+[0m[K",
+)

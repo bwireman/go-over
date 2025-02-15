@@ -1,0 +1,18 @@
+---
+version: 1.2.5
+title: Javascript@manifest_test@test/testdata/manifest/a.toml
+---
+[
+  Package(
+    name: "a",
+    version: SemVer(
+      major: 0,
+      minor: 8,
+      patch: 1,
+      pre: "",
+      build: "",
+    ),
+    version_raw: "0.8.1",
+    direct: True,
+  ),
+]

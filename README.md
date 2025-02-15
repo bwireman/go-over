@@ -70,14 +70,14 @@ Optional settings that can be added to your project's `gleam.toml`
 cache = true
 # if true all cached data will be stored in user's home directory
 # allowing cache to be shared between projects
-# default: false
-global = false
+# default: true
+global = true
 # sets output format for warnings ["minimal", "detailed", "json"]
 # default: "minimal"
 format = "minimal"
 # will additionally check if newer versions of dependencies exist
-# default: false
-outdated = false
+# default: true
+outdated = true
 
 [go-over.ignore]
 # will ignore all warnings for indirect dependencies
@@ -112,7 +112,7 @@ You can add go_over to you're pre-commit hooks by installing
 ```toml
 [cactus.pre-commit]
 actions = [
-    { command = "go_over", kind = "module", args=["--outdated"] },
+  { command = "go_over" },
 ]
 ```
 

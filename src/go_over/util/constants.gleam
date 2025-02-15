@@ -14,8 +14,8 @@ pub const long_ass_dashes = "\n-----------------------------------------------\n
 pub fn go_over_path(global: Bool) -> String {
   case global {
     True ->
-      directories.home_dir()
-      |> cli.hard_fail_with_msg("could not get home directory")
+      directories.cache_dir()
+      |> cli.hard_fail_with_msg("could not get cache directory")
     False ->
       simplifile.current_directory()
       |> cli.hard_fail_with_msg("could not get current directory")
