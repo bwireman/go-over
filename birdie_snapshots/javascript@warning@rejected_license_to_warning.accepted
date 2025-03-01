@@ -23,7 +23,7 @@ title: Javascript@warning@rejected_license_to_warning
     package: "package for warning tests",
     version: None,
     reason: "Rejected License found: closed-source-crap",
-    warning_reason_code: Outdated,
+    warning_reason_code: RejectedLicense(name: "closed-source-crap"),
     severity: "rejected-license",
     dep: Direct,
   ),

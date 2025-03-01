@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "elixir": "~> 1.10",
+    "app": "retired",
+    "build_tools": ["mix"]
+  },
+  "version": "0.1.2",
+  "checksum": "deadbeef",
+  "url": "retired/releases/0.1.2",
+  "has_docs": true,
+  "inserted_at": "2021-06-16T23:40:00.101920Z",
+  "updated_at": "2021-06-18T17:01:38.829429Z",
+  "retirement": { "message": "example", "reason": "security" },
+  "downloads": 87,
+  "publisher": {
+    "url": "go-over-test",
+    "username": "go-over-test-user"
+  },
+  "requirements": {},
+  "docs_html_url": "retired/0.1.2/",
+  "package_url": "retired",
+  "configs": {
+    "erlang.mk": "dep_retired = hex 0.1.2",
+    "mix.exs": "{:retired, \"~> 0.1.2\"}",
+    "rebar.config": "{retired, \"0.1.2\"}"
+  },
+  "html_url": "/packages/retired/0.1.2"
+}

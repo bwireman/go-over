@@ -62,5 +62,6 @@ allowed_licenses = ["MIT", "Apache-2.0", "BSD 2-Clause", "WTFPL"]
 [go-over.ignore]
 indirect = false
 dev_dependencies = false
+packages = ["glance"]
 severity = []
 ids = []

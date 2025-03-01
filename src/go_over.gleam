@@ -6,6 +6,7 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleam/string
 import go_over/config.{type Config, Config}
+import go_over/hex/puller
 import go_over/packages
 import go_over/sources
 import go_over/util/constants
@@ -91,7 +92,7 @@ pub fn main() {
     "Checking packages: " <> print.raw("retired", "yellow"),
     conf.verbose,
   )
-  let retired_warnings = sources.get_retired_warnings(pkgs, conf)
+  let retired_warnings = sources.get_retired_warnings(puller.CURL, pkgs, conf)
 
   let hex_warnings =
     gfunction.iff(
@@ -111,7 +112,7 @@ pub fn main() {
           conf.verbose,
         )
 
-        sources.get_hex_warnings(pkgs, conf)
+        sources.get_hex_warnings(puller.CURL, pkgs, conf)
       },
       [],
     )

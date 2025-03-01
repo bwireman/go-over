@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "links": {},
+    "description": "boo",
+    "licenses": ["closed-source"],
+    "maintainers": []
+  },
+  "name": "bad",
+  "url": "bad",
+  "owners": [],
+  "inserted_at": "2024-05-30T22:39:23.118433Z",
+  "updated_at": "2025-01-20T17:52:08.078591Z",
+  "repository": "hexpm",
+  "releases": [],
+  "downloads": { "all": 1, "day": 2, "recent": 3, "week": 4 },
+  "latest_version": "1.1.1",
+  "docs_html_url": "bad/",
+  "retirements": {},
+  "configs": {
+    "erlang.mk": "dep_bad = hex 1.1.1",
+    "mix.exs": "{:bad, \"~> 2.4\"}",
+    "rebar.config": "{bad, \"1.1.1\"}"
+  },
+  "html_url": "/packages/bad",
+  "latest_stable_version": "1.1.1"
+}

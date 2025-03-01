@@ -1,6 +1,6 @@
 import gleam/json
 import gleeunit/should
-import go_over/retired/hex
+import go_over/hex/hex
 import go_over_test
 import simplifile
 

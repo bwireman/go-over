@@ -4,8 +4,8 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
 import go_over/advisories/advisories.{type Advisory}
+import go_over/hex/core
 import go_over/packages.{type Package}
-import go_over/retired/core
 import go_over/util/print
 
 pub type WarningReasonCode {
@@ -99,7 +99,7 @@ pub fn rejected_license_to_warning(pkg: Package, license: String) -> Warning {
     pkg.name,
     None,
     "Rejected License found: " <> license,
-    Outdated,
+    RejectedLicense(license),
     "rejected-license",
     dep_code_from_bool(pkg.direct),
   )

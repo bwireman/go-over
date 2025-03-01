@@ -15,7 +15,7 @@ title: Erlang@warning_format_as_string@rejected_license_to_warning
   "[33mID: null
 Package: package for warning tests
 Version: null
-WarningReason: Outdated
+WarningReason: Rejected License (closed-source-crap)
 Dependency Type: Direct
 Severity: rejected-license
 Reason: Rejected License found: closed-source-crap

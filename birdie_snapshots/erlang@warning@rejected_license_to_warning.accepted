@@ -17,7 +17,7 @@ title: Erlang@warning@rejected_license_to_warning
     "package for warning tests",
     None,
     "Rejected License found: closed-source-crap",
-    Outdated,
+    RejectedLicense("closed-source-crap"),
     "rejected-license",
     Direct,
   ),

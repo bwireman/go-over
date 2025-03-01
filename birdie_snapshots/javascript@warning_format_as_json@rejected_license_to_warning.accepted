@@ -18,5 +18,5 @@ title: Javascript@warning_format_as_json@rejected_license_to_warning
     ),
     "closed-source-crap",
   ),
-  "{"id":null,"package":"package for warning tests","version":null,"warning_reason":"Outdated","dependency_type":"Direct","severity":"rejected-license","reason":"Rejected License found: closed-source-crap"}",
+  "{"id":null,"package":"package for warning tests","version":null,"warning_reason":"Rejected License (closed-source-crap)","dependency_type":"Direct","severity":"rejected-license","reason":"Rejected License found: closed-source-crap"}",
 )
