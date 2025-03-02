@@ -32,7 +32,7 @@ Package: package for warning tests
 Version: pre1.2.3-build
 WarningReason: Vulnerable
 Dependency Type: Direct
-Severity: example
+Severity: unknown-example
 Reason: it's like bad
 [0m[K",
 )

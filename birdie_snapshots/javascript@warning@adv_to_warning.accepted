@@ -32,8 +32,8 @@ title: Javascript@warning@adv_to_warning
     package: "package for warning tests",
     version: Some("pre1.2.3-build"),
     reason: "it's like bad",
-    warning_reason_code: Vulnerable,
-    severity: "example",
+    warning_reason_code: WarningReasonVulnerable,
+    severity: SeverityUnknown(info: "example"),
     dep: Direct,
   ),
 )

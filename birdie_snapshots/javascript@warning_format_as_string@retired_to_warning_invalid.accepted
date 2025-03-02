@@ -21,12 +21,12 @@ title: Javascript@warning_format_as_string@retired_to_warning_invalid
       message: Some("It's an example man"),
     ),
   ),
-  "[31mID: null
+  "[36mID: null
 Package: package for warning tests
 Version: pre1.2.3-build
 WarningReason: Retired
 Dependency Type: Direct
-Severity: package-retired (invalid)
+Severity: package-retired:invalid
 Reason: invalid: It's an example man
 [0m[K",
 )

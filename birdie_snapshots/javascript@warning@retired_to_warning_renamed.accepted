@@ -26,8 +26,8 @@ title: Javascript@warning@retired_to_warning_renamed
     package: "package for warning tests",
     version: Some("pre1.2.3-build"),
     reason: "renamed: It's an example man",
-    warning_reason_code: Retired,
-    severity: "package-retired (renamed)",
+    warning_reason_code: WarningReasonRetired,
+    severity: SeverityPackageRetiredRenamed,
     dep: Direct,
   ),
 )

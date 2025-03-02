@@ -12,5 +12,13 @@ title: Erlang@warning_format_as_json@retired_to_warning_renamed_none
     ),
     ReleaseRetirement(Renamed, None),
   ),
-  "{"id":null,"package":"package for warning tests","version":"pre1.2.3-build","warning_reason":"Retired","dependency_type":"Direct","severity":"package-retired (renamed)","reason":"renamed"}",
+  "
+{
+"id":null,
+"package":"package for warning tests",
+"version":"pre1.2.3-build",
+"warning_reason":"Retired",
+"dependency_type":"Direct",
+"severity":"package-retired:renamed",
+"reason":"renamed"}",
 )

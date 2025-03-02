@@ -14,7 +14,7 @@ Config(
   puller: CURL,
   allowed_licenses: [],
   ignore_packages: ["a", "b"],
-  ignore_severity: ["a", "b"],
+  ignore_severity: ["critical", "high"],
   ignore_ids: ["a", "b"],
   ignore_dev_dependencies: True,
 )

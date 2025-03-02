@@ -12,6 +12,6 @@ title: Erlang@warning_format_as_string_minimal@retired_to_warning_invalid_none
     ),
     ReleaseRetirement(Invalid, None),
   ),
-  "[31mpackage for warning tests-pre1.2.3-build: package-retired (invalid)
+  "[36mpackage for warning tests-pre1.2.3-build: package-retired:invalid
 [0m[K",
 )

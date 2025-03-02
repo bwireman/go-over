@@ -1,3 +1,4 @@
+import gleam/string
 import gleam/hexpm
 import gleam/json
 import gleam/list
@@ -8,11 +9,20 @@ import go_over/packages.{type Package, Package}
 import go_over/warning.{type Warning}
 import go_over_test
 
+@external(javascript, "./test_ffi.mjs", "pprint")
+fn pprint_json(j: String) -> String {
+  j
+  |> string.replace("{", "\n{\n")
+  |> string.replace("[", "\n[\n")
+  |> string.replace(",", ",\n")
+}
+
 pub fn to_warning_format(name: String, input: a, warning: Warning) {
   go_over_test.birdie_snap_with_input(warning, input, "warning@" <> name)
   go_over_test.birdie_snap_with_input(
     warning.format_as_json(warning)
-      |> json.to_string(),
+      |> json.to_string()
+      |> pprint_json(),
     input,
     "warning_format_as_json@" <> name,
   )
@@ -53,6 +63,7 @@ pub fn adv_to_warning_test() {
   ))
 }
 
+// SOMETHING IS WRONG HERE
 pub fn retired_to_warning_test() {
   // with message
   {

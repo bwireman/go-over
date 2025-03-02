@@ -26,7 +26,7 @@ Package: package for warning tests
 Version: pre1.2.3-build
 WarningReason: Retired
 Dependency Type: Direct
-Severity: package-retired (security)
+Severity: package-retired:security
 Reason: security
 [0m[K",
 )

@@ -20,8 +20,8 @@ title: Erlang@warning@retired_to_warning_renamed
     "package for warning tests",
     Some("pre1.2.3-build"),
     "renamed: It's an example man",
-    Retired,
-    "package-retired (renamed)",
+    WarningReasonRetired,
+    SeverityPackageRetiredRenamed,
     Direct,
   ),
 )

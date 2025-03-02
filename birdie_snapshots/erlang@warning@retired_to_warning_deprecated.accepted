@@ -20,8 +20,8 @@ title: Erlang@warning@retired_to_warning_deprecated
     "package for warning tests",
     Some("pre1.2.3-build"),
     "deprecated: It's an example man",
-    Retired,
-    "package-retired (deprecated)",
+    WarningReasonRetired,
+    SeverityPackageRetiredDeprecated,
     Direct,
   ),
 )

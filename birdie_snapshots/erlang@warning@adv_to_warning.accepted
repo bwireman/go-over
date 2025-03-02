@@ -23,8 +23,8 @@ title: Erlang@warning@adv_to_warning
     "package for warning tests",
     Some("pre1.2.3-build"),
     "it's like bad",
-    Vulnerable,
-    "example",
+    WarningReasonVulnerable,
+    SeverityUnknown("example"),
     Direct,
   ),
 )

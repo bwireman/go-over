@@ -17,8 +17,8 @@ title: Erlang@warning@retired_to_warning_invalid_none
     "package for warning tests",
     Some("pre1.2.3-build"),
     "invalid",
-    Retired,
-    "package-retired (invalid)",
+    WarningReasonRetired,
+    SeverityPackageRetiredInvalid,
     Direct,
   ),
 )

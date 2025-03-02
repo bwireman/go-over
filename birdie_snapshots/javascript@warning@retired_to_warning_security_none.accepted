@@ -26,8 +26,8 @@ title: Javascript@warning@retired_to_warning_security_none
     package: "package for warning tests",
     version: Some("pre1.2.3-build"),
     reason: "security",
-    warning_reason_code: Retired,
-    severity: "package-retired (security)",
+    warning_reason_code: WarningReasonRetired,
+    severity: SeverityPackageRetiredSecurity,
     dep: Direct,
   ),
 )

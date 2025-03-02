@@ -17,8 +17,8 @@ title: Erlang@warning@outdated_to_warning
     "package for warning tests",
     Some("pre1.2.3-build"),
     "New Version: '1.2.3' exists",
-    Outdated,
-    "package-outdated",
+    WarningReasonOutdated,
+    SeverityPackageOutdated,
     Direct,
   ),
 )

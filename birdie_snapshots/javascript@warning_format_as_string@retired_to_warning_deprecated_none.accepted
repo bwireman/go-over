@@ -21,12 +21,12 @@ title: Javascript@warning_format_as_string@retired_to_warning_deprecated_none
       message: None,
     ),
   ),
-  "[31mID: null
+  "[34mID: null
 Package: package for warning tests
 Version: pre1.2.3-build
 WarningReason: Retired
 Dependency Type: Direct
-Severity: package-retired (deprecated)
+Severity: package-retired:deprecated
 Reason: deprecated
 [0m[K",
 )

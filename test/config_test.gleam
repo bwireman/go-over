@@ -103,12 +103,66 @@ pub fn filter_advisory_ids_test() {
 
 pub fn filter_severity_test() {
   let full = test_read_config("test/testdata/gleam/full.toml")
-  let a = Warning(None, "", None, "", warning.Vulnerable, "a", warning.Direct)
-  let b = Warning(None, "", None, "", warning.Vulnerable, "b", warning.Direct)
-  let c = Warning(None, "", None, "", warning.Vulnerable, "c", warning.Direct)
-  let aa = Warning(None, "", None, "", warning.Vulnerable, "A", warning.Direct)
-  let bb = Warning(None, "", None, "", warning.Vulnerable, "B", warning.Direct)
-  let cc = Warning(None, "", None, "", warning.Vulnerable, "C", warning.Direct)
+  let a =
+    Warning(
+      None,
+      "",
+      None,
+      "",
+      warning.WarningReasonVulnerable,
+      warning.SeverityCritical,
+      warning.Direct,
+    )
+  let b =
+    Warning(
+      None,
+      "",
+      None,
+      "",
+      warning.WarningReasonVulnerable,
+      warning.SeverityHigh,
+      warning.Direct,
+    )
+  let c =
+    Warning(
+      None,
+      "",
+      None,
+      "",
+      warning.WarningReasonVulnerable,
+      warning.SeverityModerate,
+      warning.Direct,
+    )
+  let aa =
+    Warning(
+      None,
+      "",
+      None,
+      "",
+      warning.WarningReasonVulnerable,
+      warning.SeverityCritical,
+      warning.Direct,
+    )
+  let bb =
+    Warning(
+      None,
+      "",
+      None,
+      "",
+      warning.WarningReasonVulnerable,
+      warning.SeverityHigh,
+      warning.Direct,
+    )
+  let cc =
+    Warning(
+      None,
+      "",
+      None,
+      "",
+      warning.WarningReasonVulnerable,
+      warning.SeverityPackageRetiredSecurity,
+      warning.Direct,
+    )
 
   should.equal(filter_severity(full, []), [])
   should.equal(filter_severity(full, [a]), [])

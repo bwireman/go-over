@@ -14,7 +14,7 @@ Config(
   Curl,
   [],
   ["a", "b"],
-  ["a", "b"],
+  ["critical", "high"],
   ["a", "b"],
   True,
 )

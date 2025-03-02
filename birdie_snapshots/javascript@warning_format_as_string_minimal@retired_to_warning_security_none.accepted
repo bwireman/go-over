@@ -21,6 +21,6 @@ title: Javascript@warning_format_as_string_minimal@retired_to_warning_security_n
       message: None,
     ),
   ),
-  "[31mpackage for warning tests-pre1.2.3-build: package-retired (security)
+  "[31mpackage for warning tests-pre1.2.3-build: package-retired:security
 [0m[K",
 )

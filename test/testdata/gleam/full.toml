@@ -4,5 +4,5 @@ c = "~> 1.1.1"
 [go-over.ignore]
 dev_dependencies = true
 packages = ["a", "b"]
-severity = ["a", "b"]
+severity = ["critical", "high"]
 ids = ["a", "b"]

@@ -175,7 +175,7 @@ pub fn filter_advisory_ids(
 pub fn filter_severity(conf: Config, warnings: List(Warning)) -> List(Warning) {
   glist.reject_contains_tap(
     warnings,
-    fn(w) { string.lowercase(w.severity) },
+    fn(w) { warning.severity_as_string(w.severity) },
     conf.ignore_severity,
   )
 }

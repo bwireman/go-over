@@ -21,6 +21,6 @@ title: Javascript@warning_format_as_string_minimal@retired_to_warning_other
       message: Some("It's an example man"),
     ),
   ),
-  "[31mpackage for warning tests-pre1.2.3-build: package-retired (other)
+  "[31mpackage for warning tests-pre1.2.3-build: package-retired:it's an example man
 [0m[K",
 )

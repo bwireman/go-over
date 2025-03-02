@@ -12,7 +12,9 @@ import go_over/util/constants
 import go_over/util/print
 import go_over/util/spinner
 import go_over/warning.{
-  type Warning, Direct, Indirect, Retired, Vulnerable, Warning,
+  type Warning, Direct, Indirect, SeverityCritical, SeverityHigh, SeverityLow,
+  SeverityModerate, SeverityPackageRetiredSecurity, SeverityRejectedLicense, Warning,
+  WarningReasonRetired, WarningReasonVulnerable,
 }
 import gxyz/function as gfunction
 import shellout
@@ -140,8 +142,8 @@ const example_warnings = [
     "fake",
     Some("x.y.z"),
     "Retired",
-    Vulnerable,
-    "Critical",
+    WarningReasonVulnerable,
+    SeverityCritical,
     Direct,
   ),
   Warning(
@@ -149,8 +151,8 @@ const example_warnings = [
     "another_fake",
     Some("1.2.3"),
     "Vulnerable",
-    Vulnerable,
-    "High",
+    WarningReasonVulnerable,
+    SeverityHigh,
     Direct,
   ),
   Warning(
@@ -158,8 +160,8 @@ const example_warnings = [
     "and_another",
     Some("4.5.6"),
     "Vulnerable",
-    Vulnerable,
-    "Moderate",
+    WarningReasonVulnerable,
+    SeverityModerate,
     Direct,
   ),
   Warning(
@@ -167,8 +169,8 @@ const example_warnings = [
     "one_more",
     Some("7.8.9"),
     "Vulnerable",
-    Vulnerable,
-    "LOW",
+    WarningReasonVulnerable,
+    SeverityLow,
     Indirect,
   ),
   Warning(
@@ -176,8 +178,8 @@ const example_warnings = [
     "this_one_was_retired",
     Some("10.11.12"),
     "Retired",
-    Retired,
-    "Package Retired",
+    WarningReasonRetired,
+    SeverityPackageRetiredSecurity,
     Indirect,
   ),
   Warning(
@@ -185,8 +187,8 @@ const example_warnings = [
     "rejected_license",
     None,
     "Retired",
-    Retired,
-    "Rejected License",
+    WarningReasonRetired,
+    SeverityRejectedLicense,
     Indirect,
   ),
 ]

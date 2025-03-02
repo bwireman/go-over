@@ -17,8 +17,8 @@ title: Erlang@warning@retired_to_warning_security_none
     "package for warning tests",
     Some("pre1.2.3-build"),
     "security",
-    Retired,
-    "package-retired (security)",
+    WarningReasonRetired,
+    SeverityPackageRetiredSecurity,
     Direct,
   ),
 )

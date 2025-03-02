@@ -27,5 +27,13 @@ title: Javascript@warning_format_as_json@adv_to_warning
       description: "it's like bad",
     ),
   ),
-  "{"id":"ghsa-example","package":"package for warning tests","version":"pre1.2.3-build","warning_reason":"Vulnerable","dependency_type":"Direct","severity":"example","reason":"it's like bad"}",
+  "{
+	"id": "ghsa-example",
+	"package": "package for warning tests",
+	"version": "pre1.2.3-build",
+	"warning_reason": "Vulnerable",
+	"dependency_type": "Direct",
+	"severity": "unknown-example",
+	"reason": "it's like bad"
+}",
 )

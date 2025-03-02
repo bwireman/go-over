@@ -5,7 +5,10 @@ import go_over/config.{Config, Minimal}
 import go_over/hex/puller.{Mock}
 import go_over/packages
 import go_over/sources
-import go_over/warning.{Indirect, Outdated, RejectedLicense, Retired, Warning}
+import go_over/warning.{
+  Indirect, Warning, WarningReasonOutdated, WarningReasonRejectedLicense,
+  WarningReasonRetired,
+}
 
 const conf = Config(
   dev_deps: [],
@@ -39,8 +42,8 @@ pub fn get_retired_warnings_test() {
       "name",
       Some("1.1.1"),
       "security: example",
-      Retired,
-      "package-retired (security)",
+      WarningReasonRetired,
+      warning.SeverityPackageRetiredSecurity,
       Indirect,
     ),
   ])
@@ -66,8 +69,8 @@ pub fn get_rejected_license_test() {
       "name",
       None,
       "Rejected License found: closed-source",
-      RejectedLicense("closed-source"),
-      "rejected-license",
+      WarningReasonRejectedLicense("closed-source"),
+      warning.SeverityRejectedLicense,
       Indirect,
     ),
   ])
@@ -93,8 +96,8 @@ pub fn get_outdated_test() {
       "name",
       Some("1.1.1"),
       "New Version: '1.2.3' exists",
-      Outdated,
-      "package-outdated",
+      WarningReasonOutdated,
+      warning.SeverityPackageOutdated,
       Indirect,
     ),
   ])

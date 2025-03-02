@@ -18,6 +18,6 @@ title: Erlang@warning_format_as_string_minimal@adv_to_warning
       "it's like bad",
     ),
   ),
-  "[31mpackage for warning tests-pre1.2.3-build: example
+  "[31mpackage for warning tests-pre1.2.3-build: unknown-example
 [0m[K",
 )
