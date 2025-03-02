@@ -1,8 +1,8 @@
-import gleam/string
 import gleam/hexpm
 import gleam/json
 import gleam/list
 import gleam/option
+import gleam/string
 import gleamsver.{type SemVer, SemVer}
 import go_over/advisories/advisories.{type Advisory, Advisory}
 import go_over/packages.{type Package, Package}
@@ -13,8 +13,11 @@ import go_over_test
 fn pprint_json(j: String) -> String {
   j
   |> string.replace("{", "\n{\n")
+  |> string.replace("}", "\n}\n")
   |> string.replace("[", "\n[\n")
+  |> string.replace("]", "\n]\n")
   |> string.replace(",", ",\n")
+  |> string.replace("\":", "\": ")
 }
 
 pub fn to_warning_format(name: String, input: a, warning: Warning) {

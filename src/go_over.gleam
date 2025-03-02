@@ -13,8 +13,8 @@ import go_over/util/print
 import go_over/util/spinner
 import go_over/warning.{
   type Warning, Direct, Indirect, SeverityCritical, SeverityHigh, SeverityLow,
-  SeverityModerate, SeverityPackageRetiredSecurity, SeverityRejectedLicense, Warning,
-  WarningReasonRetired, WarningReasonVulnerable,
+  SeverityModerate, SeverityPackageRetiredSecurity, SeverityRejectedLicense,
+  Warning, WarningReasonRetired, WarningReasonVulnerable,
 }
 import gxyz/function as gfunction
 import shellout

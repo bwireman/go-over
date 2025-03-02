@@ -14,11 +14,13 @@ title: Erlang@warning_format_as_json@retired_to_warning_other_none
   ),
   "
 {
-"id":null,
-"package":"package for warning tests",
-"version":"pre1.2.3-build",
-"warning_reason":"Retired",
-"dependency_type":"Direct",
-"severity":"package-retired:unknown",
-"reason":"other"}",
+"id": null,
+"package": "package for warning tests",
+"version": "pre1.2.3-build",
+"warning_reason": "Retired",
+"dependency_type": "Direct",
+"severity": "package-retired:unknown",
+"reason": "other"
+}
+",
 )
