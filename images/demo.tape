@@ -9,21 +9,19 @@ Set BorderRadius 12
 
 # Setup
 Hide
-Type `rm -rf .go-over/`
-Enter
-Type `rm -rf ~/.go-over/ && clear`
+Type `rm -rf ~/.cache/go-over/ && clear`
 Enter
 Show
 
 Type `gleam run -m go_over -- -h`
-Sleep 2s
+Sleep 3.5s
 Enter
 Sleep 10s
 
 Type clear
 Enter
 
-Type "# check for retired, vulnerable or outdated packages"
+Type "# check for retired, vulnerable or outdated packages (and even filter their licenses)"
 Enter
 Sleep 5s
 Type `gleam run -m go_over`

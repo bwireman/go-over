@@ -53,6 +53,7 @@ pub type Flags {
     global: Bool,
     verbose: Bool,
     format: option.Option(Format),
+    puller: option.Option(puller.Puller),
   )
 }
 
@@ -280,6 +281,7 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
     use fake <- clip.parameter
     use verbose <- clip.parameter
     use format <- clip.parameter
+    use puller <- clip.parameter
 
     merge_flags_and_config(
       Flags(
@@ -290,6 +292,7 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
         verbose:,
         format:,
         global:,
+        puller:,
       ),
       cfg,
     )
@@ -321,6 +324,14 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
       "Specify the output format of any warnings, [minimal, verbose, json]",
     )
     |> opt.map(parse_config_format)
+    |> opt.default(option.None),
+  )
+  |> clip.opt(
+    opt.new("puller")
+    |> opt.help(
+      "Specify the tool used to reach out to hex.pm, [curl, wget, httpie]",
+    )
+    |> opt.map(parse_puller)
     |> opt.default(option.None),
   )
   |> clip.help(help.custom(help_message))

@@ -225,6 +225,7 @@ pub fn merge_flags_and_config_test() {
       verbose: False,
       format: option.None,
       global: False,
+      puller: option.None,
     )
 
   config.merge_flags_and_config(empty_flags, empty_conf)

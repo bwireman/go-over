@@ -21,7 +21,8 @@ gleam add --dev go_over
 ## 📣 Also!
 
 - add `.go-over/` to your `.gitignore`
-- make sure `git` & `curl` are installed
+- make sure `git` & `curl` are installed (`wget` and `httpie` are also
+  supported)
 
 #### 🌸 Javascript
 
@@ -78,6 +79,12 @@ format = "minimal"
 # will additionally check if newer versions of dependencies exist
 # default: true
 outdated = true
+# tool used to pull information from hex.pm ["curl", "wget", "httpie"]
+# default: "curl"
+puller = "curl"
+# licenses dependencies are allowed to use. If left empty then all licenses are allowed
+# default: []
+allowed_licenses = []
 
 [go-over.ignore]
 # will ignore all warnings for indirect dependencies
