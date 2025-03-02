@@ -13,6 +13,7 @@ title: Javascript@spin_up_test@outdated
     format: Minimal,
     verbose: False,
     global: True,
+    puller: CURL,
     allowed_licenses: [],
     ignore_packages: [],
     ignore_severity: [],

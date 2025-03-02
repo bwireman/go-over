@@ -9,6 +9,7 @@ import gleam/option.{type Option, Some}
 import gleam/result
 import gleam/string
 import go_over/advisories/advisories.{type Advisory}
+import go_over/hex/puller
 import go_over/packages.{type Package}
 import go_over/util/print
 import go_over/warning.{type Warning}
@@ -34,6 +35,7 @@ pub type Config {
     format: Format,
     verbose: Bool,
     global: Bool,
+    puller: puller.Puller,
     allowed_licenses: List(String),
     ignore_packages: List(String),
     ignore_severity: List(String),
@@ -80,6 +82,14 @@ pub fn read_config(path: String) -> Config {
     tom.get_string(go_over, ["format"])
     |> result.unwrap("minimal")
     |> string.lowercase()
+    |> parse_config_format()
+    |> option.unwrap(Minimal)
+  let puller =
+    tom.get_string(go_over, ["puller"])
+    |> result.unwrap("curl")
+    |> string.lowercase()
+    |> parse_puller()
+    |> option.unwrap(puller.CURL)
   let global =
     tom.get_bool(go_over, ["global"])
     |> result.unwrap(True)
@@ -95,15 +105,21 @@ pub fn read_config(path: String) -> Config {
   let ignore_indirect =
     tom.get_bool(ignore, ["indirect"])
     |> result.unwrap(False)
-  let packages =
+  let ignore_packages =
     tom.get_array(ignore, ["packages"])
     |> result.unwrap([])
-  let severity =
+    |> list.map(toml_as_string)
+    |> option.values()
+  let ignore_severity =
     tom.get_array(ignore, ["severity"])
     |> result.unwrap([])
-  let ids =
+    |> list.map(toml_as_string)
+    |> option.values()
+  let ignore_ids =
     tom.get_array(ignore, ["ids"])
     |> result.unwrap([])
+    |> list.map(toml_as_string)
+    |> option.values()
   let ignore_dev_dependencies =
     tom.get_bool(ignore, ["dev_dependencies"])
     |> result.unwrap(False)
@@ -118,11 +134,12 @@ pub fn read_config(path: String) -> Config {
     //read from flags only
     verbose: False,
     global:,
+    puller:,
     allowed_licenses:,
-    format: parse_config_format(format) |> option.unwrap(Minimal),
-    ignore_packages: list.map(packages, toml_as_string) |> option.values(),
-    ignore_severity: list.map(severity, toml_as_string) |> option.values(),
-    ignore_ids: list.map(ids, toml_as_string) |> option.values(),
+    format:,
+    ignore_packages:,
+    ignore_severity:,
+    ignore_ids:,
     ignore_dev_dependencies:,
   )
 }
@@ -179,6 +196,22 @@ pub fn parse_config_format(val: String) -> option.Option(Format) {
   }
 }
 
+fn parse_puller(name: String) -> option.Option(puller.Puller) {
+  case name {
+    "curl" -> Some(puller.CURL)
+    "wget" -> Some(puller.WGET)
+    "httpie" -> Some(puller.HTTPIE)
+    _ -> {
+      print.warning(
+        "Invalid puller '"
+        <> name
+        <> "' valid options are ['curl', 'wget', 'httpie'], defaulting to curl",
+      )
+      option.None
+    }
+  }
+}
+
 fn toml_as_string(toml: Toml) -> Option(String) {
   case toml {
     tom.String(s) -> Some(s)
@@ -228,6 +261,7 @@ pub fn merge_flags_and_config(flags: Flags, cfg: Config) -> Config {
     fake: flags.fake,
     verbose: flags.verbose,
     allowed_licenses: cfg.allowed_licenses,
+    puller: cfg.puller,
     global:,
     format: option.unwrap(flags.format, cfg.format),
     ignore_packages: cfg.ignore_packages,

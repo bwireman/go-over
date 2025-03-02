@@ -4,7 +4,6 @@ import gleam/pair
 import go_over/advisories/advisories
 import go_over/config.{type Config, Config}
 import go_over/hex/hex
-import go_over/hex/puller
 import go_over/hex/retired
 import go_over/packages.{type Package}
 import go_over/warning.{type Warning, Warning}
@@ -21,25 +20,23 @@ pub fn get_vulnerable_warnings(
   |> list.flat_map(tuple.apply_from2(_, warning.adv_to_warning))
 }
 
-pub fn get_retired_warnings(
-  pull: puller.Puller,
-  pkgs: List(Package),
-  conf: Config,
-) -> List(Warning) {
+pub fn get_retired_warnings(pkgs: List(Package), conf: Config) -> List(Warning) {
   pkgs
   |> list.map(fn(pkg) {
-    retired.check_retired(pull, pkg, conf.force, conf.verbose, conf.global)
+    retired.check_retired(
+      conf.puller,
+      pkg,
+      conf.force,
+      conf.verbose,
+      conf.global,
+    )
     |> option.map(pair.new(pkg, _))
   })
   |> option.values()
   |> list.map(tuple.apply_from2(_, warning.retired_to_warning))
 }
 
-pub fn get_hex_warnings(
-  pull: puller.Puller,
-  pkgs: List(Package),
-  conf: Config,
-) -> List(Warning) {
+pub fn get_hex_warnings(pkgs: List(Package), conf: Config) -> List(Warning) {
   let check_licenses = list.length(conf.allowed_licenses) > 0
   let outdated = conf.outdated
   let force = conf.force
@@ -49,7 +46,14 @@ pub fn get_hex_warnings(
 
   list.flat_map(pkgs, fn(pkg) {
     let sources =
-      hex.get_hex_info(pull, pkg, force, verbose, global, allowed_licenses)
+      hex.get_hex_info(
+        conf.puller,
+        pkg,
+        force,
+        verbose,
+        global,
+        allowed_licenses,
+      )
 
     list.map(sources, fn(source) {
       case source, outdated, check_licenses {

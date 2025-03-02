@@ -11,6 +11,7 @@ Config(
   format: Minimal,
   verbose: False,
   global: True,
+  puller: CURL,
   allowed_licenses: [],
   ignore_packages: ["a", "b"],
   ignore_severity: ["a", "b"],

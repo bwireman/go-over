@@ -2,7 +2,7 @@ import gleam/option.{None, Some}
 import gleamsver
 import gleeunit/should
 import go_over/config.{Config, Minimal}
-import go_over/hex/puller
+import go_over/hex/puller.{Mock}
 import go_over/packages
 import go_over/sources
 import go_over/warning.{Indirect, Outdated, RejectedLicense, Retired, Warning}
@@ -16,6 +16,7 @@ const conf = Config(
   format: Minimal,
   verbose: True,
   global: False,
+  puller: puller.CURL,
   allowed_licenses: ["MIT"],
   ignore_packages: [],
   ignore_severity: [],
@@ -28,8 +29,10 @@ const pkgs = [
 ]
 
 pub fn get_retired_warnings_test() {
-  puller.Mock("test/testdata/hex/retired/retired.json")
-  |> sources.get_retired_warnings(pkgs, conf)
+  sources.get_retired_warnings(
+    pkgs,
+    Config(..conf, puller: Mock("test/testdata/hex/retired/retired.json")),
+  )
   |> should.equal([
     Warning(
       None,
@@ -42,14 +45,21 @@ pub fn get_retired_warnings_test() {
     ),
   ])
 
-  puller.Mock("test/testdata/hex/retired/not_retired.json")
-  |> sources.get_retired_warnings(pkgs, conf)
+  sources.get_retired_warnings(
+    pkgs,
+    Config(..conf, puller: Mock("test/testdata/hex/retired/not_retired.json")),
+  )
   |> should.equal([])
 }
 
 pub fn get_rejected_license_test() {
-  puller.Mock("test/testdata/hex/rejected_licenses/bad_license.json")
-  |> sources.get_hex_warnings(pkgs, conf)
+  sources.get_hex_warnings(
+    pkgs,
+    Config(
+      ..conf,
+      puller: Mock("test/testdata/hex/rejected_licenses/bad_license.json"),
+    ),
+  )
   |> should.equal([
     Warning(
       None,
@@ -62,14 +72,21 @@ pub fn get_rejected_license_test() {
     ),
   ])
 
-  puller.Mock("test/testdata/hex/rejected_licenses/good_license.json")
-  |> sources.get_hex_warnings(pkgs, conf)
+  sources.get_hex_warnings(
+    pkgs,
+    Config(
+      ..conf,
+      puller: Mock("test/testdata/hex/rejected_licenses/good_license.json"),
+    ),
+  )
   |> should.equal([])
 }
 
 pub fn get_outdated_test() {
-  puller.Mock("test/testdata/hex/outdated/outdated.json")
-  |> sources.get_hex_warnings(pkgs, conf)
+  sources.get_hex_warnings(
+    pkgs,
+    Config(..conf, puller: Mock("test/testdata/hex/outdated/outdated.json")),
+  )
   |> should.equal([
     Warning(
       None,
@@ -82,7 +99,9 @@ pub fn get_outdated_test() {
     ),
   ])
 
-  puller.Mock("test/testdata/hex/outdated/up_to_date.json")
-  |> sources.get_hex_warnings(pkgs, conf)
+  sources.get_hex_warnings(
+    pkgs,
+    Config(..conf, puller: Mock("test/testdata/hex/outdated/up_to_date.json")),
+  )
   |> should.equal([])
 }

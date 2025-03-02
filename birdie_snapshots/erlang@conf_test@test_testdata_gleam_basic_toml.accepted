@@ -11,6 +11,7 @@ Config(
   Detailed,
   False,
   True,
+  Curl,
   [],
   ["a"],
   ["b"],

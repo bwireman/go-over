@@ -13,6 +13,7 @@ title: Erlang@spin_up_test@format=minimal
     Minimal,
     False,
     True,
+    Curl,
     [],
     [],
     [],
