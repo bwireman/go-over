@@ -11,7 +11,7 @@ Config(
   format: Minimal,
   verbose: False,
   global: True,
-  puller: CURL,
+  puller: WGET,
   allowed_licenses: [],
   ignore_packages: ["a", "b", "c"],
   ignore_severity: [],

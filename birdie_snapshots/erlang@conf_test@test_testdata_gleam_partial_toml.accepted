@@ -11,7 +11,7 @@ Config(
   Minimal,
   False,
   True,
-  Curl,
+  Wget,
   [],
   ["a", "b", "c"],
   [],

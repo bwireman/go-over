@@ -6,6 +6,7 @@ import go_over/config.{
   filter_advisory_ids, filter_dev_dependencies, filter_packages, filter_severity,
   read_config,
 }
+import go_over/hex/puller
 import go_over/packages.{Package}
 import go_over/warning.{Warning}
 import go_over_test
@@ -31,6 +32,7 @@ pub fn read_config_test() {
   let empty = test_read_config("test/testdata/gleam/empty.toml")
   should.be_false(empty.force)
   should.equal(empty.format, config.Minimal)
+  should.equal(empty.puller, puller.CURL)
   should.equal(empty.ignore_packages, [])
   should.equal(empty.ignore_severity, [])
   should.equal(empty.ignore_ids, [])
@@ -38,6 +40,7 @@ pub fn read_config_test() {
 
   let basic = test_read_config("test/testdata/gleam/basic.toml")
   should.be_true(basic.force)
+  should.equal(basic.puller, puller.HTTPIE)
   should.equal(basic.format, config.Detailed)
   should.equal(basic.ignore_packages, ["a"])
   should.equal(basic.ignore_severity, ["b"])
@@ -46,6 +49,7 @@ pub fn read_config_test() {
 
   let partial = test_read_config("test/testdata/gleam/partial.toml")
   should.be_false(partial.force)
+  should.equal(partial.puller, puller.WGET)
   should.equal(partial.format, config.Minimal)
   should.equal(partial.ignore_packages, ["a", "b", "c"])
   should.equal(partial.ignore_severity, [])
@@ -127,6 +131,7 @@ pub fn spin_up_test() {
   should.be_false(conf.fake)
   should.be_false(conf.verbose)
   should.equal(conf.format, config.Minimal)
+  should.equal(conf.puller, puller.CURL)
 
   let conf = test_spin_up("force", ["--force"])
   should.be_true(conf.force)

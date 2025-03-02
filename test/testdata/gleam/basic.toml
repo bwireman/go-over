@@ -1,5 +1,6 @@
 [go-over]
 cache = false
+puller = "httpie"
 format = "detailed"
 
 [go-over.ignore]
