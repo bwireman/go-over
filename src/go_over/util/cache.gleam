@@ -11,6 +11,10 @@ fn cache_name(path: String) -> String {
   filepath.join(path, ".go-over-cache")
 }
 
+fn version_name(path: String) -> String {
+  filepath.join(path, ".go-over-version")
+}
+
 fn file_cached(path: String, max_age_seconds: Int) -> Result(Bool, Nil) {
   path
   |> cache_name()
@@ -56,6 +60,11 @@ pub fn pull_if_not_cached(
       path
       |> cache_name()
       |> simplifile.write(now)
+      |> cli.hard_fail_with_msg("could not write cache file for " <> path)
+
+      path
+      |> version_name()
+      |> simplifile.write("3.0.0")
       |> cli.hard_fail_with_msg("could not write cache file for " <> path)
 
       Nil
