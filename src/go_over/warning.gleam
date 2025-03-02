@@ -71,7 +71,7 @@ pub fn string_to_severity(s: String) -> Severity {
     "high" -> SeverityHigh
     "low" -> SeverityLow
     "moderate" -> SeverityModerate
-
+    "unknown-" <> v -> SeverityUnknown(v)
     v -> SeverityUnknown(v)
   }
 }
