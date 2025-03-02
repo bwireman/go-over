@@ -1,0 +1,32 @@
+---
+version: 1.2.6
+title: Javascript@warning_format_as_string_minimal@adv_to_warning
+---
+#(
+  #(
+    Package(
+      name: "package for warning tests",
+      version: SemVer(
+        major: 1,
+        minor: 2,
+        patch: 3,
+        pre: "pre",
+        build: "build",
+      ),
+      version_raw: "pre1.2.3-build",
+      direct: True,
+    ),
+    Advisory(
+      id: "ghsa-example",
+      name: "example-advisory",
+      severity: "example",
+      vulnerable_version_ranges: [
+        "1.1.1",
+        "2.2.2",
+      ],
+      description: "it's like bad",
+    ),
+  ),
+  "[31mpackage for warning tests-pre1.2.3-build: unknown-example
+[0m[K",
+)

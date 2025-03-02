@@ -58,5 +58,5 @@ pub fn read_manifest(path: String) -> List(Package) {
       }
     }
   })
-  |> option.values
+  |> option.values()
 }

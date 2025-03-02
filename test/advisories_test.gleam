@@ -1,8 +1,7 @@
-import birdie
 import gleeunit/should
 import go_over/advisories/advisories.{check_for_advisories, read}
 import go_over/packages.{read_manifest}
-import pprint
+import go_over_test
 import simplifile
 
 pub fn check_for_advisories_test() {
@@ -83,6 +82,8 @@ pub fn read_adv_test() {
   let assert Ok(body) = simplifile.read("test/testdata/advisories/all.yaml")
   read(body)
   |> should.be_ok()
-  |> pprint.format()
-  |> birdie.snap(title: "Advisories test: test/testdata/advisories/all.yaml")
+  |> go_over_test.birdie_snap_with_input(
+    body,
+    "advisories_test@test/testdata/advisories/all.yaml",
+  )
 }

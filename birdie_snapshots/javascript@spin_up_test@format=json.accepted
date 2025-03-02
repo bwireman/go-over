@@ -1,0 +1,23 @@
+---
+version: 1.2.6
+title: Javascript@spin_up_test@format=json
+---
+#(
+  ["--format", "json"],
+  Config(
+    dev_deps: [],
+    outdated: False,
+    ignore_indirect: False,
+    force: False,
+    fake: False,
+    format: JSON,
+    verbose: False,
+    global: True,
+    puller: CURL,
+    allowed_licenses: [],
+    ignore_packages: [],
+    ignore_severity: [],
+    ignore_ids: [],
+    ignore_dev_dependencies: False,
+  ),
+)

@@ -1,0 +1,33 @@
+---
+version: 1.2.6
+title: Javascript@warning@retired_to_warning_other_none
+---
+#(
+  #(
+    Package(
+      name: "package for warning tests",
+      version: SemVer(
+        major: 1,
+        minor: 2,
+        patch: 3,
+        pre: "pre",
+        build: "build",
+      ),
+      version_raw: "pre1.2.3-build",
+      direct: True,
+    ),
+    ReleaseRetirement(
+      reason: OtherReason,
+      message: None,
+    ),
+  ),
+  Warning(
+    advisory_id: None,
+    package: "package for warning tests",
+    version: Some("pre1.2.3-build"),
+    reason: "other",
+    warning_reason_code: WarningReasonRetired,
+    severity: SeverityPackageRetiredOtherReason(reason: "Unknown"),
+    dep: Direct,
+  ),
+)

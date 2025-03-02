@@ -1,0 +1,30 @@
+---
+version: 1.2.6
+title: Javascript@warning_format_as_json@outdated_to_warning
+---
+#(
+  #(
+    Package(
+      name: "package for warning tests",
+      version: SemVer(
+        major: 1,
+        minor: 2,
+        patch: 3,
+        pre: "pre",
+        build: "build",
+      ),
+      version_raw: "pre1.2.3-build",
+      direct: True,
+    ),
+    "1.2.3",
+  ),
+  "{
+	"id": null,
+	"package": "package for warning tests",
+	"version": "pre1.2.3-build",
+	"warning_reason": "Outdated",
+	"dependency_type": "Direct",
+	"severity": "package-outdated",
+	"reason": "New Version: '1.2.3' exists"
+}",
+)

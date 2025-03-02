@@ -1,2 +1,5 @@
+[go-over]
+puller = "WGET"
+
 [go-over.ignore]
 packages = ["a", "b", "c"]

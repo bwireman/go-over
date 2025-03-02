@@ -12,13 +12,18 @@ pub const advisories_repo = "mirego/elixir-security-advisories"
 pub const long_ass_dashes = "\n-----------------------------------------------\n"
 
 pub fn go_over_path(global: Bool) -> String {
-  case global {
-    True ->
-      directories.home_dir()
-      |> cli.hard_fail_with_msg("could not get home directory")
-    False ->
+  let #(path, name) = case global {
+    True -> #(
+      directories.cache_dir()
+        |> cli.hard_fail_with_msg("could not get cache directory"),
+      "go-over",
+    )
+    False -> #(
       simplifile.current_directory()
-      |> cli.hard_fail_with_msg("could not get current directory")
+        |> cli.hard_fail_with_msg("could not get current directory"),
+      ".go-over",
+    )
   }
-  |> filepath.join(".go-over")
+
+  filepath.join(path, name)
 }

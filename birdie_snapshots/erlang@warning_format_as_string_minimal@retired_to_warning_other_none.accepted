@@ -1,0 +1,17 @@
+---
+version: 1.2.6
+title: Erlang@warning_format_as_string_minimal@retired_to_warning_other_none
+---
+#(
+  #(
+    Package(
+      "package for warning tests",
+      SemVer(1, 2, 3, "pre", "build"),
+      "pre1.2.3-build",
+      True,
+    ),
+    ReleaseRetirement(OtherReason, None),
+  ),
+  "[31mpackage for warning tests-pre1.2.3-build: package-retired:unknown
+[0m[K",
+)

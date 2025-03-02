@@ -5,50 +5,20 @@ import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
 import gleam/string
-import go_over/advisories/advisories
 import go_over/config.{type Config, Config}
-import go_over/packages.{type Package}
-import go_over/retired/outdated
-import go_over/retired/retired
+import go_over/packages
+import go_over/sources
 import go_over/util/constants
 import go_over/util/print
 import go_over/util/spinner
 import go_over/warning.{
-  type Warning, Direct, Indirect, Retired, Vulnerable, Warning,
+  type Warning, Direct, Indirect, SeverityCritical, SeverityHigh, SeverityLow,
+  SeverityModerate, SeverityPackageRetiredSecurity, SeverityRejectedLicense,
+  Warning, WarningReasonRetired, WarningReasonVulnerable,
 }
 import gxyz/function as gfunction
-import gxyz/tuple
 import shellout
 import simplifile
-
-fn get_vulnerable_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
-  advisories.check_for_advisories(pkgs, conf.force, conf.verbose, conf.global)
-  |> list.map(fn(p) { tuple.map2_1(p, config.filter_advisory_ids(conf, _)) })
-  |> list.filter(fn(p) { tuple.at2_1(p) == [] })
-  |> list.flat_map(tuple.apply_from2(_, warning.adv_to_warning))
-}
-
-fn get_retired_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
-  pkgs
-  |> list.map(fn(pkg) {
-    retired.check_retired(pkg, conf.force, conf.verbose, conf.global)
-    |> option.map(fn(ret) { #(pkg, ret) })
-  })
-  |> option.values()
-  |> list.map(tuple.apply_from2(_, warning.retired_to_warning))
-}
-
-fn get_outdated_packages(pkgs: List(Package), conf: Config) -> List(Warning) {
-  pkgs
-  |> list.map(fn(pkg) {
-    case outdated.check_outdated(pkg, conf.force, conf.verbose, conf.global) {
-      Some(ret) -> Some(#(pkg, ret))
-      None -> None
-    }
-  })
-  |> option.values()
-  |> list.map(tuple.apply_from2(_, warning.outdated_to_warning))
-}
 
 fn print_warnings_count(vulns: List(Warning)) -> Nil {
   {
@@ -57,7 +27,7 @@ fn print_warnings_count(vulns: List(Warning)) -> Nil {
     <> " WARNING(s) FOUND!"
     <> constants.long_ass_dashes
   }
-  |> io.print_error
+  |> io.print_error()
 }
 
 fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
@@ -116,24 +86,35 @@ pub fn main() {
     "Checking packages: " <> print.raw("vulnerable", "red"),
     conf.verbose,
   )
-  let vulnerable_packages = get_vulnerable_packages(pkgs, conf)
+  let vulnerable_warnings = sources.get_vulnerable_warnings(pkgs, conf)
 
   spinner.set_text_spinner(
     spinner,
     "Checking packages: " <> print.raw("retired", "yellow"),
     conf.verbose,
   )
-  let retired_packages = get_retired_packages(pkgs, conf)
+  let retired_warnings = sources.get_retired_warnings(pkgs, conf)
 
-  spinner.set_text_spinner(
-    spinner,
-    "Checking packages: " <> print.raw("outdated", "brightmagenta"),
-    conf.verbose,
-  )
-  let outdated_packages =
+  let hex_warnings =
     gfunction.iff(
-      conf.outdated,
-      gfunction.freeze2(get_outdated_packages, pkgs, conf),
+      conf.outdated || list.length(conf.allowed_licenses) > 0,
+      fn() {
+        let msg = case conf.outdated, list.length(conf.allowed_licenses) > 0 {
+          True, True -> "outdated & licenses"
+          True, False -> "outdated"
+          False, True -> "licenses"
+          False, False ->
+            panic as "Unreachable, please create an issue in https://github.com/bwireman/go-over if you see this"
+        }
+
+        spinner.set_text_spinner(
+          spinner,
+          "Checking packages: " <> print.raw(msg, "brightmagenta"),
+          conf.verbose,
+        )
+
+        sources.get_hex_warnings(pkgs, conf)
+      },
       [],
     )
 
@@ -144,8 +125,8 @@ pub fn main() {
 
   spinner.set_text_spinner(spinner, "Filtering warnings", conf.verbose)
   let warnings =
-    list.append(retired_packages, vulnerable_packages)
-    |> list.append(outdated_packages)
+    list.append(retired_warnings, vulnerable_warnings)
+    |> list.append(hex_warnings)
     |> config.filter_severity(conf, _)
 
   spinner.stop_spinner(spinner)
@@ -156,33 +137,58 @@ pub fn main() {
 }
 
 const example_warnings = [
-  Warning(None, "fake", "x.y.z", "Retired", Vulnerable, "Critical", Direct),
+  Warning(
+    None,
+    "fake",
+    Some("x.y.z"),
+    "Retired",
+    WarningReasonVulnerable,
+    SeverityCritical,
+    Direct,
+  ),
   Warning(
     None,
     "another_fake",
-    "1.2.3",
+    Some("1.2.3"),
     "Vulnerable",
-    Vulnerable,
-    "High",
+    WarningReasonVulnerable,
+    SeverityHigh,
     Direct,
   ),
   Warning(
     None,
     "and_another",
-    "4.5.6",
+    Some("4.5.6"),
     "Vulnerable",
-    Vulnerable,
-    "Moderate",
+    WarningReasonVulnerable,
+    SeverityModerate,
     Direct,
   ),
-  Warning(None, "one_more", "7.8.9", "Vulnerable", Vulnerable, "LOW", Indirect),
+  Warning(
+    None,
+    "one_more",
+    Some("7.8.9"),
+    "Vulnerable",
+    WarningReasonVulnerable,
+    SeverityLow,
+    Indirect,
+  ),
   Warning(
     None,
     "this_one_was_retired",
-    "10.11.12",
+    Some("10.11.12"),
     "Retired",
-    Retired,
-    "Package Retired",
+    WarningReasonRetired,
+    SeverityPackageRetiredSecurity,
+    Indirect,
+  ),
+  Warning(
+    None,
+    "rejected_license",
+    None,
+    "Retired",
+    WarningReasonRetired,
+    SeverityRejectedLicense,
     Indirect,
   ),
 ]

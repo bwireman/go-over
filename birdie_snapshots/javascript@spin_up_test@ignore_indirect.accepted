@@ -1,0 +1,23 @@
+---
+version: 1.2.6
+title: Javascript@spin_up_test@ignore_indirect
+---
+#(
+  ["--ignore-indirect"],
+  Config(
+    dev_deps: [],
+    outdated: False,
+    ignore_indirect: True,
+    force: False,
+    fake: False,
+    format: Minimal,
+    verbose: False,
+    global: True,
+    puller: CURL,
+    allowed_licenses: [],
+    ignore_packages: [],
+    ignore_severity: [],
+    ignore_ids: [],
+    ignore_dev_dependencies: False,
+  ),
+)

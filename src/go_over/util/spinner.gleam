@@ -8,7 +8,7 @@ import spinner
 
 // --- SPINNER ---
 fn little_guy(msg: String) {
-  "🕵️‍♂️ " <> msg
+  "🕵️ " <> msg
 }
 
 @target(erlang)

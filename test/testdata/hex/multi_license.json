@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "licenses": ["foo", "BAR", "baz"]
+  },
+  "latest_stable_version": "2.1.0"
+}

@@ -1,4 +1,3 @@
-import birdie
 import gleam/option.{None}
 import gleamsver.{parse}
 import gleeunit/should
@@ -7,40 +6,33 @@ import go_over/config.{
   filter_advisory_ids, filter_dev_dependencies, filter_packages, filter_severity,
   read_config,
 }
+import go_over/hex/puller
 import go_over/packages.{Package}
 import go_over/warning.{Warning}
-import pprint
+import go_over_test
 
 fn empty_conf() {
   config.read_config("test/testdata/gleam/empty.toml")
 }
 
 pub fn test_read_config(p: String) {
-  let body = read_config(p)
-
-  body
-  |> pprint.format()
-  |> birdie.snap("Conf test: " <> p)
-
-  body
+  p
+  |> read_config()
+  |> go_over_test.birdie_snap("conf_test@" <> p)
 }
 
 pub fn test_spin_up(name: String, argv: List(String)) {
-  let conf =
-    config.spin_up(empty_conf(), argv)
-    |> should.be_ok
-
-  conf
-  |> pprint.format()
-  |> birdie.snap("Spin up test: " <> name)
-
-  conf
+  empty_conf()
+  |> config.spin_up(argv)
+  |> should.be_ok()
+  |> go_over_test.birdie_snap_with_input(argv, "spin_up_test@" <> name)
 }
 
 pub fn read_config_test() {
   let empty = test_read_config("test/testdata/gleam/empty.toml")
   should.be_false(empty.force)
   should.equal(empty.format, config.Minimal)
+  should.equal(empty.puller, puller.CURL)
   should.equal(empty.ignore_packages, [])
   should.equal(empty.ignore_severity, [])
   should.equal(empty.ignore_ids, [])
@@ -48,6 +40,7 @@ pub fn read_config_test() {
 
   let basic = test_read_config("test/testdata/gleam/basic.toml")
   should.be_true(basic.force)
+  should.equal(basic.puller, puller.HTTPIE)
   should.equal(basic.format, config.Detailed)
   should.equal(basic.ignore_packages, ["a"])
   should.equal(basic.ignore_severity, ["b"])
@@ -56,25 +49,15 @@ pub fn read_config_test() {
 
   let partial = test_read_config("test/testdata/gleam/partial.toml")
   should.be_false(partial.force)
+  should.equal(partial.puller, puller.WGET)
   should.equal(partial.format, config.Minimal)
   should.equal(partial.ignore_packages, ["a", "b", "c"])
   should.equal(partial.ignore_severity, [])
   should.equal(partial.ignore_ids, [])
   should.be_false(partial.ignore_indirect)
 
-  let indirect_old = test_read_config("test/testdata/gleam/indirect_old.toml")
-  should.be_true(indirect_old.ignore_indirect)
-
   let indirect_new = test_read_config("test/testdata/gleam/indirect_new.toml")
   should.be_true(indirect_new.ignore_indirect)
-
-  let indirect_conflict_old =
-    test_read_config("test/testdata/gleam/indirect_conflict_old.toml")
-  should.be_false(indirect_conflict_old.ignore_indirect)
-
-  let indirect_conflict_new =
-    test_read_config("test/testdata/gleam/indirect_conflict_new.toml")
-  should.be_true(indirect_conflict_new.ignore_indirect)
 }
 
 pub fn filter_dev_deps_test() {
@@ -120,12 +103,66 @@ pub fn filter_advisory_ids_test() {
 
 pub fn filter_severity_test() {
   let full = test_read_config("test/testdata/gleam/full.toml")
-  let a = Warning(None, "", "", "", warning.Vulnerable, "a", warning.Direct)
-  let b = Warning(None, "", "", "", warning.Vulnerable, "b", warning.Direct)
-  let c = Warning(None, "", "", "", warning.Vulnerable, "c", warning.Direct)
-  let aa = Warning(None, "", "", "", warning.Vulnerable, "A", warning.Direct)
-  let bb = Warning(None, "", "", "", warning.Vulnerable, "B", warning.Direct)
-  let cc = Warning(None, "", "", "", warning.Vulnerable, "C", warning.Direct)
+  let a =
+    Warning(
+      None,
+      "",
+      None,
+      "",
+      warning.WarningReasonVulnerable,
+      warning.SeverityCritical,
+      warning.Direct,
+    )
+  let b =
+    Warning(
+      None,
+      "",
+      None,
+      "",
+      warning.WarningReasonVulnerable,
+      warning.SeverityHigh,
+      warning.Direct,
+    )
+  let c =
+    Warning(
+      None,
+      "",
+      None,
+      "",
+      warning.WarningReasonVulnerable,
+      warning.SeverityModerate,
+      warning.Direct,
+    )
+  let aa =
+    Warning(
+      None,
+      "",
+      None,
+      "",
+      warning.WarningReasonVulnerable,
+      warning.SeverityCritical,
+      warning.Direct,
+    )
+  let bb =
+    Warning(
+      None,
+      "",
+      None,
+      "",
+      warning.WarningReasonVulnerable,
+      warning.SeverityHigh,
+      warning.Direct,
+    )
+  let cc =
+    Warning(
+      None,
+      "",
+      None,
+      "",
+      warning.WarningReasonVulnerable,
+      warning.SeverityPackageRetiredSecurity,
+      warning.Direct,
+    )
 
   should.equal(filter_severity(full, []), [])
   should.equal(filter_severity(full, [a]), [])
@@ -148,6 +185,7 @@ pub fn spin_up_test() {
   should.be_false(conf.fake)
   should.be_false(conf.verbose)
   should.equal(conf.format, config.Minimal)
+  should.equal(conf.puller, puller.CURL)
 
   let conf = test_spin_up("force", ["--force"])
   should.be_true(conf.force)
@@ -165,8 +203,6 @@ pub fn spin_up_test() {
   should.be_true(conf.verbose)
 }
 
-// JS doesn't love the different format values sooo
-@target(erlang)
 pub fn spin_up_format_test() {
   let conf = test_spin_up("format=minimal", ["--format", "minimal"])
   should.equal(conf.format, config.Minimal)

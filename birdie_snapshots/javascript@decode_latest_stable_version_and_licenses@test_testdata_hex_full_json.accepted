@@ -1,0 +1,17 @@
+---
+version: 1.2.6
+title: Javascript@decode_latest_stable_version_and_licenses@test/testdata/hex/full.json
+---
+#(
+  "{
+  "meta": {
+    "licenses": ["MIT"]
+  },
+  "latest_stable_version": "2.1.0"
+}
+",
+  Ok(HexInfo(
+    latest_stable_version: Some("2.1.0"),
+    licenses: ["MIT"],
+  )),
+)

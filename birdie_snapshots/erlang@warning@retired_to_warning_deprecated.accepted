@@ -1,0 +1,27 @@
+---
+version: 1.2.6
+title: Erlang@warning@retired_to_warning_deprecated
+---
+#(
+  #(
+    Package(
+      "package for warning tests",
+      SemVer(1, 2, 3, "pre", "build"),
+      "pre1.2.3-build",
+      True,
+    ),
+    ReleaseRetirement(
+      Deprecated,
+      Some("It's an example man"),
+    ),
+  ),
+  Warning(
+    None,
+    "package for warning tests",
+    Some("pre1.2.3-build"),
+    "deprecated: It's an example man",
+    WarningReasonRetired,
+    SeverityPackageRetiredDeprecated,
+    Direct,
+  ),
+)
