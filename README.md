@@ -52,11 +52,12 @@ gleam run -m go_over
 
 - `--format` FORMAT: Specify the output format of any warnings, [minimal,
   verbose, json] (default: None)
+- `--puller` Specify the tool used to reach out to hex.pm, [curl, wget, httpie] (default: None)
 - `--force`: Force pulling new data even if the cached data is still valid
 - `--outdated`: Additionally check if newer versions of dependencies exist
 - `--ignore-indirect`: Ignore all warnings for indirect dependencies
 - `--verbose`: Print progress as packages are checked
-- `--help`,-h: Print help
+- `--help,-h`: Print help
 
 Flags override config values if set
 
