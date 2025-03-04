@@ -3,6 +3,7 @@ import filepath
 import gleam/int
 import gleam/order
 import gleam/result
+import go_over/util/constants
 import go_over/util/print
 import gxyz/cli
 import simplifile
@@ -64,7 +65,7 @@ pub fn pull_if_not_cached(
 
       path
       |> version_name()
-      |> simplifile.write("3.0.0")
+      |> simplifile.write(constants.version)
       |> cli.hard_fail_with_msg("could not write cache file for " <> path)
 
       Nil
