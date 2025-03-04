@@ -89,16 +89,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with:
-          python-version: "3.13"
-          cache: "pip" # caching pip dependencies
-      - run: pip install httpie
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{ env.otp }}
           gleam-version: ${{ env.gleam }}
           rebar3-version: ${{ env.rebar }}
       - uses: oven-sh/setup-bun@v1
+      - run: pip install httpie
       - run: bun install
       - run: gleam test --target javascript --runtime bun
       - run: gleam run --target javascript --runtime bun -- --outdated --puller httpie
