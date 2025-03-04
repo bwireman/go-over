@@ -11,6 +11,7 @@ import gleam/string
 import go_over/advisories/advisories.{type Advisory}
 import go_over/hex/puller
 import go_over/packages.{type Package}
+import go_over/util/constants
 import go_over/util/print
 import go_over/warning.{type Warning}
 import gxyz/cli
@@ -224,7 +225,13 @@ fn toml_as_string(toml: Toml) -> Option(String) {
   }
 }
 
-// ? want to head the `fake` flag but otherwise use the default help
+const logo = "                       ____  ____      ____ _   _____  _____
+                        / __ `/ __ \\    / __ \\ | / / _ \\/ ___/
+                       / /_/ / /_/ /   / /_/ / |/ /  __/ /
+                       \\__, /\\____/____\\____/|___/\\___/_/
+                      /____/     /_____/"
+
+// ? want to hide the `fake` flag but otherwise use the default help
 fn help_message(args: arg_info.ArgInfo) -> String {
   arg_info.ArgInfo(
     named: args.named,
@@ -234,15 +241,8 @@ fn help_message(args: arg_info.ArgInfo) -> String {
   )
   |> arg_info.help_text(
     "go_over",
-    "                       ____  ____      ____ _   _____  _____
-                        / __ `/ __ \\    / __ \\ | / / _ \\/ ___/
-                       / /_/ / /_/ /   / /_/ / |/ /  __/ /
-                       \\__, /\\____/____\\____/|___/\\___/_/
-                      /____/     /_____/
-version 3.0.0
-"
-    |> print.format_high()
-      <> "🕵️ Audit Erlang & Elixir dependencies, to make sure your gleam projects really ✨ sparkle!",
+    print.format_high(logo <> "\tversion: " <> constants.version <> "\n")
+      <> "🕵️Audit Erlang & Elixir dependencies, to make sure your gleam projects really ✨ sparkle!",
   )
   // ? strip out the pointless leading go_over in the help message
   |> string.crop(" ")
