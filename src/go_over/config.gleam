@@ -262,7 +262,7 @@ pub fn merge_flags_and_config(flags: Flags, cfg: Config) -> Config {
     fake: flags.fake,
     verbose: flags.verbose,
     allowed_licenses: cfg.allowed_licenses,
-    puller: cfg.puller,
+    puller: option.unwrap(flags.puller, cfg.puller),
     global:,
     format: option.unwrap(flags.format, cfg.format),
     ignore_packages: cfg.ignore_packages,

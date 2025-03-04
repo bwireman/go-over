@@ -71,6 +71,7 @@ jobs:
         puller: [curl, wget, httpie]
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{ env.otp }}
@@ -81,9 +82,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
+      - run: pip install httpie
       - run: npm install
       - run: gleam test --target javascript --runtime nodejs
-      - run: gleam run --target javascript --runtime nodejs -- --outdated --puller ${{matrix.puller}}
+      - run: gleam run --target javascript --runtime nodejs -- --outdated --puller ${{ matrix.puller }}
 
   bun:
     runs-on: ubuntu-latest
