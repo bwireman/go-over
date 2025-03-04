@@ -67,7 +67,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20.x, 22.x, 23.x]
+        node-version: [22.x, 23.x]
+        puller: [curl, wget, httpie]
     steps:
       - uses: actions/checkout@v4
       - uses: erlef/setup-beam@v1
@@ -82,7 +83,7 @@ jobs:
           cache: "npm"
       - run: npm install
       - run: gleam test --target javascript --runtime nodejs
-      - run: gleam run --target javascript --runtime nodejs -- --outdated
+      - run: gleam run --target javascript --runtime nodejs -- --outdated --puller ${{matrix.puller}}
 
   bun:
     runs-on: ubuntu-latest
