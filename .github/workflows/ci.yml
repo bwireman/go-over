@@ -34,6 +34,7 @@ jobs:
           gleam-version: ${{ env.gleam }}
           rebar3-version: ${{ env.rebar }}
       - run: gleam test --target erlang
+      - run: gleam run --target erlang -- --puller wget
       - run: gleam run --target erlang -- --outdated
 
   windows-erlang:
@@ -67,7 +68,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20.x, 22.x, 23.x]
+        node-version: [22.x, 23.x]
+        puller: [curl, wget]
     steps:
       - uses: actions/checkout@v4
       - uses: erlef/setup-beam@v1
@@ -82,7 +84,7 @@ jobs:
           cache: "npm"
       - run: npm install
       - run: gleam test --target javascript --runtime nodejs
-      - run: gleam run --target javascript --runtime nodejs -- --outdated
+      - run: gleam run --target javascript --runtime nodejs -- --outdated --puller ${{ matrix.puller }}
 
   bun:
     runs-on: ubuntu-latest
@@ -96,6 +98,7 @@ jobs:
       - uses: oven-sh/setup-bun@v1
       - run: bun install
       - run: gleam test --target javascript --runtime bun
+      - run: gleam run --target javascript --runtime bun -- --puller wget
       - run: gleam run --target javascript --runtime bun -- --outdated
 
   deno:
@@ -112,4 +115,5 @@ jobs:
           deno-version: v2.x # Run with latest stable Deno.
       - run: deno install
       - run: gleam test --target javascript --runtime deno
+      - run: gleam run --target javascript --runtime deno -- --puller wget
       - run: gleam run --target javascript --runtime deno -- --outdated
