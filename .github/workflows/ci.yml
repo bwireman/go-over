@@ -34,6 +34,7 @@ jobs:
           gleam-version: ${{ env.gleam }}
           rebar3-version: ${{ env.rebar }}
       - run: gleam test --target erlang
+      - run: gleam run --target erlang -- --puller wget
       - run: gleam run --target erlang -- --outdated
 
   windows-erlang:
@@ -68,10 +69,12 @@ jobs:
     strategy:
       matrix:
         node-version: [22.x, 23.x]
-        puller: [curl, wget, httpie]
+        puller: [curl, wget]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{ env.otp }}
@@ -82,7 +85,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
-      - run: pip install httpie
       - run: npm install
       - run: gleam test --target javascript --runtime nodejs
       - run: gleam run --target javascript --runtime nodejs -- --outdated --puller ${{ matrix.puller }}
@@ -92,16 +94,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{ env.otp }}
           gleam-version: ${{ env.gleam }}
           rebar3-version: ${{ env.rebar }}
       - uses: oven-sh/setup-bun@v1
-      - run: pip install httpie
       - run: bun install
       - run: gleam test --target javascript --runtime bun
-      - run: gleam run --target javascript --runtime bun -- --outdated --puller httpie
+      - run: gleam run --target javascript --runtime bun -- --puller wget
+      - run: gleam run --target javascript --runtime bun -- --outdated
 
   deno:
     runs-on: ubuntu-latest
@@ -117,4 +121,5 @@ jobs:
           deno-version: v2.x # Run with latest stable Deno.
       - run: deno install
       - run: gleam test --target javascript --runtime deno
-      - run: gleam run --target javascript --runtime deno -- --outdated --puller wget
+      - run: gleam run --target javascript --runtime deno -- --puller wget
+      - run: gleam run --target javascript --runtime deno -- --outdated
