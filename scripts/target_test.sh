@@ -31,12 +31,12 @@ else
 fi
 
 # shellcheck disable=SC2086
-gleam run $CMD -- --force --verbose
+gleam run $CMD -- --force --verbose --puller curl
 rm -rf .go-over/outdated
 
 snooze 15
 # shellcheck disable=SC2086
-gleam run $CMD -- --outdated
+gleam run $CMD -- --outdated --puller wget
 
 # shellcheck disable=SC2086
 gleam test $CMD
