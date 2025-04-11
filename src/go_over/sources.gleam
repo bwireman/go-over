@@ -2,11 +2,11 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleam/pair
 import go_over/advisories/advisories
-import go_over/config.{type Config, Config}
+import go_over/config.{type Config}
 import go_over/hex/hex
 import go_over/hex/retired
 import go_over/packages.{type Package}
-import go_over/warning.{type Warning, Warning}
+import go_over/warning.{type Warning}
 import gxyz/list as glist
 import gxyz/tuple
 

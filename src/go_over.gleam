@@ -5,7 +5,7 @@ import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
 import gleam/string
-import go_over/config.{type Config, Config}
+import go_over/config.{type Config}
 import go_over/packages
 import go_over/sources
 import go_over/util/constants

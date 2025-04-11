@@ -3,10 +3,10 @@ import gleam/json
 import gleam/list
 import gleam/option
 import gleam/string
-import gleamsver.{type SemVer, SemVer}
+import gleamsver.{SemVer}
 import gleeunit/should
-import go_over/advisories/advisories.{type Advisory, Advisory}
-import go_over/packages.{type Package, Package}
+import go_over/advisories/advisories.{Advisory}
+import go_over/packages.{Package}
 import go_over/warning.{type Warning}
 import go_over_test
 
