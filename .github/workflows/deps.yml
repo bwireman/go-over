@@ -2,8 +2,8 @@ name: Dependency Check
 
 on:
   schedule:
-    # run once a day at 9am UTC
-    - cron: "0 9 * * *"
+    # run every friday at 9am UTC
+    - cron: "0 9 * * 6"
   push:
     branches:
       - main
@@ -11,7 +11,7 @@ on:
 
 env:
   otp: "27.0"
-  gleam: "1.9.1"
+  gleam: "1.10.0"
   rebar: "3"
 
 jobs:
