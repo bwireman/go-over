@@ -1,4 +1,3 @@
-import gleam/json
 import gleeunit/should
 import go_over/hex/hex
 import go_over_test
@@ -10,7 +9,7 @@ fn parse(path: String) {
     |> should.be_ok()
 
   input
-  |> json.decode(hex.decode_latest_stable_version_and_licenses)
+  |> hex.decode_latest_stable_version_and_licenses
   |> go_over_test.birdie_snap_with_input(
     input,
     "decode_latest_stable_version_and_licenses@" <> path,

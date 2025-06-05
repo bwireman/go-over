@@ -1,5 +1,5 @@
 ---
-version: 1.2.6
+version: 1.3.0
 title: Erlang@spin_up_test@outdated
 ---
 #(
@@ -13,7 +13,7 @@ title: Erlang@spin_up_test@outdated
     Minimal,
     False,
     True,
-    Curl,
+    CURL,
     [],
     [],
     [],

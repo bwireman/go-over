@@ -1,5 +1,5 @@
 ---
-version: 1.2.6
+version: 1.3.0
 title: Erlang@decode_latest_stable_version_and_licenses@test/testdata/hex/no_license.json
 ---
 #(
@@ -9,7 +9,7 @@ title: Erlang@decode_latest_stable_version_and_licenses@test/testdata/hex/no_lic
   "latest_stable_version": "2.1.0"
 }
 ",
-  Error(UnexpectedFormat([
+  Error(UnableToDecode([
     DecodeError(
       "Field",
       "Nothing",

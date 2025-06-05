@@ -27,7 +27,7 @@ filepath = ">= 1.0.0 and < 2.0.0"
 tom = ">= 1.0.0 and < 2.0.0"
 yamerl = ">= 0.10.0 and < 1.0.0"
 gleam_hexpm = ">= 3.0.0 and < 4.0.0"
-gleam_json = ">= 2.2.0 and < 3.0.0"
+gleam_json = ">= 3.0.0 and < 4.0.0"
 birl = ">= 1.7.0 and < 2.0.0"
 gleamsver = ">= 1.0.0 and < 2.0.0"
 delay = ">= 1.2.0 and < 2.0.0"
@@ -63,6 +63,6 @@ allowed_licenses = ["MIT", "Apache-2.0", "BSD 2-Clause", "WTFPL"]
 [go-over.ignore]
 indirect = false
 dev_dependencies = false
-packages = ["glance"]
+packages = ["tom"]
 severity = []
 ids = []

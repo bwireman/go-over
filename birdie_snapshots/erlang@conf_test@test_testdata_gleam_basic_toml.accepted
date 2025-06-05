@@ -1,5 +1,5 @@
 ---
-version: 1.2.6
+version: 1.3.0
 title: Erlang@conf_test@test/testdata/gleam/basic.toml
 ---
 Config(
@@ -11,7 +11,7 @@ Config(
   Detailed,
   False,
   True,
-  Httpie,
+  HTTPIE,
   [],
   ["a"],
   ["b"],

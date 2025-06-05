@@ -1,10 +1,8 @@
-import gleam/dynamic.{type DecodeError, type Dynamic} as dyn
 import gleam/dynamic/decode
 import gleam/json
 import gleam/list
 import gleam/option.{type Option}
 import gleam/order
-import gleam/result
 import gleamsver
 import go_over/hex/core
 import go_over/hex/puller
@@ -47,8 +45,8 @@ fn pull_hex_info(
 }
 
 pub fn decode_latest_stable_version_and_licenses(
-  data: Dynamic,
-) -> Result(HexInfo, List(DecodeError)) {
+  data: String,
+) -> Result(HexInfo, json.DecodeError) {
   let decoder = {
     use latest_stable_version <- decode.field(
       "latest_stable_version",
@@ -61,11 +59,7 @@ pub fn decode_latest_stable_version_and_licenses(
     decode.success(HexInfo(latest_stable_version:, licenses:))
   }
 
-  data
-  |> decode.run(decoder)
-  |> result.map_error(
-    list.map(_, fn(og) { dyn.DecodeError(og.expected, og.found, og.path) }),
-  )
+  json.parse(data, decoder)
 }
 
 fn pull(
@@ -93,7 +87,7 @@ fn pull(
     |> cli.hard_fail_with_msg("failed to read " <> cached_file_name)
 
   cli.hard_fail_with_msg(
-    json.decode(resp, decode_latest_stable_version_and_licenses),
+    decode_latest_stable_version_and_licenses(resp),
     "failed to parse " <> cached_file_name,
   )
 }
