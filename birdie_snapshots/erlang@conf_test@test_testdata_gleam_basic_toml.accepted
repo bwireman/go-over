@@ -1,5 +1,5 @@
 ---
-version: 1.3.0
+version: 1.3.1
 title: Erlang@conf_test@test/testdata/gleam/basic.toml
 ---
 Config(
@@ -7,7 +7,6 @@ Config(
   False,
   True,
   True,
-  False,
   Detailed,
   False,
   True,

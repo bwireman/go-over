@@ -15,7 +15,6 @@ const conf = Config(
   outdated: True,
   ignore_indirect: False,
   force: True,
-  fake: False,
   format: Minimal,
   verbose: True,
   global: False,

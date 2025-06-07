@@ -3,7 +3,6 @@ import gleam/int
 import gleam/io
 import gleam/json
 import gleam/list
-import gleam/option.{None, Some}
 import gleam/string
 import go_over/config.{type Config}
 import go_over/packages
@@ -11,11 +10,7 @@ import go_over/sources
 import go_over/util/constants
 import go_over/util/print
 import go_over/util/spinner
-import go_over/warning.{
-  type Warning, Direct, Indirect, SeverityCritical, SeverityHigh, SeverityLow,
-  SeverityModerate, SeverityPackageRetiredSecurity, SeverityRejectedLicense,
-  Warning, WarningReasonRetired, WarningReasonVulnerable,
-}
+import go_over/warning.{type Warning}
 import gxyz/function as gfunction
 import shellout
 import simplifile
@@ -30,7 +25,7 @@ fn print_warnings_count(vulns: List(Warning)) -> Nil {
   |> io.print_error()
 }
 
-fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
+pub fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
   case conf.format {
     config.Minimal ->
       vulns
@@ -118,11 +113,6 @@ pub fn main() {
       [],
     )
 
-  gfunction.iff_nil(
-    conf.fake,
-    gfunction.freeze2(print_warnings, example_warnings, conf),
-  )
-
   spinner.set_text_spinner(spinner, "Filtering warnings", conf.verbose)
   let warnings =
     list.append(retired_warnings, vulnerable_warnings)
@@ -135,60 +125,3 @@ pub fn main() {
     vulns -> print_warnings(vulns, conf)
   }
 }
-
-const example_warnings = [
-  Warning(
-    None,
-    "fake",
-    Some("x.y.z"),
-    "Retired",
-    WarningReasonVulnerable,
-    SeverityCritical,
-    Direct,
-  ),
-  Warning(
-    None,
-    "another_fake",
-    Some("1.2.3"),
-    "Vulnerable",
-    WarningReasonVulnerable,
-    SeverityHigh,
-    Direct,
-  ),
-  Warning(
-    None,
-    "and_another",
-    Some("4.5.6"),
-    "Vulnerable",
-    WarningReasonVulnerable,
-    SeverityModerate,
-    Direct,
-  ),
-  Warning(
-    None,
-    "one_more",
-    Some("7.8.9"),
-    "Vulnerable",
-    WarningReasonVulnerable,
-    SeverityLow,
-    Indirect,
-  ),
-  Warning(
-    None,
-    "this_one_was_retired",
-    Some("10.11.12"),
-    "Retired",
-    WarningReasonRetired,
-    SeverityPackageRetiredSecurity,
-    Indirect,
-  ),
-  Warning(
-    None,
-    "rejected_license",
-    None,
-    "Retired",
-    WarningReasonRetired,
-    SeverityRejectedLicense,
-    Indirect,
-  ),
-]

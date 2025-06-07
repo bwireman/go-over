@@ -1,5 +1,5 @@
 ---
-version: 1.2.6
+version: 1.3.1
 title: Javascript@spin_up_test@format=detailed
 ---
 #(
@@ -9,7 +9,6 @@ title: Javascript@spin_up_test@format=detailed
     outdated: False,
     ignore_indirect: False,
     force: False,
-    fake: False,
     format: Detailed,
     verbose: False,
     global: True,

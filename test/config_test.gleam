@@ -182,7 +182,6 @@ pub fn spin_up_test() {
   should.be_false(conf.force)
   should.be_false(conf.outdated)
   should.be_false(conf.ignore_indirect)
-  should.be_false(conf.fake)
   should.be_false(conf.verbose)
   should.equal(conf.format, config.Minimal)
   should.equal(conf.puller, puller.CURL)
@@ -195,9 +194,6 @@ pub fn spin_up_test() {
 
   let conf = test_spin_up("ignore_indirect", ["--ignore-indirect"])
   should.be_true(conf.ignore_indirect)
-
-  let conf = test_spin_up("fake", ["--fake"])
-  should.be_true(conf.fake)
 
   let conf = test_spin_up("verbose", ["--verbose"])
   should.be_true(conf.verbose)
@@ -219,7 +215,6 @@ pub fn merge_flags_and_config_test() {
   let empty_flags =
     config.Flags(
       force: False,
-      fake: False,
       outdated: False,
       ignore_indirect: False,
       verbose: False,

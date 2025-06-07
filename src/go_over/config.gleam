@@ -32,7 +32,6 @@ pub type Config {
     outdated: Bool,
     ignore_indirect: Bool,
     force: Bool,
-    fake: Bool,
     format: Format,
     verbose: Bool,
     global: Bool,
@@ -48,7 +47,6 @@ pub type Config {
 pub type Flags {
   Flags(
     force: Bool,
-    fake: Bool,
     outdated: Bool,
     ignore_indirect: Bool,
     global: Bool,
@@ -131,8 +129,6 @@ pub fn read_config(path: String) -> Config {
     outdated:,
     ignore_indirect:,
     force: !cache,
-    //read from flags only
-    fake: False,
     //read from flags only
     verbose: False,
     global:,
@@ -231,12 +227,11 @@ const logo = "                       ____  ____      ____ _   _____  _____
                        \\__, /\\____/____\\____/|___/\\___/_/
                       /____/     /_____/"
 
-// ? want to hide the `fake` flag but otherwise use the default help
 fn help_message(args: arg_info.ArgInfo) -> String {
   arg_info.ArgInfo(
     named: args.named,
     positional: args.positional,
-    flags: glist.reject(args.flags, fn(f) { f.name == "fake" }),
+    flags: args.flags,
     subcommands: args.subcommands,
   )
   |> arg_info.help_text(
@@ -259,7 +254,6 @@ pub fn merge_flags_and_config(flags: Flags, cfg: Config) -> Config {
     force: flags.force || cfg.force,
     outdated: flags.outdated || cfg.outdated,
     ignore_indirect: cfg.ignore_indirect || flags.ignore_indirect,
-    fake: flags.fake,
     verbose: flags.verbose,
     allowed_licenses: cfg.allowed_licenses,
     puller: option.unwrap(flags.puller, cfg.puller),
@@ -278,7 +272,6 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
     use outdated <- clip.parameter
     use ignore_indirect <- clip.parameter
     use global <- clip.parameter
-    use fake <- clip.parameter
     use verbose <- clip.parameter
     use format <- clip.parameter
     use puller <- clip.parameter
@@ -288,7 +281,6 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
         force:,
         outdated:,
         ignore_indirect:,
-        fake:,
         verbose:,
         format:,
         global:,
@@ -313,7 +305,6 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
     flag.new("global"),
     "Cache data globally in user's home directory for use by multiple projects",
   ))
-  |> clip.flag(flag.new("fake"))
   |> clip.flag(flag.help(
     flag.new("verbose"),
     "Print progress as packages are checked",
