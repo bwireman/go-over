@@ -1,9 +1,9 @@
 name = "go_over"
-version = "3.0.1"
+version = "3.0.2"
 licences = ["MIT"]
 repository = { type = "github", user = "bwireman", repo = "go-over" }
 description = "A tool to audit Erlang & Elixir dependencies, to make sure your Gleam ✨ projects really sparkle!"
-gleam = ">= 1.4.0"
+gleam = ">= 1.5.0"
 links = [
   { title = "Advisories Source", href = "https://github.com/mirego/elixir-security-advisories" },
 ]
