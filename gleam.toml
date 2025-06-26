@@ -24,7 +24,7 @@ gleam_stdlib = ">= 0.34.0 and < 2.0.0"
 shellout = ">= 1.6.0 and < 2.0.0"
 simplifile = ">= 2.0.0 and < 3.0.0"
 filepath = ">= 1.0.0 and < 2.0.0"
-tom = ">= 1.0.0 and < 2.0.0"
+tom = ">= 2.0.0 and < 3.0.0"
 yamerl = ">= 0.10.0 and < 1.0.0"
 gleam_hexpm = ">= 3.0.0 and < 4.0.0"
 gleam_json = ">= 3.0.0 and < 4.0.0"
@@ -38,7 +38,6 @@ directories = ">= 1.1.0 and < 2.0.0"
 
 [dev-dependencies]
 gleeunit = ">= 1.0.0 and < 2.0.0"
-cactus = ">= 1.0.0 and < 2.0.0"
 birdie = ">= 1.2.3 and < 2.0.0"
 pprint = ">= 1.0.4 and < 2.0.0"
 
