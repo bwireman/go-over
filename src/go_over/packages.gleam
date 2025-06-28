@@ -9,8 +9,19 @@ import shellout
 import simplifile
 import tom
 
+pub type PackageSource {
+  PackageSourceHex
+  PackageSourceGit
+}
+
 pub type Package {
-  Package(name: String, version: SemVer, version_raw: String, direct: Bool)
+  Package(
+    name: String,
+    version: SemVer,
+    version_raw: String,
+    direct: Bool,
+    source: PackageSource,
+  )
 }
 
 pub fn read_manifest(path: String) -> List(Package) {
@@ -24,12 +35,12 @@ pub fn read_manifest(path: String) -> List(Package) {
   let packages =
     tom.get_array(manifest, ["packages"])
     |> cli.hard_fail_with_msg("could not parse " <> path <> " value: packages")
-  let requirements =
+  let required_packages =
     tom.get_table(manifest, ["requirements"])
     |> cli.hard_fail_with_msg(
       "could not parse " <> path <> " value: requirements",
     )
-  let required_packages = dict.keys(requirements)
+    |> dict.keys()
 
   list.map(packages, fn(p) {
     case p {
@@ -48,7 +59,24 @@ pub fn read_manifest(path: String) -> List(Package) {
           gleamsver.parse(ver)
           |> cli.hard_fail_with_msg("could not parse package version: " <> ver)
 
-        Some(Package(name, semver, ver, list.contains(required_packages, name)))
+        let source_raw =
+          tom.get_string(t, ["source"])
+          |> cli.hard_fail_with_msg(
+            "could not parse package: " <> string.inspect(t),
+          )
+
+        let source = case source_raw {
+          "git" -> PackageSourceGit
+          _ -> PackageSourceHex
+        }
+
+        Some(Package(
+          name,
+          semver,
+          ver,
+          list.contains(required_packages, name),
+          source,
+        ))
       }
 
       _ -> {

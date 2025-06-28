@@ -63,9 +63,9 @@ pub fn read_config_test() {
 pub fn filter_dev_deps_test() {
   let full = test_read_config("test/testdata/gleam/full.toml")
   let assert Ok(v) = parse("1.1.1")
-  let a = Package("a", v, "", False)
-  let b = Package("b", v, "", False)
-  let c = Package("c", v, "", False)
+  let a = Package("a", v, "", False, packages.PackageSourceHex)
+  let b = Package("b", v, "", False, packages.PackageSourceHex)
+  let c = Package("c", v, "", False, packages.PackageSourceHex)
 
   should.equal(filter_dev_dependencies(full, []), [])
   should.equal(filter_dev_dependencies(full, [a]), [a])
@@ -77,9 +77,9 @@ pub fn filter_dev_deps_test() {
 pub fn filter_packages_test() {
   let full = test_read_config("test/testdata/gleam/full.toml")
   let assert Ok(v) = parse("1.1.1")
-  let a = Package("a", v, "", False)
-  let b = Package("b", v, "", False)
-  let c = Package("c", v, "", False)
+  let a = Package("a", v, "", False, packages.PackageSourceHex)
+  let b = Package("b", v, "", False, packages.PackageSourceHex)
+  let c = Package("c", v, "", False, packages.PackageSourceHex)
 
   should.equal(filter_packages(full, []), [])
   should.equal(filter_packages(full, [a]), [])
@@ -111,7 +111,7 @@ pub fn filter_severity_test() {
       "",
       warning.WarningReasonVulnerable,
       warning.SeverityCritical,
-      warning.Direct,
+      warning.DirectDep,
     )
   let b =
     Warning(
@@ -121,7 +121,7 @@ pub fn filter_severity_test() {
       "",
       warning.WarningReasonVulnerable,
       warning.SeverityHigh,
-      warning.Direct,
+      warning.DirectDep,
     )
   let c =
     Warning(
@@ -131,7 +131,7 @@ pub fn filter_severity_test() {
       "",
       warning.WarningReasonVulnerable,
       warning.SeverityModerate,
-      warning.Direct,
+      warning.DirectDep,
     )
   let aa =
     Warning(
@@ -141,7 +141,7 @@ pub fn filter_severity_test() {
       "",
       warning.WarningReasonVulnerable,
       warning.SeverityCritical,
-      warning.Direct,
+      warning.DirectDep,
     )
   let bb =
     Warning(
@@ -151,7 +151,7 @@ pub fn filter_severity_test() {
       "",
       warning.WarningReasonVulnerable,
       warning.SeverityHigh,
-      warning.Direct,
+      warning.DirectDep,
     )
   let cc =
     Warning(
@@ -161,7 +161,7 @@ pub fn filter_severity_test() {
       "",
       warning.WarningReasonVulnerable,
       warning.SeverityPackageRetiredSecurity,
-      warning.Direct,
+      warning.DirectDep,
     )
 
   should.equal(filter_severity(full, []), [])

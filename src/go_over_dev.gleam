@@ -3,7 +3,7 @@ import gleam/option.{None, Some}
 import go_over
 import go_over/config
 import go_over/warning.{
-  Direct, Indirect, SeverityCritical, SeverityHigh, SeverityLow,
+  DirectDep, IndirectDep, SeverityCritical, SeverityHigh, SeverityLow,
   SeverityModerate, SeverityPackageRetiredSecurity, SeverityRejectedLicense,
   Warning, WarningReasonRetired, WarningReasonVulnerable,
 }
@@ -18,7 +18,7 @@ const example_warnings = [
     "Retired",
     WarningReasonVulnerable,
     SeverityCritical,
-    Direct,
+    DirectDep,
   ),
   Warning(
     None,
@@ -27,7 +27,7 @@ const example_warnings = [
     "Vulnerable",
     WarningReasonVulnerable,
     SeverityHigh,
-    Direct,
+    DirectDep,
   ),
   Warning(
     None,
@@ -36,7 +36,7 @@ const example_warnings = [
     "Vulnerable",
     WarningReasonVulnerable,
     SeverityModerate,
-    Direct,
+    DirectDep,
   ),
   Warning(
     None,
@@ -45,7 +45,7 @@ const example_warnings = [
     "Vulnerable",
     WarningReasonVulnerable,
     SeverityLow,
-    Indirect,
+    IndirectDep,
   ),
   Warning(
     None,
@@ -54,7 +54,7 @@ const example_warnings = [
     "Retired",
     WarningReasonRetired,
     SeverityPackageRetiredSecurity,
-    Indirect,
+    IndirectDep,
   ),
   Warning(
     None,
@@ -63,7 +63,7 @@ const example_warnings = [
     "Retired",
     WarningReasonRetired,
     SeverityRejectedLicense,
-    Indirect,
+    IndirectDep,
   ),
 ]
 

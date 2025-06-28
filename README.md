@@ -10,7 +10,9 @@ A tool to audit Erlang & Elixir dependencies, to make sure your ✨ gleam
 projects really sparkle!
 
 🚨 _**NOTE**_: security advisories are _NOT_ currently monitored for gleam
-dependencies. The language, while excellent, is far too new and niche
+dependencies. The language, while excellent, is far too new and niche.
+
+⚠️ Dependencies sourced directly from git have limited support, only checking for security advisories and not retirements or outdated versions
 
 # 🔽 Install
 
@@ -50,8 +52,8 @@ gleam run -m go_over
 
 ### 🏴 Flags
 
-- `--format` FORMAT: Specify the output format of any warnings, [minimal,
-  verbose, json] (default: None)
+- `--format` Specify the output format of any warnings, [minimal, verbose, json]
+  (default: None)
 - `--puller` Specify the tool used to reach out to hex.pm, [curl, wget, httpie]
   (default: None)
 - `--force`: Force pulling new data even if the cached data is still valid

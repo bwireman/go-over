@@ -6,7 +6,7 @@ import gleam/string
 import gleamsver.{SemVer}
 import gleeunit/should
 import go_over/advisories/advisories.{Advisory}
-import go_over/packages.{Package}
+import go_over/packages.{Package, PackageSourceHex}
 import go_over/warning.{type Warning}
 import go_over_test
 
@@ -47,6 +47,7 @@ const example_package = Package(
   version: SemVer(1, 2, 3, "pre", "build"),
   version_raw: "pre1.2.3-build",
   direct: True,
+  source: PackageSourceHex,
 )
 
 pub fn adv_to_warning_test() {

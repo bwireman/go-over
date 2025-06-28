@@ -6,7 +6,7 @@ import go_over/hex/puller.{Mock}
 import go_over/packages
 import go_over/sources
 import go_over/warning.{
-  Indirect, Warning, WarningReasonOutdated, WarningReasonRejectedLicense,
+  IndirectDep, Warning, WarningReasonOutdated, WarningReasonRejectedLicense,
   WarningReasonRetired,
 }
 
@@ -27,7 +27,13 @@ const conf = Config(
 )
 
 const pkgs = [
-  packages.Package("name", gleamsver.SemVer(1, 1, 1, "", ""), "1.1.1", False),
+  packages.Package(
+    "name",
+    gleamsver.SemVer(1, 1, 1, "", ""),
+    "1.1.1",
+    False,
+    packages.PackageSourceHex,
+  ),
 ]
 
 pub fn get_retired_warnings_test() {
@@ -43,7 +49,7 @@ pub fn get_retired_warnings_test() {
       "security: example",
       WarningReasonRetired,
       warning.SeverityPackageRetiredSecurity,
-      Indirect,
+      IndirectDep,
     ),
   ])
 
@@ -70,7 +76,7 @@ pub fn get_rejected_license_test() {
       "Rejected License found: closed-source",
       WarningReasonRejectedLicense("closed-source"),
       warning.SeverityRejectedLicense,
-      Indirect,
+      IndirectDep,
     ),
   ])
 
@@ -97,7 +103,7 @@ pub fn get_outdated_test() {
       "New Version: '1.2.3' exists",
       WarningReasonOutdated,
       warning.SeverityPackageOutdated,
-      Indirect,
+      IndirectDep,
     ),
   ])
 

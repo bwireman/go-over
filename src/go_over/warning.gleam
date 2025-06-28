@@ -77,21 +77,21 @@ pub fn string_to_severity(s: String) -> Severity {
 }
 
 pub type Dep {
-  Direct
-  Indirect
+  DirectDep
+  IndirectDep
 }
 
 fn dep_code_as_string(d: Dep) -> String {
   case d {
-    Direct -> "Direct"
-    Indirect -> "Indirect"
+    DirectDep -> "Direct"
+    IndirectDep -> "Indirect"
   }
 }
 
 fn dep_code_from_bool(d: Bool) -> Dep {
   case d {
-    True -> Direct
-    False -> Indirect
+    True -> DirectDep
+    False -> IndirectDep
   }
 }
 

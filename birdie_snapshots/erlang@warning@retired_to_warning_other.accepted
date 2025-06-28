@@ -1,5 +1,5 @@
 ---
-version: 1.2.6
+version: 1.3.1
 title: Erlang@warning@retired_to_warning_other
 ---
 #(
@@ -9,6 +9,7 @@ title: Erlang@warning@retired_to_warning_other
       SemVer(1, 2, 3, "pre", "build"),
       "pre1.2.3-build",
       True,
+      PackageSourceHex,
     ),
     ReleaseRetirement(
       OtherReason,
@@ -22,6 +23,6 @@ title: Erlang@warning@retired_to_warning_other
     "other: It's an example man",
     WarningReasonRetired,
     SeverityPackageRetiredOtherReason("It's an example man"),
-    Direct,
+    DirectDep,
   ),
 )
