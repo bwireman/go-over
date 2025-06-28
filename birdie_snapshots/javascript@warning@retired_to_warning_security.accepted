@@ -1,5 +1,5 @@
 ---
-version: 1.2.6
+version: 1.3.1
 title: Javascript@warning@retired_to_warning_security
 ---
 #(
@@ -15,6 +15,7 @@ title: Javascript@warning@retired_to_warning_security
       ),
       version_raw: "pre1.2.3-build",
       direct: True,
+      source: PackageSourceHex,
     ),
     ReleaseRetirement(
       reason: Security,
@@ -28,6 +29,6 @@ title: Javascript@warning@retired_to_warning_security
     reason: "security: It's an example man",
     warning_reason_code: WarningReasonRetired,
     severity: SeverityPackageRetiredSecurity,
-    dep: Direct,
+    dep: DirectDep,
   ),
 )

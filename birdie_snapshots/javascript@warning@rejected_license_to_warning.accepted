@@ -1,5 +1,5 @@
 ---
-version: 1.2.6
+version: 1.3.1
 title: Javascript@warning@rejected_license_to_warning
 ---
 #(
@@ -15,6 +15,7 @@ title: Javascript@warning@rejected_license_to_warning
       ),
       version_raw: "pre1.2.3-build",
       direct: True,
+      source: PackageSourceHex,
     ),
     "closed-source-crap",
   ),
@@ -25,6 +26,6 @@ title: Javascript@warning@rejected_license_to_warning
     reason: "Rejected License found: closed-source-crap",
     warning_reason_code: WarningReasonRejectedLicense(name: "closed-source-crap"),
     severity: SeverityRejectedLicense,
-    dep: Direct,
+    dep: DirectDep,
   ),
 )

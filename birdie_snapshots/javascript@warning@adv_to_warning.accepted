@@ -1,5 +1,5 @@
 ---
-version: 1.2.6
+version: 1.3.1
 title: Javascript@warning@adv_to_warning
 ---
 #(
@@ -15,6 +15,7 @@ title: Javascript@warning@adv_to_warning
       ),
       version_raw: "pre1.2.3-build",
       direct: True,
+      source: PackageSourceHex,
     ),
     Advisory(
       id: "ghsa-example",
@@ -34,6 +35,6 @@ title: Javascript@warning@adv_to_warning
     reason: "it's like bad",
     warning_reason_code: WarningReasonVulnerable,
     severity: SeverityUnknown(info: "example"),
-    dep: Direct,
+    dep: DirectDep,
   ),
 )

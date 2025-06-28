@@ -25,4 +25,10 @@ pub fn read_manifest_test() {
   should.equal(dos.name, "dos")
   should.equal(dos.version_raw, "2.2.123")
   should.be_false(dos.direct)
+
+  let assert [_, _, git] = test_read_manifest("test/testdata/manifest/git.toml")
+  should.equal(git.name, "c")
+  should.equal(git.version_raw, "0.1.0")
+  should.be_false(git.direct)
+  should.equal(git.source, packages.PackageSourceGit)
 }
