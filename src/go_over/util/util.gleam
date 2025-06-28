@@ -11,3 +11,7 @@ pub fn retry_cmd(
   |> delay.retry_with_backoff(3)
   |> delay.run()
 }
+
+pub fn do_panic() {
+  panic as "Unreachable, please create an issue in https://github.com/bwireman/go-over if you see this"
+}

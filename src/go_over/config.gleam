@@ -13,6 +13,7 @@ import go_over/hex/puller
 import go_over/packages.{type Package}
 import go_over/util/constants
 import go_over/util/print
+import go_over/util/util
 import go_over/warning.{type Warning}
 import gxyz/cli
 import gxyz/list as glist
@@ -216,7 +217,7 @@ fn toml_as_string(toml: Toml) -> Option(String) {
     _ -> {
       print.warning("could not parse config value " <> string.inspect(toml))
       shellout.exit(1)
-      panic as "Unreachable, please create an issue in https://github.com/bwireman/go-over if you see this"
+      util.do_panic()
     }
   }
 }

@@ -10,6 +10,7 @@ import go_over/sources
 import go_over/util/constants
 import go_over/util/print
 import go_over/util/spinner
+import go_over/util/util
 import go_over/warning.{type Warning}
 import gxyz/function as gfunction
 import gxyz/list as glist
@@ -59,7 +60,7 @@ pub fn main() {
     Error(e) -> {
       io.println_error(e)
       shellout.exit(0)
-      panic as "Unreachable, please create an issue in https://github.com/bwireman/go-over if you see this"
+      util.do_panic()
     }
     Ok(conf) -> conf
   }
@@ -102,8 +103,7 @@ pub fn main() {
           True, True -> "outdated & licenses"
           True, False -> "outdated"
           False, True -> "licenses"
-          False, False ->
-            panic as "Unreachable, please create an issue in https://github.com/bwireman/go-over if you see this"
+          False, False -> util.do_panic()
         }
 
         spinner.set_text_spinner(

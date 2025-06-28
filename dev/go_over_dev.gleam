@@ -1,4 +1,3 @@
-import gleam/io
 import gleam/option.{None, Some}
 import go_over
 import go_over/config
@@ -68,16 +67,8 @@ const example_warnings = [
 ]
 
 pub fn main() {
-  let conf = case
+  let assert Ok(conf) =
     config.spin_up(config.read_config("gleam.toml"), shellout.arguments())
-  {
-    Error(e) -> {
-      io.println_error(e)
-      shellout.exit(0)
-      panic as "Unreachable, please create an issue in https://github.com/bwireman/go-over if you see this"
-    }
-    Ok(conf) -> conf
-  }
 
   gfunction.iff_nil(
     True,
