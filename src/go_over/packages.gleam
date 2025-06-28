@@ -13,6 +13,7 @@ import tom
 pub type PackageSource {
   PackageSourceHex
   PackageSourceGit
+  PackageSourceLocal
 }
 
 pub type Package {
@@ -68,7 +69,9 @@ pub fn read_manifest(path: String) -> List(Package) {
 
         let source = case source_raw {
           "git" -> PackageSourceGit
-          _ -> PackageSourceHex
+          "hex" -> PackageSourceHex
+          "local" -> PackageSourceLocal
+          _ -> util.do_panic()
         }
 
         Some(Package(

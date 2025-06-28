@@ -13,7 +13,6 @@ import go_over/util/spinner
 import go_over/util/util
 import go_over/warning.{type Warning}
 import gxyz/function as gfunction
-import gxyz/list as glist
 import shellout
 import simplifile
 
@@ -92,7 +91,7 @@ pub fn main() {
   )
   let retired_warnings =
     pkgs
-    |> glist.reject(fn(p) { p.source == packages.PackageSourceGit })
+    |> list.filter(fn(p) { p.source == packages.PackageSourceHex })
     |> sources.get_retired_warnings(conf)
 
   let hex_warnings =
@@ -113,7 +112,7 @@ pub fn main() {
         )
 
         pkgs
-        |> glist.reject(fn(p) { p.source == packages.PackageSourceGit })
+        |> list.filter(fn(p) { p.source == packages.PackageSourceHex })
         |> sources.get_hex_warnings(conf)
       },
       [],

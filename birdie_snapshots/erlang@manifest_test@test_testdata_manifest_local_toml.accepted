@@ -1,0 +1,27 @@
+---
+version: 1.3.1
+title: Erlang@manifest_test@test/testdata/manifest/local.toml
+---
+[
+  Package(
+    "a",
+    SemVer(0, 8, 1, "", ""),
+    "0.8.1",
+    True,
+    PackageSourceHex,
+  ),
+  Package(
+    "b",
+    SemVer(2, 2, 123, "", ""),
+    "2.2.123",
+    False,
+    PackageSourceHex,
+  ),
+  Package(
+    "c",
+    SemVer(0, 1, 0, "", ""),
+    "0.1.0",
+    False,
+    PackageSourceLocal,
+  ),
+]
