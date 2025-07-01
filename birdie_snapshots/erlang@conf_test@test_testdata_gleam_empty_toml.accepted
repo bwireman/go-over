@@ -10,7 +10,7 @@ Config(
   Minimal,
   False,
   True,
-  CURL,
+  Native,
   [],
   [],
   [],

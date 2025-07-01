@@ -18,8 +18,10 @@ fi
 
 TARGET="$1"
 RUNTIME="$2"
+PULLER="curl"
 if [ "$TARGET" = "erlang" ]; then
     CMD='--target erlang'
+    PULLER="native"
 else
     if [ -z "$2" ]; then
         echo "Must set runtime"
@@ -31,7 +33,7 @@ else
 fi
 
 # shellcheck disable=SC2086
-gleam run $CMD -- --force --verbose --puller curl
+gleam run $CMD -- --force --verbose --puller $PULLER
 rm -rf .go-over/outdated
 
 snooze 15

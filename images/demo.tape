@@ -3,7 +3,7 @@ Set FontSize 14
 Set PlaybackSpeed 1.35
 Set TypingSpeed 75ms
 Set FontFamily 'JetBrains Mono'
-Set Margin 15
+Set Margin 12
 Set MarginFill "#ffaff3"
 Set BorderRadius 12
 
@@ -26,4 +26,4 @@ Enter
 Sleep 5s
 Type `gleam run -m go_over`
 Enter
-Sleep 40s
+Sleep 25s

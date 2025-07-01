@@ -87,10 +87,10 @@ pub fn read_config(path: String) -> Config {
     |> option.unwrap(Minimal)
   let puller =
     tom.get_string(go_over, ["puller"])
-    |> result.unwrap("curl")
+    |> result.unwrap(puller.default_string())
     |> string.lowercase()
     |> parse_puller()
-    |> option.unwrap(puller.CURL)
+    |> option.unwrap(puller.default())
   let global =
     tom.get_bool(go_over, ["global"])
     |> result.unwrap(True)
@@ -197,6 +197,7 @@ pub fn parse_config_format(val: String) -> option.Option(Format) {
 
 fn parse_puller(name: String) -> option.Option(puller.Puller) {
   case name {
+    "native" -> Some(puller.Native)
     "curl" -> Some(puller.CURL)
     "wget" -> Some(puller.WGET)
     "httpie" -> Some(puller.HTTPIE)
@@ -204,7 +205,8 @@ fn parse_puller(name: String) -> option.Option(puller.Puller) {
       print.warning(
         "Invalid puller '"
         <> name
-        <> "' valid options are ['curl', 'wget', 'httpie'], defaulting to curl",
+        <> "' valid options are ['native', 'curl', 'wget', 'httpie'], defaulting to "
+        <> puller.default_string(),
       )
       option.None
     }
@@ -238,7 +240,7 @@ fn help_message(args: arg_info.ArgInfo) -> String {
   |> arg_info.help_text(
     "go_over",
     print.format_high(logo <> "\tversion: " <> constants.version <> "\n")
-      <> "🕵️Audit Erlang & Elixir dependencies, to make sure your gleam projects really ✨ sparkle!",
+      <> "🕵️ Audit Erlang & Elixir dependencies, to make sure your gleam projects really ✨ sparkle!",
   )
   // ? strip out the pointless leading go_over in the help message
   |> string.crop(" ")
@@ -321,7 +323,7 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
   |> clip.opt(
     opt.new("puller")
     |> opt.help(
-      "Specify the tool used to reach out to hex.pm, [curl, wget, httpie]",
+      "Specify the tool used to reach out to hex.pm, [native, curl, wget, httpie]",
     )
     |> opt.map(parse_puller)
     |> opt.default(option.None),

@@ -55,8 +55,8 @@ gleam run -m go_over
 
 - `--format` Specify the output format of any warnings, [minimal, verbose, json]
   (default: None)
-- `--puller` Specify the tool used to reach out to hex.pm, [curl, wget, httpie]
-  (default: None)
+- `--puller` Specify the tool used to reach out to hex.pm, [native, curl, wget,
+  httpie] (default: None)
 - `--force`: Force pulling new data even if the cached data is still valid
 - `--outdated`: Additionally check if newer versions of dependencies exist
 - `--ignore-indirect`: Ignore all warnings for indirect dependencies
@@ -84,8 +84,8 @@ format = "minimal"
 # will additionally check if newer versions of dependencies exist
 # default: true
 outdated = true
-# tool used to pull information from hex.pm ["curl", "wget", "httpie"]
-# default: "curl"
+# tool used to pull information from hex.pm ["native", "curl", "wget", "httpie"]
+# default: "curl" for JS and "native" for Erlang
 puller = "curl"
 # licenses dependencies are allowed to use. If left empty then all licenses are allowed
 # default: []

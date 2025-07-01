@@ -12,7 +12,7 @@ title: Erlang@spin_up_test@outdated
     Minimal,
     False,
     True,
-    CURL,
+    Native,
     [],
     [],
     [],

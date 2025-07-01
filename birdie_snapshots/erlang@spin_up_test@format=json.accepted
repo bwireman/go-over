@@ -12,7 +12,7 @@ title: Erlang@spin_up_test@format=json
     JSON,
     False,
     True,
-    CURL,
+    Native,
     [],
     [],
     [],

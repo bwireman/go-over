@@ -12,7 +12,7 @@ title: Erlang@spin_up_test@ignore_indirect
     Minimal,
     False,
     True,
-    CURL,
+    Native,
     [],
     [],
     [],

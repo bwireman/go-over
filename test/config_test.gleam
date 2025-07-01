@@ -32,7 +32,7 @@ pub fn read_config_test() {
   let empty = test_read_config("test/testdata/gleam/empty.toml")
   should.be_false(empty.force)
   should.equal(empty.format, config.Minimal)
-  should.equal(empty.puller, puller.CURL)
+  should.equal(empty.puller, puller.default())
   should.equal(empty.ignore_packages, [])
   should.equal(empty.ignore_severity, [])
   should.equal(empty.ignore_ids, [])
@@ -184,7 +184,7 @@ pub fn spin_up_test() {
   should.be_false(conf.ignore_indirect)
   should.be_false(conf.verbose)
   should.equal(conf.format, config.Minimal)
-  should.equal(conf.puller, puller.CURL)
+  should.equal(conf.puller, puller.default())
 
   let conf = test_spin_up("force", ["--force"])
   should.be_true(conf.force)
