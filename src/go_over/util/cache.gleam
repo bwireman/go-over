@@ -1,8 +1,9 @@
-import birl
 import filepath
-import gleam/int
 import gleam/order
 import gleam/result
+import gleam/time/calendar
+import gleam/time/duration
+import gleam/time/timestamp
 import go_over/util/constants
 import go_over/util/print
 import gxyz/cli
@@ -21,11 +22,11 @@ fn file_cached(path: String, max_age_seconds: Int) -> Result(Bool, Nil) {
   |> cache_name()
   |> simplifile.read()
   |> result.replace_error(Nil)
-  |> result.try(int.base_parse(_, 10))
+  |> result.try(timestamp.parse_rfc3339)
   |> result.map(fn(v) {
-    let cutoff = birl.from_unix(v + max_age_seconds)
+    let cutoff = timestamp.add(v, duration.seconds(max_age_seconds))
 
-    case birl.compare(birl.utc_now(), cutoff) {
+    case timestamp.compare(timestamp.system_time(), cutoff) {
       order.Lt | order.Eq -> True
       _ -> False
     }
@@ -51,9 +52,8 @@ pub fn pull_if_not_cached(
       pull_fn()
 
       let now =
-        birl.utc_now()
-        |> birl.to_unix()
-        |> int.to_string()
+        timestamp.system_time()
+        |> timestamp.to_rfc3339(calendar.utc_offset)
 
       simplifile.create_directory_all(path)
       |> cli.hard_fail_with_msg("could not write cache file for " <> path)
