@@ -4,7 +4,6 @@ import gleam/list
 import gleam/option
 import gleam/string
 import gleamsver.{SemVer}
-import gleeunit/should
 import go_over/advisories/advisories.{Advisory}
 import go_over/packages.{Package, PackageSourceHex}
 import go_over/warning.{type Warning}
@@ -195,57 +194,49 @@ pub fn rejected_license_to_warning_test() {
 }
 
 pub fn severity_as_string_test() {
-  warning.severity_as_string(warning.SeverityPackageRetiredInvalid)
-  |> should.equal("package-retired:invalid")
-  warning.severity_as_string(warning.SeverityPackageRetiredSecurity)
-  |> should.equal("package-retired:security")
-  warning.severity_as_string(warning.SeverityPackageRetiredDeprecated)
-  |> should.equal("package-retired:deprecated")
-  warning.severity_as_string(warning.SeverityPackageRetiredRenamed)
-  |> should.equal("package-retired:renamed")
-  warning.severity_as_string(warning.SeverityPackageRetiredOtherReason(
-    "something",
-  ))
-  |> should.equal("package-retired:something")
-  warning.severity_as_string(warning.SeverityPackageOutdated)
-  |> should.equal("package-outdated")
-  warning.severity_as_string(warning.SeverityRejectedLicense)
-  |> should.equal("rejected-license")
-  warning.severity_as_string(warning.SeverityCritical)
-  |> should.equal("critical")
-  warning.severity_as_string(warning.SeverityHigh)
-  |> should.equal("high")
-  warning.severity_as_string(warning.SeverityLow)
-  |> should.equal("low")
-  warning.severity_as_string(warning.SeverityModerate)
-  |> should.equal("moderate")
-  warning.severity_as_string(warning.SeverityUnknown("something"))
-  |> should.equal("unknown-something")
+  assert warning.severity_as_string(warning.SeverityPackageRetiredInvalid)
+    == "package-retired:invalid"
+  assert warning.severity_as_string(warning.SeverityPackageRetiredSecurity)
+    == "package-retired:security"
+  assert warning.severity_as_string(warning.SeverityPackageRetiredDeprecated)
+    == "package-retired:deprecated"
+  assert warning.severity_as_string(warning.SeverityPackageRetiredRenamed)
+    == "package-retired:renamed"
+  assert warning.severity_as_string(warning.SeverityPackageRetiredOtherReason(
+      "something",
+    ))
+    == "package-retired:something"
+  assert warning.severity_as_string(warning.SeverityPackageOutdated)
+    == "package-outdated"
+  assert warning.severity_as_string(warning.SeverityRejectedLicense)
+    == "rejected-license"
+  assert warning.severity_as_string(warning.SeverityCritical) == "critical"
+  assert warning.severity_as_string(warning.SeverityHigh) == "high"
+  assert warning.severity_as_string(warning.SeverityLow) == "low"
+  assert warning.severity_as_string(warning.SeverityModerate) == "moderate"
+  assert warning.severity_as_string(warning.SeverityUnknown("something"))
+    == "unknown-something"
 }
 
 pub fn string_to_severity_test() {
-  warning.string_to_severity("package-retired:invalid")
-  |> should.equal(warning.SeverityPackageRetiredInvalid)
-  warning.string_to_severity("package-retired:security")
-  |> should.equal(warning.SeverityPackageRetiredSecurity)
-  warning.string_to_severity("package-retired:deprecated")
-  |> should.equal(warning.SeverityPackageRetiredDeprecated)
-  warning.string_to_severity("package-retired:renamed")
-  |> should.equal(warning.SeverityPackageRetiredRenamed)
-  warning.string_to_severity("package-retired:something")
-  |> should.equal(warning.SeverityPackageRetiredOtherReason("something"))
-  warning.string_to_severity("package-outdated")
-  |> should.equal(warning.SeverityPackageOutdated)
-  warning.string_to_severity("rejected-license")
-  |> should.equal(warning.SeverityRejectedLicense)
-  warning.string_to_severity("critical")
-  |> should.equal(warning.SeverityCritical)
-  warning.string_to_severity("high")
-  |> should.equal(warning.SeverityHigh)
-  warning.string_to_severity("low")
-  |> should.equal(warning.SeverityLow)
-  warning.string_to_severity("moderate")
-  |> should.equal(warning.SeverityModerate)
-  warning.string_to_severity("unknown-something")
-  |> should.equal(warning.SeverityUnknown("something"))
+  assert warning.string_to_severity("package-retired:invalid")
+    == warning.SeverityPackageRetiredInvalid
+  assert warning.string_to_severity("package-retired:security")
+    == warning.SeverityPackageRetiredSecurity
+  assert warning.string_to_severity("package-retired:deprecated")
+    == warning.SeverityPackageRetiredDeprecated
+  assert warning.string_to_severity("package-retired:renamed")
+    == warning.SeverityPackageRetiredRenamed
+  assert warning.string_to_severity("package-retired:something")
+    == warning.SeverityPackageRetiredOtherReason("something")
+  assert warning.string_to_severity("package-outdated")
+    == warning.SeverityPackageOutdated
+  assert warning.string_to_severity("rejected-license")
+    == warning.SeverityRejectedLicense
+  assert warning.string_to_severity("critical") == warning.SeverityCritical
+  assert warning.string_to_severity("high") == warning.SeverityHigh
+  assert warning.string_to_severity("low") == warning.SeverityLow
+  assert warning.string_to_severity("moderate") == warning.SeverityModerate
+  assert warning.string_to_severity("unknown-something")
+    == warning.SeverityUnknown("something")
 }

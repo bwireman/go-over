@@ -1,4 +1,3 @@
-import gleeunit/should
 import go_over/advisories/advisories.{check_for_advisories, read}
 import go_over/packages.{read_manifest}
 import go_over_test
@@ -9,80 +8,68 @@ pub fn check_for_advisories_test() {
     read_manifest("test/testdata/manifest/known_vulnerable.toml")
     |> check_for_advisories(False, False, True)
 
-  should.equal(pkg.name, "phoenix")
-  should.equal(adv1.name, "phoenix")
-  should.equal(adv2.name, "phoenix")
+  assert pkg.name == "phoenix"
+  assert adv1.name == "phoenix"
+  assert adv2.name == "phoenix"
 }
 
 pub fn read_adv_test() {
   let assert Ok(body) = simplifile.read("test/testdata/advisories/blank.yaml")
-  read(body)
-  |> should.be_error()
+  assert Error(Nil) == read(body)
 
   let assert Ok(body) =
     simplifile.read("test/testdata/advisories/missing_id.yaml")
-  read(body)
-  |> should.be_error()
+  assert Error(Nil) == read(body)
 
   let assert Ok(body) =
     simplifile.read("test/testdata/advisories/missing_package.yaml")
-  read(body)
-  |> should.be_error()
+  assert Error(Nil) == read(body)
 
   let assert Ok(body) =
     simplifile.read("test/testdata/advisories/missing_title.yaml")
-  read(body)
-  |> should.be_error()
+  assert Error(Nil) == read(body)
 
   let assert Ok(body) =
     simplifile.read("test/testdata/advisories/missing_severity.yaml")
-  read(body)
-  |> should.be_error()
+  assert Error(Nil) == read(body)
 
   let assert Ok(body) =
     simplifile.read("test/testdata/advisories/missing_versions.yaml")
-  read(body)
-  |> should.be_error()
+  assert Error(Nil) == read(body)
 
   let assert Ok(body) =
     simplifile.read("test/testdata/advisories/non_list_versions.yaml")
-  read(body)
-  |> should.be_error()
+  assert Error(Nil) == read(body)
 
   let assert Ok(body) =
     simplifile.read("test/testdata/advisories/not-even-yaml.txt")
-  read(body)
-  |> should.be_error()
+  assert Error(Nil) == read(body)
 
   let assert Ok(body) =
     simplifile.read("test/testdata/advisories/not_string_id.yaml")
-  read(body)
-  |> should.be_error()
+  assert Error(Nil) == read(body)
 
   let assert Ok(body) =
     simplifile.read("test/testdata/advisories/not_string_package.yaml")
-  read(body)
-  |> should.be_error()
+  assert Error(Nil) == read(body)
 
   let assert Ok(body) =
     simplifile.read("test/testdata/advisories/not_string_severity.yaml")
-  read(body)
-  |> should.be_error()
+  assert Error(Nil) == read(body)
 
   let assert Ok(body) =
     simplifile.read("test/testdata/advisories/not_string_title.yaml")
-  read(body)
-  |> should.be_error()
+  assert Error(Nil) == read(body)
 
   let assert Ok(body) =
     simplifile.read("test/testdata/advisories/not_string_versions.yaml")
-  read(body)
-  |> should.be_error()
+  assert Error(Nil) == read(body)
 
   let assert Ok(body) = simplifile.read("test/testdata/advisories/all.yaml")
-  read(body)
-  |> should.be_ok()
-  |> go_over_test.birdie_snap_with_input(
+  let assert Ok(parsed) = read(body)
+
+  go_over_test.birdie_snap_with_input(
+    parsed,
     body,
     "advisories_test@test/testdata/advisories/all.yaml",
   )

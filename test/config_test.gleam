@@ -1,6 +1,5 @@
 import gleam/option.{None}
 import gleamsver.{parse}
-import gleeunit/should
 import go_over/advisories/advisories.{Advisory}
 import go_over/config.{
   filter_advisory_ids, filter_dev_dependencies, filter_packages, filter_severity,
@@ -22,42 +21,43 @@ pub fn test_read_config(p: String) {
 }
 
 pub fn test_spin_up(name: String, argv: List(String)) {
-  empty_conf()
-  |> config.spin_up(argv)
-  |> should.be_ok()
-  |> go_over_test.birdie_snap_with_input(argv, "spin_up_test@" <> name)
+  let assert Ok(conf) =
+    empty_conf()
+    |> config.spin_up(argv)
+
+  go_over_test.birdie_snap_with_input(conf, argv, "spin_up_test@" <> name)
 }
 
 pub fn read_config_test() {
   let empty = test_read_config("test/testdata/gleam/empty.toml")
-  should.be_false(empty.force)
-  should.equal(empty.format, config.Minimal)
-  should.equal(empty.puller, puller.default())
-  should.equal(empty.ignore_packages, [])
-  should.equal(empty.ignore_severity, [])
-  should.equal(empty.ignore_ids, [])
-  should.be_false(empty.ignore_indirect)
+  assert !empty.force
+  assert empty.format == config.Minimal
+  assert empty.puller == puller.default()
+  assert empty.ignore_packages == []
+  assert empty.ignore_severity == []
+  assert empty.ignore_ids == []
+  assert !empty.ignore_indirect
 
   let basic = test_read_config("test/testdata/gleam/basic.toml")
-  should.be_true(basic.force)
-  should.equal(basic.puller, puller.HTTPIE)
-  should.equal(basic.format, config.Detailed)
-  should.equal(basic.ignore_packages, ["a"])
-  should.equal(basic.ignore_severity, ["b"])
-  should.equal(basic.ignore_ids, ["c"])
-  should.be_true(basic.ignore_indirect)
+  assert basic.force
+  assert basic.puller == puller.HTTPIE
+  assert basic.format == config.Detailed
+  assert basic.ignore_packages == ["a"]
+  assert basic.ignore_severity == ["b"]
+  assert basic.ignore_ids == ["c"]
+  assert basic.ignore_indirect
 
   let partial = test_read_config("test/testdata/gleam/partial.toml")
-  should.be_false(partial.force)
-  should.equal(partial.puller, puller.WGET)
-  should.equal(partial.format, config.Minimal)
-  should.equal(partial.ignore_packages, ["a", "b", "c"])
-  should.equal(partial.ignore_severity, [])
-  should.equal(partial.ignore_ids, [])
-  should.be_false(partial.ignore_indirect)
+  assert !partial.force
+  assert partial.puller == puller.WGET
+  assert partial.format == config.Minimal
+  assert partial.ignore_packages == ["a", "b", "c"]
+  assert partial.ignore_severity == []
+  assert partial.ignore_ids == []
+  assert !partial.ignore_indirect
 
   let indirect_new = test_read_config("test/testdata/gleam/indirect_new.toml")
-  should.be_true(indirect_new.ignore_indirect)
+  assert indirect_new.ignore_indirect
 }
 
 pub fn filter_dev_deps_test() {
@@ -67,11 +67,11 @@ pub fn filter_dev_deps_test() {
   let b = Package("b", v, "", False, packages.PackageSourceHex)
   let c = Package("c", v, "", False, packages.PackageSourceHex)
 
-  should.equal(filter_dev_dependencies(full, []), [])
-  should.equal(filter_dev_dependencies(full, [a]), [a])
-  should.equal(filter_dev_dependencies(full, [a, b]), [a, b])
-  should.equal(filter_dev_dependencies(full, [b, c]), [b])
-  should.equal(filter_dev_dependencies(full, [a, b, c]), [a, b])
+  assert filter_dev_dependencies(full, []) == []
+  assert filter_dev_dependencies(full, [a]) == [a]
+  assert filter_dev_dependencies(full, [a, b]) == [a, b]
+  assert filter_dev_dependencies(full, [b, c]) == [b]
+  assert filter_dev_dependencies(full, [a, b, c]) == [a, b]
 }
 
 pub fn filter_packages_test() {
@@ -81,11 +81,11 @@ pub fn filter_packages_test() {
   let b = Package("b", v, "", False, packages.PackageSourceHex)
   let c = Package("c", v, "", False, packages.PackageSourceHex)
 
-  should.equal(filter_packages(full, []), [])
-  should.equal(filter_packages(full, [a]), [])
-  should.equal(filter_packages(full, [a, b]), [])
-  should.equal(filter_packages(full, [b, c]), [c])
-  should.equal(filter_packages(full, [a, b, c]), [c])
+  assert filter_packages(full, []) == []
+  assert filter_packages(full, [a]) == []
+  assert filter_packages(full, [a, b]) == []
+  assert filter_packages(full, [b, c]) == [c]
+  assert filter_packages(full, [a, b, c]) == [c]
 }
 
 pub fn filter_advisory_ids_test() {
@@ -94,11 +94,11 @@ pub fn filter_advisory_ids_test() {
   let b = Advisory("b", "", "", [], "")
   let c = Advisory("c", "", "", [], "")
 
-  should.equal(filter_advisory_ids(full, []), [])
-  should.equal(filter_advisory_ids(full, [a]), [])
-  should.equal(filter_advisory_ids(full, [a, b]), [])
-  should.equal(filter_advisory_ids(full, [b, c]), [c])
-  should.equal(filter_advisory_ids(full, [a, b, c]), [c])
+  assert filter_advisory_ids(full, []) == []
+  assert filter_advisory_ids(full, [a]) == []
+  assert filter_advisory_ids(full, [a, b]) == []
+  assert filter_advisory_ids(full, [b, c]) == [c]
+  assert filter_advisory_ids(full, [a, b, c]) == [c]
 }
 
 pub fn filter_severity_test() {
@@ -164,50 +164,50 @@ pub fn filter_severity_test() {
       warning.DirectDep,
     )
 
-  should.equal(filter_severity(full, []), [])
-  should.equal(filter_severity(full, [a]), [])
-  should.equal(filter_severity(full, [a, b]), [])
-  should.equal(filter_severity(full, [b, c]), [c])
-  should.equal(filter_severity(full, [a, b, c]), [c])
+  assert filter_severity(full, []) == []
+  assert filter_severity(full, [a]) == []
+  assert filter_severity(full, [a, b]) == []
+  assert filter_severity(full, [b, c]) == [c]
+  assert filter_severity(full, [a, b, c]) == [c]
 
-  should.equal(filter_severity(full, []), [])
-  should.equal(filter_severity(full, [aa]), [])
-  should.equal(filter_severity(full, [aa, bb]), [])
-  should.equal(filter_severity(full, [bb, cc]), [cc])
-  should.equal(filter_severity(full, [aa, bb, cc]), [cc])
+  assert filter_severity(full, []) == []
+  assert filter_severity(full, [aa]) == []
+  assert filter_severity(full, [aa, bb]) == []
+  assert filter_severity(full, [bb, cc]) == [cc]
+  assert filter_severity(full, [aa, bb, cc]) == [cc]
 }
 
 pub fn spin_up_test() {
   let conf = test_spin_up("empty", [])
-  should.be_false(conf.force)
-  should.be_false(conf.outdated)
-  should.be_false(conf.ignore_indirect)
-  should.be_false(conf.verbose)
-  should.equal(conf.format, config.Minimal)
-  should.equal(conf.puller, puller.default())
+  assert !conf.force
+  assert !conf.outdated
+  assert !conf.ignore_indirect
+  assert !conf.verbose
+  assert conf.format == config.Minimal
+  assert conf.puller == puller.default()
 
   let conf = test_spin_up("force", ["--force"])
-  should.be_true(conf.force)
+  assert conf.force
 
   let conf = test_spin_up("outdated", ["--outdated"])
-  should.be_true(conf.outdated)
+  assert conf.outdated
 
   let conf = test_spin_up("ignore_indirect", ["--ignore-indirect"])
-  should.be_true(conf.ignore_indirect)
+  assert conf.ignore_indirect
 
   let conf = test_spin_up("verbose", ["--verbose"])
-  should.be_true(conf.verbose)
+  assert conf.verbose
 }
 
 pub fn spin_up_format_test() {
   let conf = test_spin_up("format=minimal", ["--format", "minimal"])
-  should.equal(conf.format, config.Minimal)
+  assert conf.format == config.Minimal
 
   let conf = test_spin_up("format=json", ["--format", "json"])
-  should.equal(conf.format, config.JSON)
+  assert conf.format == config.JSON
 
   let conf = test_spin_up("format=detailed", ["--format", "detailed"])
-  should.equal(conf.format, config.Detailed)
+  assert conf.format == config.Detailed
 }
 
 pub fn merge_flags_and_config_test() {
@@ -223,117 +223,116 @@ pub fn merge_flags_and_config_test() {
       puller: option.None,
     )
 
-  config.merge_flags_and_config(empty_flags, empty_conf)
-  |> should.equal(empty_conf)
+  assert config.merge_flags_and_config(empty_flags, empty_conf) == empty_conf
 
   // FLAG
-  config.merge_flags_and_config(
-    config.Flags(..empty_flags, outdated: True),
-    empty_conf,
-  )
-  |> should.equal(config.Config(..empty_conf, outdated: True))
+  assert config.merge_flags_and_config(
+      config.Flags(..empty_flags, outdated: True),
+      empty_conf,
+    )
+    == config.Config(..empty_conf, outdated: True)
 
-  config.merge_flags_and_config(
-    config.Flags(..empty_flags, ignore_indirect: True),
-    empty_conf,
-  )
-  |> should.equal(config.Config(..empty_conf, ignore_indirect: True))
+  assert config.merge_flags_and_config(
+      config.Flags(..empty_flags, ignore_indirect: True),
+      empty_conf,
+    )
+    == config.Config(..empty_conf, ignore_indirect: True)
 
-  config.merge_flags_and_config(
-    config.Flags(..empty_flags, force: True),
-    empty_conf,
-  )
-  |> should.equal(config.Config(..empty_conf, force: True))
+  assert config.merge_flags_and_config(
+      config.Flags(..empty_flags, force: True),
+      empty_conf,
+    )
+    == config.Config(..empty_conf, force: True)
 
-  config.merge_flags_and_config(
-    config.Flags(..empty_flags, global: True),
-    empty_conf,
-  )
-  |> should.equal(config.Config(..empty_conf, global: True))
+  assert config.merge_flags_and_config(
+      config.Flags(..empty_flags, global: True),
+      empty_conf,
+    )
+    == config.Config(..empty_conf, global: True)
 
-  config.merge_flags_and_config(
-    config.Flags(..empty_flags, format: option.Some(config.JSON)),
-    empty_conf,
-  )
-  |> should.equal(config.Config(..empty_conf, format: config.JSON))
+  assert config.merge_flags_and_config(
+      config.Flags(..empty_flags, format: option.Some(config.JSON)),
+      empty_conf,
+    )
+    == config.Config(..empty_conf, format: config.JSON)
 
-  config.merge_flags_and_config(
-    config.Flags(..empty_flags, format: option.Some(config.Detailed)),
-    empty_conf,
-  )
-  |> should.equal(config.Config(..empty_conf, format: config.Detailed))
+  assert config.merge_flags_and_config(
+      config.Flags(..empty_flags, format: option.Some(config.Detailed)),
+      empty_conf,
+    )
+    == config.Config(..empty_conf, format: config.Detailed)
 
   // CONF
-  config.merge_flags_and_config(
-    empty_flags,
-    config.Config(..empty_conf, outdated: True),
-  )
-  |> should.equal(config.Config(..empty_conf, outdated: True))
+  assert config.merge_flags_and_config(
+      empty_flags,
+      config.Config(..empty_conf, outdated: True),
+    )
+    == config.Config(..empty_conf, outdated: True)
 
-  config.merge_flags_and_config(
-    empty_flags,
-    config.Config(..empty_conf, ignore_indirect: True),
-  )
-  |> should.equal(config.Config(..empty_conf, ignore_indirect: True))
+  assert config.merge_flags_and_config(
+      empty_flags,
+      config.Config(..empty_conf, ignore_indirect: True),
+    )
+    == config.Config(..empty_conf, ignore_indirect: True)
 
-  config.merge_flags_and_config(
-    empty_flags,
-    config.Config(..empty_conf, force: True),
-  )
-  |> should.equal(config.Config(..empty_conf, force: True))
+  assert config.merge_flags_and_config(
+      empty_flags,
+      config.Config(..empty_conf, force: True),
+    )
+    == config.Config(..empty_conf, force: True)
 
-  config.merge_flags_and_config(
-    empty_flags,
-    config.Config(..empty_conf, global: True),
-  )
-  |> should.equal(config.Config(..empty_conf, global: True))
+  assert config.merge_flags_and_config(
+      empty_flags,
+      config.Config(..empty_conf, global: True),
+    )
+    == config.Config(..empty_conf, global: True)
 
-  config.merge_flags_and_config(
-    empty_flags,
-    config.Config(..empty_conf, format: config.JSON),
-  )
-  |> should.equal(config.Config(..empty_conf, format: config.JSON))
+  assert config.merge_flags_and_config(
+      empty_flags,
+      config.Config(..empty_conf, format: config.JSON),
+    )
+    == config.Config(..empty_conf, format: config.JSON)
 
-  config.merge_flags_and_config(
-    empty_flags,
-    config.Config(..empty_conf, format: config.Detailed),
-  )
-  |> should.equal(config.Config(..empty_conf, format: config.Detailed))
+  assert config.merge_flags_and_config(
+      empty_flags,
+      config.Config(..empty_conf, format: config.Detailed),
+    )
+    == config.Config(..empty_conf, format: config.Detailed)
 
   // BOTH
-  config.merge_flags_and_config(
-    config.Flags(..empty_flags, format: option.Some(config.JSON)),
-    config.Config(..empty_conf, format: config.Minimal),
-  )
-  |> should.equal(config.Config(..empty_conf, format: config.JSON))
+  assert config.merge_flags_and_config(
+      config.Flags(..empty_flags, format: option.Some(config.JSON)),
+      config.Config(..empty_conf, format: config.Minimal),
+    )
+    == config.Config(..empty_conf, format: config.JSON)
 
-  config.merge_flags_and_config(
-    config.Flags(..empty_flags, format: option.Some(config.Detailed)),
-    config.Config(..empty_conf, format: config.Minimal),
-  )
-  |> should.equal(config.Config(..empty_conf, format: config.Detailed))
+  assert config.merge_flags_and_config(
+      config.Flags(..empty_flags, format: option.Some(config.Detailed)),
+      config.Config(..empty_conf, format: config.Minimal),
+    )
+    == config.Config(..empty_conf, format: config.Detailed)
 
-  config.merge_flags_and_config(
-    config.Flags(..empty_flags, global: False),
-    config.Config(..empty_conf, global: False),
-  )
-  |> should.equal(config.Config(..empty_conf, global: False))
+  assert config.merge_flags_and_config(
+      config.Flags(..empty_flags, global: False),
+      config.Config(..empty_conf, global: False),
+    )
+    == config.Config(..empty_conf, global: False)
 
-  config.merge_flags_and_config(
-    config.Flags(..empty_flags, global: True),
-    config.Config(..empty_conf, global: True),
-  )
-  |> should.equal(config.Config(..empty_conf, global: True))
+  assert config.merge_flags_and_config(
+      config.Flags(..empty_flags, global: True),
+      config.Config(..empty_conf, global: True),
+    )
+    == config.Config(..empty_conf, global: True)
 
-  config.merge_flags_and_config(
-    config.Flags(..empty_flags, global: True),
-    config.Config(..empty_conf, global: False),
-  )
-  |> should.equal(config.Config(..empty_conf, global: True))
+  assert config.merge_flags_and_config(
+      config.Flags(..empty_flags, global: True),
+      config.Config(..empty_conf, global: False),
+    )
+    == config.Config(..empty_conf, global: True)
 
-  config.merge_flags_and_config(
-    config.Flags(..empty_flags, global: False),
-    config.Config(..empty_conf, global: True),
-  )
-  |> should.equal(config.Config(..empty_conf, global: True))
+  assert config.merge_flags_and_config(
+      config.Flags(..empty_flags, global: False),
+      config.Config(..empty_conf, global: True),
+    )
+    == config.Config(..empty_conf, global: True)
 }

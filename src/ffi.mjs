@@ -2,7 +2,7 @@ import { parse as parse_yaml } from "yaml";
 import { Error, Ok, toList } from "../prelude.mjs";
 
 const string_type = "string";
-const err = new Error(null);
+const err = new Error(undefined);
 
 /**
  * Parses mirego/elixir-security-advisories advisory yaml

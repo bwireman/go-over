@@ -1,6 +1,5 @@
 import gleam/option.{None, Some}
 import gleamsver
-import gleeunit/should
 import go_over/config.{Config, Minimal}
 import go_over/hex/puller.{Mock}
 import go_over/packages
@@ -37,79 +36,79 @@ const pkgs = [
 ]
 
 pub fn get_retired_warnings_test() {
-  sources.get_retired_warnings(
-    pkgs,
-    Config(..conf, puller: Mock("test/testdata/hex/retired/retired.json")),
-  )
-  |> should.equal([
-    Warning(
-      None,
-      "name",
-      Some("1.1.1"),
-      "security: example",
-      WarningReasonRetired,
-      warning.SeverityPackageRetiredSecurity,
-      IndirectDep,
-    ),
-  ])
+  assert sources.get_retired_warnings(
+      pkgs,
+      Config(..conf, puller: Mock("test/testdata/hex/retired/retired.json")),
+    )
+    == [
+      Warning(
+        None,
+        "name",
+        Some("1.1.1"),
+        "security: example",
+        WarningReasonRetired,
+        warning.SeverityPackageRetiredSecurity,
+        IndirectDep,
+      ),
+    ]
 
-  sources.get_retired_warnings(
-    pkgs,
-    Config(..conf, puller: Mock("test/testdata/hex/retired/not_retired.json")),
-  )
-  |> should.equal([])
+  assert sources.get_retired_warnings(
+      pkgs,
+      Config(..conf, puller: Mock("test/testdata/hex/retired/not_retired.json")),
+    )
+    == []
 }
 
 pub fn get_rejected_license_test() {
-  sources.get_hex_warnings(
-    pkgs,
-    Config(
-      ..conf,
-      puller: Mock("test/testdata/hex/rejected_licenses/bad_license.json"),
-    ),
-  )
-  |> should.equal([
-    Warning(
-      None,
-      "name",
-      None,
-      "Rejected License found: closed-source",
-      WarningReasonRejectedLicense("closed-source"),
-      warning.SeverityRejectedLicense,
-      IndirectDep,
-    ),
-  ])
+  assert sources.get_hex_warnings(
+      pkgs,
+      Config(
+        ..conf,
+        puller: Mock("test/testdata/hex/rejected_licenses/bad_license.json"),
+      ),
+    )
+    == [
+      Warning(
+        None,
+        "name",
+        None,
+        "Rejected License found: closed-source",
+        WarningReasonRejectedLicense("closed-source"),
+        warning.SeverityRejectedLicense,
+        IndirectDep,
+      ),
+    ]
 
-  sources.get_hex_warnings(
-    pkgs,
-    Config(
-      ..conf,
-      puller: Mock("test/testdata/hex/rejected_licenses/good_license.json"),
-    ),
-  )
-  |> should.equal([])
+  assert sources.get_hex_warnings(
+      pkgs,
+      Config(
+        ..conf,
+        puller: Mock("test/testdata/hex/rejected_licenses/good_license.json"),
+      ),
+    )
+    == []
 }
 
 pub fn get_outdated_test() {
-  sources.get_hex_warnings(
-    pkgs,
-    Config(..conf, puller: Mock("test/testdata/hex/outdated/outdated.json")),
-  )
-  |> should.equal([
-    Warning(
-      None,
-      "name",
-      Some("1.1.1"),
-      "New Version: '1.2.3' exists",
-      WarningReasonOutdated,
-      warning.SeverityPackageOutdated,
-      IndirectDep,
-    ),
-  ])
+  assert sources.get_hex_warnings(
+      pkgs,
+      Config(..conf, puller: Mock("test/testdata/hex/outdated/outdated.json")),
+    )
+    == [
+      Warning(
+        None,
+        "name",
+        Some("1.1.1"),
+        "New Version: '1.2.3' exists",
+        WarningReasonOutdated,
+        warning.SeverityPackageOutdated,
+        IndirectDep,
+      ),
+    ]
 
-  sources.get_hex_warnings(
-    pkgs,
-    Config(..conf, puller: Mock("test/testdata/hex/outdated/up_to_date.json")),
-  )
-  |> should.equal([])
+  assert sources.get_hex_warnings(
+      pkgs,
+      Config(..conf, puller: Mock("test/testdata/hex/outdated/up_to_date.json")),
+    )
+    == []
 }
