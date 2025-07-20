@@ -24,8 +24,7 @@ gleam add --dev go_over
 ## 📣 Also!
 
 - add `.go-over/` to your `.gitignore`
-- make sure `git` & `curl` are installed (`wget` and `httpie` are also
-  supported)
+- make sure `git` is installed. (If not running via the BEAM you need `curl`, `wget` _or_ `httpie` installed as well)
 
 #### 🌸 Javascript
 
