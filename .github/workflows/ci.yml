@@ -37,6 +37,33 @@ jobs:
       - run: gleam run --target erlang -- --puller wget
       - run: gleam run --target erlang -- --outdated
 
+  macos-erlang:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ env.otp }}
+          gleam-version: ${{ env.gleam }}
+          rebar3-version: ${{ env.rebar }}
+      - run: gleam run --target erlang -- --outdated
+
+  macos-node:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ env.otp }}
+          gleam-version: ${{ env.gleam }}
+          rebar3-version: ${{ env.rebar }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.nodelts }}
+          cache: "npm"
+      - run: npm install
+      - run: gleam run --target javascript --runtime nodejs -- --outdated
+
   windows-erlang:
     runs-on: windows-latest
     steps:
@@ -68,7 +95,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [22.x, 23.x]
+        node-version: [22.x, 24.x]
         puller: [curl, wget]
     steps:
       - uses: actions/checkout@v4
@@ -95,7 +122,9 @@ jobs:
           otp-version: ${{ env.otp }}
           gleam-version: ${{ env.gleam }}
           rebar3-version: ${{ env.rebar }}
-      - uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
       - run: bun install
       - run: gleam test --target javascript --runtime bun
       - run: gleam run --target javascript --runtime bun -- --puller wget
@@ -110,7 +139,7 @@ jobs:
           otp-version: ${{ env.otp }}
           gleam-version: ${{ env.gleam }}
           rebar3-version: ${{ env.rebar }}
-      - uses: denoland/setup-deno@v1
+      - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x # Run with latest stable Deno.
       - run: deno install
