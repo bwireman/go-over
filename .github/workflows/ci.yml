@@ -62,7 +62,7 @@ jobs:
           node-version: ${{ env.nodelts }}
           cache: "npm"
       - run: npm install
-      - run: gleam run --target javascript --runtime nodejs -- --outdated --puller wget
+      - run: gleam run --target javascript --runtime nodejs -- --outdated --puller curl
 
   node:
     runs-on: ubuntu-latest
