@@ -57,7 +57,10 @@ pub fn release_url(pkg: Package) {
 
 pub fn do_pull_hex(pull: puller.Puller, pkg: Package, url: String) -> String {
   puller.run(pull, url)
-  |> cli.hard_fail_with_msg(
-    "request to hex.pm for package: " <> pkg.name <> " failed",
-  )
+  |> cli.custom_hard_fail([
+    cli.FailOptMessage(
+      "request to hex.pm for package: " <> pkg.name <> " failed",
+    ),
+    cli.FailOptEcho,
+  ])
 }

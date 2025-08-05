@@ -10,8 +10,8 @@ on:
   pull_request:
 
 env:
-  otp: "27.0"
-  gleam: "1.11.1"
+  otp: "28.0"
+  gleam: "1.12.0"
   rebar: "3"
 
 jobs:

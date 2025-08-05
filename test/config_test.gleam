@@ -32,7 +32,7 @@ pub fn read_config_test() {
   let empty = test_read_config("test/testdata/gleam/empty.toml")
   assert !empty.force
   assert empty.format == config.Minimal
-  assert empty.puller == puller.default()
+  assert empty.puller == puller.default
   assert empty.ignore_packages == []
   assert empty.ignore_severity == []
   assert empty.ignore_ids == []
@@ -184,7 +184,7 @@ pub fn spin_up_test() {
   assert !conf.ignore_indirect
   assert !conf.verbose
   assert conf.format == config.Minimal
-  assert conf.puller == puller.default()
+  assert conf.puller == puller.default
 
   let conf = test_spin_up("force", ["--force"])
   assert conf.force

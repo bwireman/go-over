@@ -87,10 +87,10 @@ pub fn read_config(path: String) -> Config {
     |> option.unwrap(Minimal)
   let puller =
     tom.get_string(go_over, ["puller"])
-    |> result.unwrap(puller.default_string())
+    |> result.unwrap(puller.default_string)
     |> string.lowercase()
     |> parse_puller()
-    |> option.unwrap(puller.default())
+    |> option.unwrap(puller.default)
   let global =
     tom.get_bool(go_over, ["global"])
     |> result.unwrap(True)
@@ -206,7 +206,7 @@ fn parse_puller(name: String) -> option.Option(puller.Puller) {
         "Invalid puller '"
         <> name
         <> "' valid options are ['native', 'curl', 'wget', 'httpie'], defaulting to "
-        <> puller.default_string(),
+        <> puller.default_string,
       )
       option.None
     }

@@ -8,6 +8,18 @@ import gleam/string
 import go_over/util/util
 import simplifile
 
+@target(erlang)
+pub const default = Native
+
+@target(erlang)
+pub const default_string = "native"
+
+@target(javascript)
+pub const default = CURL
+
+@target(javascript)
+pub const default_string = "curl"
+
 pub type Puller {
   Native
   CURL
@@ -29,26 +41,6 @@ fn native_get(url: String) -> Result(String, #(Int, String)) {
 @target(javascript)
 fn native_get(_: String) -> Result(String, #(Int, String)) {
   Error(#(1, "Native puller is only supported on the Erlang target"))
-}
-
-@target(erlang)
-pub fn default() -> Puller {
-  Native
-}
-
-@target(erlang)
-pub fn default_string() -> String {
-  "native"
-}
-
-@target(javascript)
-pub fn default() -> Puller {
-  CURL
-}
-
-@target(javascript)
-pub fn default_string() -> String {
-  "curl"
 }
 
 pub fn run(puller: Puller, url: String) -> Result(String, #(Int, String)) {
