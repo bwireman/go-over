@@ -1,4 +1,3 @@
-import gleam/function
 import gleam/int
 import gleam/io
 import gleam/json
@@ -16,7 +15,7 @@ import gxyz/function as gfunction
 import shellout
 import simplifile
 
-fn print_warnings_count(vulns: List(Warning)) -> Nil {
+fn print_warnings_count(vulns: List(Warning)) -> List(Warning) {
   {
     "⛔ "
     <> int.to_string(list.length(vulns))
@@ -24,13 +23,14 @@ fn print_warnings_count(vulns: List(Warning)) -> Nil {
     <> constants.long_ass_dashes
   }
   |> io.print_error()
+  vulns
 }
 
 pub fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
   case conf.format {
     config.Minimal ->
       vulns
-      |> function.tap(print_warnings_count)
+      |> print_warnings_count
       |> list.map(warning.format_as_string_minimal)
       |> string.join("")
       |> io.print_error()
@@ -44,7 +44,7 @@ pub fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
 
     _ ->
       vulns
-      |> function.tap(print_warnings_count)
+      |> print_warnings_count
       |> list.map(warning.format_as_string)
       |> string.join(constants.long_ass_dashes)
       |> io.print_error()
@@ -96,9 +96,9 @@ pub fn main() {
 
   let hex_warnings =
     gfunction.iff(
-      conf.outdated || list.length(conf.allowed_licenses) > 0,
+      conf.outdated || !list.is_empty(conf.allowed_licenses),
       fn() {
-        let msg = case conf.outdated, list.length(conf.allowed_licenses) > 0 {
+        let msg = case conf.outdated, !list.is_empty(conf.allowed_licenses) {
           True, True -> "outdated & licenses"
           True, False -> "outdated"
           False, True -> "licenses"

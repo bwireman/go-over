@@ -37,7 +37,7 @@ pub fn get_retired_warnings(pkgs: List(Package), conf: Config) -> List(Warning) 
 }
 
 pub fn get_hex_warnings(pkgs: List(Package), conf: Config) -> List(Warning) {
-  let check_licenses = list.length(conf.allowed_licenses) > 0
+  let check_licenses = !list.is_empty(conf.allowed_licenses)
   let outdated = conf.outdated
   let force = conf.force
   let verbose = conf.verbose
