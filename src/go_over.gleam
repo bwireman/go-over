@@ -66,11 +66,12 @@ pub fn main() {
   }
 
   globals.set_verbose(conf.verbose)
+  globals.set_use_global_cache(conf.global)
 
   let spinner = spinner.new_spinner("Let's do this!")
   gfunction.ignore_result(
     conf.force,
-    gfunction.freeze1(simplifile.delete, globals.go_over_path(conf.global)),
+    gfunction.freeze1(simplifile.delete, globals.go_over_path()),
   )
 
   spinner.set_text_spinner(spinner, "Reading manifest")

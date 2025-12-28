@@ -10,7 +10,6 @@ import go_over/util/globals
 import go_over/util/print
 import go_over/util/util
 import gxyz/cli
-import gxyz/function
 import simplifile
 
 pub type Advisory {
@@ -23,9 +22,9 @@ pub type Advisory {
   )
 }
 
-fn advisories_path(global: Bool) -> String {
+fn advisories_path() -> String {
   global_value.create_with_unique_name("advisories.path.global.data", fn() {
-    globals.go_over_path(global)
+    globals.go_over_path()
     |> filepath.join("mirego-elixir-security-advisories")
   })
 }
@@ -54,8 +53,8 @@ fn read_adv(path: String) -> Advisory {
   )
 }
 
-fn read_all_adv(global: Bool) -> List(Advisory) {
-  let packages_path = filepath.join(advisories_path(global), "packages")
+fn read_all_adv() -> List(Advisory) {
+  let packages_path = filepath.join(advisories_path(), "packages")
 
   let packages =
     cli.hard_fail_with_msg(
@@ -100,8 +99,8 @@ fn is_vulnerable(
   |> option.values()
 }
 
-fn delete_and_clone(global: Bool) -> Nil {
-  let path = advisories_path(global)
+fn delete_and_clone() -> Nil {
+  let path = advisories_path()
 
   // ? File may or may not exist
   let _ = simplifile.delete(path)
@@ -129,17 +128,16 @@ fn delete_and_clone(global: Bool) -> Nil {
 pub fn check_for_advisories(
   packages: List(packages.Package),
   force_pull: Bool,
-  global: Bool,
 ) -> List(#(Package, List(Advisory))) {
   cache.pull_if_not_cached(
-    advisories_path(global),
+    advisories_path(),
     six_hours,
     force_pull,
-    function.freeze1(delete_and_clone, global),
+    delete_and_clone,
     constants.advisories_repo,
   )
 
-  let advisories = read_all_adv(global)
+  let advisories = read_all_adv()
 
   list.map(packages, fn(pkg) {
     case is_vulnerable(pkg, advisories) {

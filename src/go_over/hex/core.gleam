@@ -6,15 +6,15 @@ import go_over/packages.{type Package}
 import go_over/util/globals
 import gxyz/cli
 
-pub fn release_path(pkg: packages.Package, global: Bool) -> String {
-  globals.go_over_path(global)
+pub fn release_path(pkg: packages.Package) -> String {
+  globals.go_over_path()
   |> filepath.join("deps")
   |> filepath.join(pkg.name)
   |> filepath.join(pkg.version_raw)
 }
 
-pub fn hex_info_path(pkg: packages.Package, global: Bool) -> String {
-  globals.go_over_path(global)
+pub fn hex_info_path(pkg: packages.Package) -> String {
+  globals.go_over_path()
   |> filepath.join("hex-info")
   |> filepath.join(pkg.name)
   |> filepath.join(pkg.version_raw)
@@ -27,15 +27,15 @@ pub fn pkg_pull_error(pkg: packages.Package, pkg_path: String) {
   <> pkg_path
 }
 
-pub fn release_filename(pkg, global: Bool) -> String {
+pub fn release_filename(pkg) -> String {
   pkg
-  |> release_path(global)
+  |> release_path()
   |> filepath.join("resp.json")
 }
 
-pub fn hex_info_filename(pkg, global: Bool) -> String {
+pub fn hex_info_filename(pkg) -> String {
   pkg
-  |> hex_info_path(global)
+  |> hex_info_path()
   |> filepath.join("hex-info-resp.json")
 }
 
