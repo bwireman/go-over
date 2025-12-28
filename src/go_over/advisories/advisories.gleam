@@ -29,7 +29,7 @@ fn advisories_path() -> String {
   })
 }
 
-@external(erlang, "go_over_ffi", "parse_adv")
+@external(erlang, "go_over@ffi", "parse_adv")
 @external(javascript, "./../../go_over_ffi.mjs", "parse_adv")
 pub fn read(
   body: String,
