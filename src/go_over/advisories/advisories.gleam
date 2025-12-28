@@ -82,22 +82,19 @@ fn is_vulnerable(
   advisories: List(Advisory),
 ) -> List(Advisory) {
   list.map(advisories, fn(adv) {
-    case adv.name == p.name {
-      False -> option.None
-      True -> {
-        case
-          {
-            list.any(adv.vulnerable_version_ranges, fn(vuln_semver) {
-              let comp = comparisons.get_comparator(vuln_semver)
+    let do_check =
+      adv.name == p.name
+      && {
+        list.any(adv.vulnerable_version_ranges, fn(vuln_semver) {
+          let comp = comparisons.get_comparator(vuln_semver)
 
-              comp(p.version)
-            })
-          }
-        {
-          False -> option.None
-          True -> option.Some(adv)
-        }
+          comp(p.version)
+        })
       }
+
+    case do_check {
+      False -> option.None
+      True -> option.Some(adv)
     }
   })
   |> option.values()
