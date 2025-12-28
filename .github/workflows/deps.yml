@@ -11,7 +11,7 @@ on:
 
 env:
   otp: "28.0"
-  gleam: "1.13.0"
+  gleam: "1.14.0"
   rebar: "3"
 
 jobs:
