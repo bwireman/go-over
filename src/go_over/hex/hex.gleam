@@ -19,16 +19,8 @@ pub type HexInfo {
   HexInfo(latest_stable_version: Option(String), licenses: List(String))
 }
 
-fn pull_hex_info(
-  puller: puller.Puller,
-  pkg: Package,
-  verbose: Bool,
-  global: Bool,
-) -> Nil {
-  print.progress(
-    verbose,
-    "Checking latest version: " <> pkg.name <> " From hex.pm",
-  )
+fn pull_hex_info(puller: puller.Puller, pkg: Package, global: Bool) -> Nil {
+  print.progress("Checking latest version: " <> pkg.name <> " From hex.pm")
   let pkg_path = core.hex_info_path(pkg, global)
   let pkg_path_fail = core.pkg_pull_error(pkg, pkg_path)
 
@@ -62,20 +54,13 @@ pub fn decode_latest_stable_version_and_licenses(
   json.parse(data, decoder)
 }
 
-fn pull(
-  puller: puller.Puller,
-  pkg: Package,
-  force_pull: Bool,
-  verbose: Bool,
-  global: Bool,
-) {
+fn pull(puller: puller.Puller, pkg: Package, force_pull: Bool, global: Bool) {
   pkg
   |> core.hex_info_path(global)
   |> cache.pull_if_not_cached(
     constants.hour,
     force_pull,
-    verbose,
-    gfunction.freeze4(pull_hex_info, puller, pkg, verbose, global),
+    gfunction.freeze3(pull_hex_info, puller, pkg, global),
     pkg.name <> ": latest stable version",
   )
 
@@ -116,11 +101,10 @@ pub fn get_hex_info(
   puller: puller.Puller,
   pkg: Package,
   force_pull: Bool,
-  verbose: Bool,
   global: Bool,
   allowed_licenses: List(String),
 ) {
-  let info = pull(puller, pkg, force_pull, verbose, global)
+  let info = pull(puller, pkg, force_pull, global)
   let cached_file_name = core.hex_info_filename(pkg, global)
 
   let outdated =

@@ -3,18 +3,18 @@ import gleam/hexpm.{type ReleaseRetirement}
 import gleam/option.{Some}
 import go_over/hex/puller
 import go_over/packages.{type Package}
-import go_over/util/constants
+import go_over/util/globals
 import gxyz/cli
 
 pub fn release_path(pkg: packages.Package, global: Bool) -> String {
-  constants.go_over_path(global)
+  globals.go_over_path(global)
   |> filepath.join("deps")
   |> filepath.join(pkg.name)
   |> filepath.join(pkg.version_raw)
 }
 
 pub fn hex_info_path(pkg: packages.Package, global: Bool) -> String {
-  constants.go_over_path(global)
+  globals.go_over_path(global)
   |> filepath.join("hex-info")
   |> filepath.join(pkg.name)
   |> filepath.join(pkg.version_raw)
