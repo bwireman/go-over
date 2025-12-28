@@ -54,12 +54,11 @@ pub fn decode_latest_stable_version_and_licenses(
   json.parse(data, decoder)
 }
 
-fn pull(puller: puller.Puller, pkg: Package, force_pull: Bool) {
+fn pull(puller: puller.Puller, pkg: Package) {
   pkg
   |> core.hex_info_path()
   |> cache.pull_if_not_cached(
     constants.hour,
-    force_pull,
     gfunction.freeze2(pull_hex_info, puller, pkg),
     pkg.name <> ": latest stable version",
   )
@@ -100,10 +99,9 @@ pub type HexWarningSource {
 pub fn get_hex_info(
   puller: puller.Puller,
   pkg: Package,
-  force_pull: Bool,
   allowed_licenses: List(String),
 ) {
-  let info = pull(puller, pkg, force_pull)
+  let info = pull(puller, pkg)
   let cached_file_name = core.hex_info_filename(pkg)
 
   let outdated =

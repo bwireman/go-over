@@ -127,12 +127,10 @@ fn delete_and_clone() -> Nil {
 
 pub fn check_for_advisories(
   packages: List(packages.Package),
-  force_pull: Bool,
 ) -> List(#(Package, List(Advisory))) {
   cache.pull_if_not_cached(
     advisories_path(),
     six_hours,
-    force_pull,
     delete_and_clone,
     constants.advisories_repo,
   )

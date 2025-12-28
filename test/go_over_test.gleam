@@ -1,8 +1,10 @@
 import birdie
 import gleeunit
+import go_over/util/globals
 import pprint
 
 pub fn main() {
+  globals.set_force(True)
   gleeunit.main()
 }
 

@@ -67,6 +67,7 @@ pub fn main() {
 
   globals.set_verbose(conf.verbose)
   globals.set_use_global_cache(conf.global)
+  globals.set_force(conf.force)
 
   let spinner = spinner.new_spinner("Let's do this!")
   gfunction.ignore_result(

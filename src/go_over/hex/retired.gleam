@@ -31,13 +31,11 @@ fn pull_retired(pull: puller.Puller, pkg: Package) -> Nil {
 pub fn check_retired(
   pull: puller.Puller,
   pkg: Package,
-  force_pull: Bool,
 ) -> Option(ReleaseRetirement) {
   pkg
   |> core.release_path()
   |> cache.pull_if_not_cached(
     constants.hour,
-    force_pull,
     function.freeze2(pull_retired, pull, pkg),
     pkg.name <> ":" <> pkg.version_raw,
   )
