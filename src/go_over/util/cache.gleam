@@ -5,6 +5,7 @@ import gleam/time/calendar
 import gleam/time/duration
 import gleam/time/timestamp
 import go_over/util/constants
+import go_over/util/globals
 import go_over/util/print
 import gxyz/cli
 import simplifile
@@ -36,14 +37,12 @@ fn file_cached(path: String, max_age_seconds: Int) -> Result(Bool, Nil) {
 pub fn pull_if_not_cached(
   path: String,
   max_age: Int,
-  force_pull: Bool,
-  verbose: Bool,
   pull_fn: fn() -> Nil,
   cache_message: String,
 ) -> Nil {
-  case force_pull, file_cached(path, max_age) {
+  case globals.force(), file_cached(path, max_age) {
     False, Ok(True) -> {
-      print.progress(verbose, "Cached: " <> cache_message)
+      print.progress("Cached: " <> cache_message)
 
       Nil
     }

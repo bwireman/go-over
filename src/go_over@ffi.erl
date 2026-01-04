@@ -1,4 +1,4 @@
--module(go_over_ffi).
+-module(go_over@ffi).
 
 -export([
     parse_adv/1

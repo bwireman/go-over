@@ -11,11 +11,15 @@ function snooze() {
     sleep "$1"
 }
 
+PKG_VERSION=$(grep -o "version.*" gleam.toml)
+grep "$PKG_VERSION" src/go_over/util/constants.gleam &> /dev/null || (echo "wrong version should be $PKG_VERSION" ; exit 1)
+
 deno fmt
 gleam check
 gleam update
 gleam build
 gleam format
+
 
 snooze 15
 rm -rf .go-over/

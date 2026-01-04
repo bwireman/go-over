@@ -7,6 +7,7 @@ import go_over/config.{type Config}
 import go_over/packages
 import go_over/sources
 import go_over/util/constants
+import go_over/util/globals
 import go_over/util/print
 import go_over/util/spinner
 import go_over/util/util
@@ -64,13 +65,17 @@ pub fn main() {
     Ok(conf) -> conf
   }
 
-  let spinner = spinner.new_spinner("Let's do this!", conf.verbose)
+  globals.set_verbose(conf.verbose)
+  globals.set_use_global_cache(conf.global)
+  globals.set_force(conf.force)
+
+  let spinner = spinner.new_spinner("Let's do this!")
   gfunction.ignore_result(
     conf.force,
-    gfunction.freeze1(simplifile.delete, constants.go_over_path(conf.global)),
+    gfunction.freeze1(simplifile.delete, globals.go_over_path()),
   )
 
-  spinner.set_text_spinner(spinner, "Reading manifest", conf.verbose)
+  spinner.set_text_spinner(spinner, "Reading manifest")
   let pkgs =
     packages.read_manifest("manifest.toml")
     |> config.filter_dev_dependencies(conf, _)
@@ -80,14 +85,12 @@ pub fn main() {
   spinner.set_text_spinner(
     spinner,
     "Checking packages: " <> print.raw("vulnerable", "red"),
-    conf.verbose,
   )
   let vulnerable_warnings = sources.get_vulnerable_warnings(pkgs, conf)
 
   spinner.set_text_spinner(
     spinner,
     "Checking packages: " <> print.raw("retired", "yellow"),
-    conf.verbose,
   )
   let retired_warnings =
     pkgs
@@ -108,7 +111,6 @@ pub fn main() {
         spinner.set_text_spinner(
           spinner,
           "Checking packages: " <> print.raw(msg, "brightmagenta"),
-          conf.verbose,
         )
 
         pkgs
@@ -118,7 +120,7 @@ pub fn main() {
       [],
     )
 
-  spinner.set_text_spinner(spinner, "Filtering warnings", conf.verbose)
+  spinner.set_text_spinner(spinner, "Filtering warnings")
   let warnings =
     list.append(retired_warnings, vulnerable_warnings)
     |> list.append(hex_warnings)
