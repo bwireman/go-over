@@ -57,7 +57,7 @@ actions = [
 
 [go-over]
 cache = true
-global = true
+global = false
 format = "minimal"
 outdated = false
 puller = "native"

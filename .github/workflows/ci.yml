@@ -17,6 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/cache@v5
+        with:
+          path: build
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/manifest.toml') }}
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{ env.otp }}
@@ -28,6 +32,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/cache@v5
+        with:
+          path: build
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/manifest.toml') }}
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{ env.otp }}
@@ -38,9 +46,14 @@ jobs:
       - run: gleam run --target erlang -- --outdated
 
   windows-erlang:
-    runs-on: windows-latest
+    #todo swap to 25 when setup-beam is fixed
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/cache@v5
+        with:
+          path: build
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/manifest.toml') }}
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{ env.otp }}
@@ -49,9 +62,14 @@ jobs:
       - run: gleam run --target erlang -- --outdated
 
   windows-node:
-    runs-on: windows-latest
+    #todo swap to 25 when setup-beam is fixed
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/cache@v5
+        with:
+          path: build
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/manifest.toml') }}
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{ env.otp }}
@@ -72,6 +90,10 @@ jobs:
         puller: [curl, wget]
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/cache@v5
+        with:
+          path: build
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/manifest.toml') }}
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{ env.otp }}
@@ -90,6 +112,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/cache@v5
+        with:
+          path: build
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/manifest.toml') }}
+
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{ env.otp }}
@@ -107,6 +134,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/cache@v5
+        with:
+          path: build
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/manifest.toml') }}
+
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{ env.otp }}

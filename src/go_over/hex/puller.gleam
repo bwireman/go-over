@@ -32,7 +32,7 @@ pub type Puller {
 fn native_get(url: String) -> Result(String, #(Int, String)) {
   url
   |> request.to()
-  |> result.replace_error(httpc.InvalidUtf8Response)
+  |> result.replace_error(httpc.ResponseTimeout)
   |> result.try(httpc.send)
   |> result.map(fn(resp) { resp.body })
   |> result.map_error(fn(err) { #(1, string.inspect(err)) })
