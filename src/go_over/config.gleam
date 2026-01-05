@@ -275,9 +275,17 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
     use outdated <- clip.parameter
     use ignore_indirect <- clip.parameter
     use global <- clip.parameter
+    use local <- clip.parameter
     use verbose <- clip.parameter
     use format <- clip.parameter
     use puller <- clip.parameter
+
+    case local && global {
+      True -> Error(Nil)
+
+      False -> Ok(Nil)
+    }
+    |> cli.hard_fail_with_msg("cannot set global and local")
 
     merge_flags_and_config(
       Flags(
@@ -286,7 +294,7 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
         ignore_indirect:,
         verbose:,
         format:,
-        global:,
+        global: !local || global,
         puller:,
       ),
       cfg,
@@ -307,6 +315,10 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
   |> clip.flag(flag.help(
     flag.new("global"),
     "Cache data globally in user's home directory for use by multiple projects",
+  ))
+  |> clip.flag(flag.help(
+    flag.new("local"),
+    "Cache data local in user's home directory for use only by this project",
   ))
   |> clip.flag(flag.help(
     flag.new("verbose"),

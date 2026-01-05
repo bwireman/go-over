@@ -31,7 +31,7 @@ jobs:
           gleam-version: ${{ env.gleam }}
           rebar3-version: ${{ env.rebar }}
       - run: gleam build
-      - run: gleam run -m go_over -- --outdated
+      - run: gleam run -m go_over -- --outdated --local
       # create an issue in the repo if there are
       # outdated or vulnerable dependencies
       - uses: jayqi/failed-build-issue-action@v1
