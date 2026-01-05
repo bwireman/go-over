@@ -250,6 +250,18 @@ pub fn merge_flags_and_config_flags_only_test() {
     == Ok(config.Config(..empty_conf(), global: True))
 
   assert config.merge_flags_and_config(
+      config.Flags(..empty_flags, local: True),
+      empty_conf(),
+    )
+    == Ok(config.Config(..empty_conf(), global: False))
+
+  let assert Error(_) =
+    config.merge_flags_and_config(
+      config.Flags(..empty_flags, local: True, global: True),
+      empty_conf(),
+    )
+
+  assert config.merge_flags_and_config(
       config.Flags(..empty_flags, format: option.Some(config.JSON)),
       empty_conf(),
     )
@@ -336,4 +348,10 @@ pub fn merge_flags_and_config_both_test() {
       config.Config(..empty_conf(), global: True),
     )
     == Ok(config.Config(..empty_conf(), global: True))
+
+  assert config.merge_flags_and_config(
+      config.Flags(..empty_flags, local: True),
+      config.Config(..empty_conf(), global: True),
+    )
+    == Ok(config.Config(..empty_conf(), global: False))
 }
