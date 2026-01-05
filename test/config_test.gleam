@@ -210,129 +210,130 @@ pub fn spin_up_format_test() {
   assert conf.format == config.Detailed
 }
 
-pub fn merge_flags_and_config_test() {
-  let empty_conf = empty_conf()
-  let empty_flags =
-    config.Flags(
-      force: False,
-      outdated: False,
-      ignore_indirect: False,
-      verbose: False,
-      format: option.None,
-      global: False,
-      puller: option.None,
-    )
+const empty_flags = config.Flags(
+  force: False,
+  outdated: False,
+  ignore_indirect: False,
+  verbose: False,
+  format: option.None,
+  global: False,
+  local: False,
+  puller: option.None,
+)
 
-  assert config.merge_flags_and_config(empty_flags, empty_conf) == empty_conf
+pub fn merge_flags_and_config_flags_only_test() {
+  assert config.merge_flags_and_config(empty_flags, empty_conf())
+    == Ok(empty_conf())
 
-  // FLAG
   assert config.merge_flags_and_config(
       config.Flags(..empty_flags, outdated: True),
-      empty_conf,
+      empty_conf(),
     )
-    == config.Config(..empty_conf, outdated: True)
+    == Ok(config.Config(..empty_conf(), outdated: True))
 
   assert config.merge_flags_and_config(
       config.Flags(..empty_flags, ignore_indirect: True),
-      empty_conf,
+      empty_conf(),
     )
-    == config.Config(..empty_conf, ignore_indirect: True)
+    == Ok(config.Config(..empty_conf(), ignore_indirect: True))
 
   assert config.merge_flags_and_config(
       config.Flags(..empty_flags, force: True),
-      empty_conf,
+      empty_conf(),
     )
-    == config.Config(..empty_conf, force: True)
+    == Ok(config.Config(..empty_conf(), force: True))
 
   assert config.merge_flags_and_config(
       config.Flags(..empty_flags, global: True),
-      empty_conf,
+      empty_conf(),
     )
-    == config.Config(..empty_conf, global: True)
+    == Ok(config.Config(..empty_conf(), global: True))
 
   assert config.merge_flags_and_config(
       config.Flags(..empty_flags, format: option.Some(config.JSON)),
-      empty_conf,
+      empty_conf(),
     )
-    == config.Config(..empty_conf, format: config.JSON)
+    == Ok(config.Config(..empty_conf(), format: config.JSON))
 
   assert config.merge_flags_and_config(
       config.Flags(..empty_flags, format: option.Some(config.Detailed)),
-      empty_conf,
+      empty_conf(),
     )
-    == config.Config(..empty_conf, format: config.Detailed)
+    == Ok(config.Config(..empty_conf(), format: config.Detailed))
+}
 
-  // CONF
+pub fn merge_flags_and_config_conf_only_test() {
   assert config.merge_flags_and_config(
       empty_flags,
-      config.Config(..empty_conf, outdated: True),
+      config.Config(..empty_conf(), outdated: True),
     )
-    == config.Config(..empty_conf, outdated: True)
-
-  assert config.merge_flags_and_config(
-      empty_flags,
-      config.Config(..empty_conf, ignore_indirect: True),
-    )
-    == config.Config(..empty_conf, ignore_indirect: True)
+    == Ok(config.Config(..empty_conf(), outdated: True))
 
   assert config.merge_flags_and_config(
       empty_flags,
-      config.Config(..empty_conf, force: True),
+      config.Config(..empty_conf(), ignore_indirect: True),
     )
-    == config.Config(..empty_conf, force: True)
+    == Ok(config.Config(..empty_conf(), ignore_indirect: True))
 
   assert config.merge_flags_and_config(
       empty_flags,
-      config.Config(..empty_conf, global: True),
+      config.Config(..empty_conf(), force: True),
     )
-    == config.Config(..empty_conf, global: True)
+    == Ok(config.Config(..empty_conf(), force: True))
 
   assert config.merge_flags_and_config(
       empty_flags,
-      config.Config(..empty_conf, format: config.JSON),
+      config.Config(..empty_conf(), global: True),
     )
-    == config.Config(..empty_conf, format: config.JSON)
+    == Ok(config.Config(..empty_conf(), global: True))
 
   assert config.merge_flags_and_config(
       empty_flags,
-      config.Config(..empty_conf, format: config.Detailed),
+      config.Config(..empty_conf(), format: config.JSON),
     )
-    == config.Config(..empty_conf, format: config.Detailed)
+    == Ok(config.Config(..empty_conf(), format: config.JSON))
 
-  // BOTH
+  assert config.merge_flags_and_config(
+      empty_flags,
+      config.Config(..empty_conf(), format: config.Detailed),
+    )
+    == Ok(config.Config(..empty_conf(), format: config.Detailed))
+}
+
+pub fn merge_flags_and_config_both_test() {
   assert config.merge_flags_and_config(
       config.Flags(..empty_flags, format: option.Some(config.JSON)),
-      config.Config(..empty_conf, format: config.Minimal),
+      config.Config(..empty_conf(), format: config.Minimal),
     )
-    == config.Config(..empty_conf, format: config.JSON)
+    == Ok(config.Config(..empty_conf(), format: config.JSON))
 
   assert config.merge_flags_and_config(
       config.Flags(..empty_flags, format: option.Some(config.Detailed)),
-      config.Config(..empty_conf, format: config.Minimal),
+      config.Config(..empty_conf(), format: config.Minimal),
     )
-    == config.Config(..empty_conf, format: config.Detailed)
+    == Ok(config.Config(..empty_conf(), format: config.Detailed))
 
   assert config.merge_flags_and_config(
       config.Flags(..empty_flags, global: False),
-      config.Config(..empty_conf, global: False),
+      config.Config(..empty_conf(), global: False),
     )
-    == config.Config(..empty_conf, global: False)
+    == Ok(config.Config(..empty_conf(), global: False))
 
   assert config.merge_flags_and_config(
       config.Flags(..empty_flags, global: True),
-      config.Config(..empty_conf, global: True),
+      config.Config(..empty_conf(), global: True),
     )
-    == config.Config(..empty_conf, global: True)
+    == Ok(config.Config(..empty_conf(), global: True))
 
   assert config.merge_flags_and_config(
       config.Flags(..empty_flags, global: True),
-      config.Config(..empty_conf, global: False),
+      config.Config(..empty_conf(), global: False),
     )
-    == config.Config(..empty_conf, global: True)
+    == Ok(config.Config(..empty_conf(), global: True))
 
   assert config.merge_flags_and_config(
       config.Flags(..empty_flags, global: False),
-      config.Config(..empty_conf, global: True),
+      config.Config(..empty_conf(), global: True),
     )
-    == config.Config(..empty_conf, global: True)
+    == Ok(config.Config(..empty_conf(), global: True))
 }
