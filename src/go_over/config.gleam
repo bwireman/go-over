@@ -51,6 +51,7 @@ pub type Flags {
     outdated: Bool,
     ignore_indirect: Bool,
     global: Bool,
+    local: Bool,
     verbose: Bool,
     format: option.Option(Format),
     puller: option.Option(puller.Puller),
@@ -246,13 +247,24 @@ fn help_message(args: arg_info.ArgInfo) -> String {
   |> string.crop(" ")
 }
 
-pub fn merge_flags_and_config(flags: Flags, cfg: Config) -> Config {
-  let global = case flags.global {
-    True -> True
-    False -> cfg.global
+pub fn merge_flags_and_config(
+  flags: Flags,
+  cfg: Config,
+) -> Result(Config, String) {
+  let invalid = case flags.global && flags.local {
+    True -> Error("cannot set --local && global")
+    _ -> Ok(Nil)
+  }
+  use _ <- result.try(invalid)
+
+  let global = case flags.global, flags.local, cfg.global {
+    True, False, _ -> True
+    False, True, _ -> False
+    False, False, _ -> cfg.global
+    True, True, _ -> util.do_panic()
   }
 
-  Config(
+  Ok(Config(
     dev_deps: cfg.dev_deps,
     force: flags.force || cfg.force,
     outdated: flags.outdated || cfg.outdated,
@@ -266,7 +278,7 @@ pub fn merge_flags_and_config(flags: Flags, cfg: Config) -> Config {
     ignore_severity: cfg.ignore_severity,
     ignore_ids: cfg.ignore_ids,
     ignore_dev_dependencies: cfg.ignore_dev_dependencies,
-  )
+  ))
 }
 
 pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
@@ -275,6 +287,7 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
     use outdated <- clip.parameter
     use ignore_indirect <- clip.parameter
     use global <- clip.parameter
+    use local <- clip.parameter
     use verbose <- clip.parameter
     use format <- clip.parameter
     use puller <- clip.parameter
@@ -287,6 +300,7 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
         verbose:,
         format:,
         global:,
+        local:,
         puller:,
       ),
       cfg,
@@ -307,6 +321,10 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
   |> clip.flag(flag.help(
     flag.new("global"),
     "Cache data globally in user's home directory for use by multiple projects",
+  ))
+  |> clip.flag(flag.help(
+    flag.new("local"),
+    "Cache data local in user's home directory for use only by this project",
   ))
   |> clip.flag(flag.help(
     flag.new("verbose"),
@@ -330,4 +348,5 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
   )
   |> clip.help(help.custom(help_message))
   |> clip.run(cli.strip_js_from_argv(argv))
+  |> result.flatten
 }

@@ -17,6 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/cache@v5
+        with:
+          path: build
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/manifest.toml') }}
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{ env.otp }}
@@ -28,30 +32,44 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/cache@v5
+        with:
+          path: build
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/manifest.toml') }}
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{ env.otp }}
           gleam-version: ${{ env.gleam }}
           rebar3-version: ${{ env.rebar }}
       - run: gleam test --target erlang
-      - run: gleam run --target erlang -- --puller wget
-      - run: gleam run --target erlang -- --outdated
+      - run: gleam run --target erlang -- --local --puller wget
+      - run: gleam run --target erlang -- --local --outdated
 
   windows-erlang:
-    runs-on: windows-latest
+    #todo swap to 25 when setup-beam is fixed
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/cache@v5
+        with:
+          path: build
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/manifest.toml') }}
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{ env.otp }}
           gleam-version: ${{ env.gleam }}
           rebar3-version: ${{ env.rebar }}
-      - run: gleam run --target erlang -- --outdated
+      - run: gleam run --target erlang -- --local --outdated
 
   windows-node:
-    runs-on: windows-latest
+    #todo swap to 25 when setup-beam is fixed
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/cache@v5
+        with:
+          path: build
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/manifest.toml') }}
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{ env.otp }}
@@ -62,7 +80,7 @@ jobs:
           node-version: ${{ env.nodelts }}
           cache: "npm"
       - run: npm install
-      - run: gleam run --target javascript --runtime nodejs -- --outdated --puller curl
+      - run: gleam run --target javascript --runtime nodejs -- --local --outdated --puller curl
 
   node:
     runs-on: ubuntu-latest
@@ -72,6 +90,10 @@ jobs:
         puller: [curl, wget]
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/cache@v5
+        with:
+          path: build
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/manifest.toml') }}
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{ env.otp }}
@@ -84,12 +106,17 @@ jobs:
           cache: "npm"
       - run: npm install
       - run: gleam test --target javascript --runtime nodejs
-      - run: gleam run --target javascript --runtime nodejs -- --outdated --puller ${{ matrix.puller }}
+      - run: gleam run --target javascript --runtime nodejs -- --local --outdated --puller ${{ matrix.puller }}
 
   bun:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/cache@v5
+        with:
+          path: build
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/manifest.toml') }}
+
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{ env.otp }}
@@ -100,13 +127,18 @@ jobs:
           bun-version: latest
       - run: bun install
       - run: gleam test --target javascript --runtime bun
-      - run: gleam run --target javascript --runtime bun -- --puller wget
-      - run: gleam run --target javascript --runtime bun -- --outdated
+      - run: gleam run --target javascript --runtime bun -- --local --puller wget
+      - run: gleam run --target javascript --runtime bun -- --local --outdated
 
   deno:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/cache@v5
+        with:
+          path: build
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/manifest.toml') }}
+
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{ env.otp }}
@@ -117,5 +149,5 @@ jobs:
           deno-version: v2.x # Run with latest stable Deno.
       - run: deno install
       - run: gleam test --target javascript --runtime deno
-      - run: gleam run --target javascript --runtime deno -- --puller wget
-      - run: gleam run --target javascript --runtime deno -- --outdated
+      - run: gleam run --target javascript --runtime deno -- --local --puller wget
+      - run: gleam run --target javascript --runtime deno -- --local --outdated
