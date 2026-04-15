@@ -9,9 +9,6 @@
 A tool to audit Erlang & Elixir dependencies, to make sure your ✨ gleam
 projects really sparkle!
 
-🚨 _**NOTE**_: security advisories are _NOT_ currently monitored for gleam
-dependencies. The language, while excellent, is far too new and niche.
-
 ⚠️ Dependencies sourced directly from git or locally have limited support, only
 checking for security advisories and not retirements or outdated versions
 
