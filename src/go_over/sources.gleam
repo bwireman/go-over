@@ -20,7 +20,10 @@ pub fn get_vulnerable_warnings(
   |> list.flat_map(tuple.apply_from2(_, warning.adv_to_warning))
 }
 
-pub fn get_retired_warnings(pkgs: List(Package), conf: Config) -> List(Warning) {
+pub fn get_retired_warnings(
+  pkgs: List(Package),
+  conf: Config,
+) -> List(Warning) {
   pkgs
   |> list.map(fn(pkg) {
     retired.check_retired(conf.puller, pkg)

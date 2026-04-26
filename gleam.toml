@@ -20,7 +20,7 @@ runtime = "nodejs"
 allow_all = true
 
 [dependencies]
-gleam_stdlib = ">= 0.34.0 and < 2.0.0"
+gleam_stdlib = ">= 1.0.0 and < 2.0.0"
 shellout = ">= 1.6.0 and < 2.0.0"
 simplifile = ">= 2.0.0 and < 3.0.0"
 filepath = ">= 1.0.0 and < 2.0.0"
