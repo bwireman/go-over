@@ -341,7 +341,7 @@ pub fn unnecessary_ignore_warnings_test() {
       warning.DirectDep,
     )
 
-  assert unnecessary_ignore_warnings(conf, manifest, [audit_warning], [])
+  assert unnecessary_ignore_warnings(conf, manifest, [audit_warning], [], [])
     == [
       warning.info_to_warning(
         "b",
@@ -366,7 +366,7 @@ pub fn unnecessary_ignore_license_warnings_test() {
       "WTFPL",
     ])
 
-  assert unnecessary_ignore_warnings(conf, [], [], ["MIT", "Apache-2.0"])
+  assert unnecessary_ignore_warnings(conf, [], [], ["MIT", "Apache-2.0"], [])
     == [
       warning.info_to_warning(
         "WTFPL",
@@ -406,7 +406,7 @@ pub fn unnecessary_ignore_indirect_test() {
   let direct = Package("a", v, "", True, packages.PackageSourceHex)
   let conf = config.Config(..empty_conf(), ignore_indirect: True)
 
-  assert unnecessary_ignore_warnings(conf, [direct], [], [])
+  assert unnecessary_ignore_warnings(conf, [direct], [], [], [])
     == [
       warning.info_to_warning(
         "indirect",
@@ -426,7 +426,7 @@ pub fn unnecessary_ignore_dev_dependencies_test() {
       ignore_dev_dependencies: True,
     )
 
-  assert unnecessary_ignore_warnings(no_dev_deps, [pkg], [], [])
+  assert unnecessary_ignore_warnings(no_dev_deps, [pkg], [], [], [])
     == [
       warning.info_to_warning(
         "dev_dependencies",
@@ -434,7 +434,7 @@ pub fn unnecessary_ignore_dev_dependencies_test() {
       ),
     ]
 
-  assert unnecessary_ignore_warnings(missing_dev_deps, [pkg], [], [])
+  assert unnecessary_ignore_warnings(missing_dev_deps, [pkg], [], [], [])
     == [
       warning.info_to_warning(
         "dev_dependencies",

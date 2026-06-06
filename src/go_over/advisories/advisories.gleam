@@ -135,9 +135,8 @@ pub fn fetch_all() -> List(Advisory) {
 
 pub fn check_for_advisories(
   packages: List(packages.Package),
+  advisories: List(Advisory),
 ) -> List(#(Package, List(Advisory))) {
-  let advisories = fetch_all()
-
   list.map(packages, fn(pkg) {
     case is_vulnerable(pkg, advisories) {
       [] -> None

@@ -6,6 +6,7 @@ import gleam/list
 import gleam/option
 import gleam/result
 import gleam/string
+import go_over/advisories/advisories
 import go_over/config.{type Config, type Flags}
 import go_over/hex/hex
 import go_over/packages
@@ -194,7 +195,9 @@ pub fn audit_project(
     spinner,
     "Checking packages: " <> print.raw("vulnerable", "red"),
   )
-  let vulnerable_warnings = sources.get_vulnerable_warnings(pkgs_audited, conf)
+  let all_advisories = advisories.fetch_all()
+  let vulnerable_warnings =
+    sources.get_vulnerable_warnings(pkgs_audited, conf, all_advisories)
 
   spinner.set_text_spinner(
     spinner,
@@ -234,6 +237,7 @@ pub fn audit_project(
       manifest_pkgs,
       audit_warnings,
       dependency_licenses,
+      all_advisories,
     )
 
   let fatal_warnings =

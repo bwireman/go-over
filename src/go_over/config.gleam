@@ -7,7 +7,7 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
-import go_over/advisories/advisories.{type Advisory, fetch_all}
+import go_over/advisories/advisories.{type Advisory}
 import go_over/hex/puller
 import go_over/packages.{type Package}
 import go_over/util/constants
@@ -226,6 +226,7 @@ pub fn unnecessary_ignore_warnings(
   manifest_pkgs: List(Package),
   audit_warnings: List(Warning),
   dependency_licenses: List(String),
+  all_advisories: List(Advisory),
 ) -> List(Warning) {
   let manifest_names = list.map(manifest_pkgs, fn(pkg) { pkg.name })
   let packages_with_warnings = list.map(audit_warnings, fn(w) { w.package })
@@ -283,7 +284,7 @@ pub fn unnecessary_ignore_warnings(
     })
 
   let id_warnings =
-    unnecessary_ignore_id_warnings(conf, manifest_names, fetch_all())
+    unnecessary_ignore_id_warnings(conf, manifest_names, all_advisories)
 
   let indirect_warnings = case conf.ignore_indirect {
     False -> []
