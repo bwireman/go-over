@@ -171,8 +171,12 @@ You can validate SARIF output against GitHub ingestion rules at
 https://sarifweb.azurewebsites.net/Validation.
 
 In workspace mode (`--workspace`), each Gleam project appears as a separate run
-in the SARIF document. All projects must use the same output `format` (or pass
-`--format` on the CLI).
+in the SARIF document. Pass `--format` on the CLI to use one format for every
+project; otherwise each project's `[go-over] format` must match.
+
+## Upgrading to v4
+
+See [CHANGELOG.md](CHANGELOG.md) for breaking changes from v3.
 
 # Other Art
 

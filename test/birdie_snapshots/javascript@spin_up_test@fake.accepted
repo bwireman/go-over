@@ -6,7 +6,6 @@ title: Javascript@spin_up_test@fake
   ["--fake"],
   Config(
     dev_deps: [],
-    outdated: False,
     ignore_indirect: False,
     force: False,
     fake: True,

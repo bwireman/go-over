@@ -39,23 +39,18 @@ fn prefix_label(prefix: option.Option(String), label: String) -> String {
   }
 }
 
-fn print_warnings_count(vulns: List(Warning), label: String) -> List(Warning) {
-  label |> io.print_error()
-  vulns
-}
-
-fn print_warnings_list(
+fn print_warnings_output(
   vulns: List(Warning),
   conf: Config,
   label: String,
   prefix: option.Option(String),
 ) -> Nil {
-  let label = prefix_label(prefix, warnings_label(vulns, label))
+  let label = prefix_label(prefix, label)
+  io.print_error(label)
 
   case conf.format {
     config.Minimal ->
       vulns
-      |> print_warnings_count(label)
       |> list.map(warning.format_as_string_minimal)
       |> string.join("")
       |> io.print_error()
@@ -66,7 +61,6 @@ fn print_warnings_list(
 
     _ ->
       vulns
-      |> print_warnings_count(label)
       |> list.map(warning.format_as_string)
       |> string.join(constants.long_ass_dashes)
       |> io.print_error()
@@ -83,41 +77,13 @@ fn warnings_label(vulns: List(Warning), kind: String) -> String {
 }
 
 fn info_label(vulns: List(Warning)) -> String {
-  "ℹ️  "
+  "ℹ️ "
   <> int.to_string(list.length(vulns))
   <> " Item(s) of Note"
   <> constants.long_ass_dashes
 }
 
-fn print_info_list(
-  vulns: List(Warning),
-  conf: Config,
-  prefix: option.Option(String),
-) -> Nil {
-  let label = prefix_label(prefix, info_label(vulns))
-
-  case conf.format {
-    config.Minimal ->
-      vulns
-      |> print_warnings_count(label)
-      |> list.map(warning.format_as_string_minimal)
-      |> string.join("")
-      |> io.print_error()
-
-    config.JSON -> Nil
-
-    config.SARIF -> Nil
-
-    _ ->
-      vulns
-      |> print_warnings_count(label)
-      |> list.map(warning.format_as_string)
-      |> string.join(constants.long_ass_dashes)
-      |> io.print_error()
-  }
-}
-
-pub fn warnings_for_json(result: AuditResult) -> List(Warning) {
+fn warnings_for_json(result: AuditResult) -> List(Warning) {
   list.append(result.info_warnings, result.fatal_warnings)
 }
 
@@ -139,10 +105,7 @@ fn write_sarif(
 ) -> Nil {
   let runs =
     list.map(results, fn(result) {
-      #(
-        result.project_root,
-        list.append(result.info_warnings, result.fatal_warnings),
-      )
+      #(result.project_root, warnings_for_json(result))
     })
 
   let content =
@@ -173,34 +136,30 @@ pub fn skipped_workspace_warnings(skipped: List(String)) -> List(Warning) {
   })
 }
 
-pub fn print_info(
-  vulns: List(Warning),
-  conf: Config,
-  prefix: option.Option(String),
-) -> Nil {
-  print_info_list(vulns, conf, prefix)
-}
-
 pub fn print_warnings(
   vulns: List(Warning),
   conf: Config,
   prefix: option.Option(String),
 ) -> Nil {
-  print_warnings_list(vulns, conf, "WARNING", prefix)
+  print_warnings_output(vulns, conf, warnings_label(vulns, "WARNING"), prefix)
   shellout.exit(1)
+}
+
+fn read_project_config(project_root: String) -> Config {
+  let gleam_toml = filepath.join(project_root, "gleam.toml")
+
+  case simplifile.read(gleam_toml) {
+    Ok(_) -> config.read_config(gleam_toml)
+    Error(_) -> config.default_config()
+  }
 }
 
 pub fn audit_project(
   flags: Flags,
   project_root: String,
 ) -> Result(AuditResult, String) {
-  let gleam_toml = filepath.join(project_root, "gleam.toml")
   let manifest_toml = filepath.join(project_root, "manifest.toml")
-
-  let project_config = case simplifile.read(gleam_toml) {
-    Ok(_) -> config.read_config(gleam_toml)
-    Error(_) -> config.default_config()
-  }
+  let project_config = read_project_config(project_root)
 
   use conf <- result.try(config.merge_flags_and_config(flags, project_config))
 
@@ -304,12 +263,15 @@ pub fn main() {
   }
 }
 
-fn scan_root_config(scan_root: String) -> config.Config {
-  let gleam_toml = filepath.join(scan_root, "gleam.toml")
-
-  case simplifile.read(gleam_toml) {
-    Ok(_) -> config.read_config(gleam_toml)
-    Error(_) -> config.default_config()
+fn print_no_issues_success(info_count: Int) -> Nil {
+  case info_count {
+    0 -> print.success("✅ No warnings found!")
+    _ ->
+      print.success(
+        "✅ No security issues found ("
+        <> int.to_string(info_count)
+        <> " item(s) of note)",
+      )
   }
 }
 
@@ -318,7 +280,7 @@ fn run(flags: config.Flags) -> Nil {
 
   let #(results, workspace_skipped) = case flags.workspace_root {
     option.Some(scan_root) -> {
-      let scan_config = scan_root_config(scan_root)
+      let scan_config = read_project_config(scan_root)
       let max_depth = scan_config.workspace_max_depth
 
       case workspace.discover_or_error(scan_root, max_depth) {
@@ -366,8 +328,8 @@ fn run(flags: config.Flags) -> Nil {
     }
   }
 
-  case workspace_mode {
-    True ->
+  case workspace_mode, flags.format {
+    True, option.None ->
       case
         config.validate_workspace_formats(
           list.map(results, fn(r) { #(r.format, r.project_root) }),
@@ -380,7 +342,7 @@ fn run(flags: config.Flags) -> Nil {
         }
         Ok(Nil) -> Nil
       }
-    False -> Nil
+    _, _ -> Nil
   }
 
   let prefix_for = fn(result: AuditResult) {
@@ -415,7 +377,13 @@ fn run(flags: config.Flags) -> Nil {
       list.each(results, fn(result) {
         case result.info_warnings {
           [] -> Nil
-          info -> print_info(info, display_conf(result), prefix_for(result))
+          info ->
+            print_warnings_output(
+              info,
+              display_conf(result),
+              info_label(info),
+              prefix_for(result),
+            )
         }
       })
     False, True -> print_json_warnings(warnings_for_json_results(results))
@@ -432,28 +400,8 @@ fn run(flags: config.Flags) -> Nil {
       write_sarif(results, flags.sarif_output)
       Nil
     }
-    False, False, False, True -> {
-      case info_count {
-        0 -> print.success("✅ No warnings found!")
-        _ ->
-          print.success(
-            "✅ No security issues found ("
-            <> int.to_string(info_count)
-            <> " item(s) of note)",
-          )
-      }
-      Nil
-    }
-    False, False, False, False -> {
-      case info_count {
-        0 -> print.success("✅ No warnings found!")
-        _ ->
-          print.success(
-            "✅ No security issues found ("
-            <> int.to_string(info_count)
-            <> " item(s) of note)",
-          )
-      }
+    False, False, False, _ -> {
+      print_no_issues_success(info_count)
       Nil
     }
     False, True, True, _ -> {
@@ -471,10 +419,10 @@ fn run(flags: config.Flags) -> Nil {
         case result.fatal_warnings {
           [] -> Nil
           vulns ->
-            print_warnings_list(
+            print_warnings_output(
               vulns,
               display_conf(result),
-              "WARNING",
+              warnings_label(vulns, "WARNING"),
               prefix_for(result),
             )
         }

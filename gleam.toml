@@ -59,7 +59,6 @@ actions = [
 force = false
 global = true
 format = "minimal"
-outdated = false
 puller = "native"
 allowed_licenses = ["MIT", "Apache-2.0", "BSD 2-Clause", "WTFPL"]
 

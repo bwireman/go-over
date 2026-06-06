@@ -549,6 +549,21 @@ pub fn normalize_workspace_argv_test() {
     == ["--workspace", "."]
   assert config.normalize_workspace_argv(["--workspace", "backend"])
     == ["--workspace", "backend"]
+  assert config.normalize_workspace_argv(["--workspace", "--local"])
+    == ["--workspace", ".", "--local"]
+  assert config.normalize_workspace_argv(["--workspace", "--format", "json"])
+    == ["--workspace", ".", "--format", "json"]
+}
+
+pub fn merge_flags_format_overrides_workspace_project_test() {
+  let json_project = config.Config(..empty_conf(), format: config.JSON)
+  let minimal_project = config.Config(..empty_conf(), format: config.Minimal)
+  let cli_sarif = config.Flags(..empty_flags, format: option.Some(config.SARIF))
+
+  assert config.merge_flags_and_config(cli_sarif, json_project)
+    == Ok(config.Config(..json_project, format: config.SARIF))
+  assert config.merge_flags_and_config(cli_sarif, minimal_project)
+    == Ok(config.Config(..minimal_project, format: config.SARIF))
 }
 
 pub fn spin_up_root_test() {

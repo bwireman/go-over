@@ -477,7 +477,7 @@ pub fn normalize_workspace_argv(argv: List(String)) -> List(String) {
   case argv {
     ["--workspace", next, ..rest] ->
       case string.starts_with(next, "-") {
-        True -> ["--workspace", ".", ..rest]
+        True -> ["--workspace", ".", next, ..rest]
         False -> argv
       }
     ["--workspace", ..rest] -> ["--workspace", ".", ..rest]

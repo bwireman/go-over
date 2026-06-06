@@ -9,7 +9,9 @@ Set BorderRadius 12
 
 # Setup
 Hide
-Type `rm -rf ~/.cache/go-over/ && clear`
+Type `rm -rf ~/.cache/go-over/deps/g* ~/.cache/go-over/package-licenses/g*`
+Enter
+Type `gleam build && clear`
 Enter
 Show
 
