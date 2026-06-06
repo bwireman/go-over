@@ -24,7 +24,7 @@ Enter
 Type "# check for retired, vulnerable or outdated packages (and even filter their licenses)"
 Enter
 Sleep 5s
-Type `gleam run -m go_over -- --outdated`
+Type `gleam run -m go_over -- `
 Enter
 Wait+Screen@50s /✅ No warnings found!/
 Sleep 3.5s

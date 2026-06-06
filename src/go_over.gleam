@@ -134,9 +134,7 @@ pub fn main() {
 }
 
 fn run_deps_outdated() -> Bool {
-  print.warning(
-    "The --outdated flag is deprecated. Use `gleam deps outdated` instead.",
-  )
+  print.warning("The --outdated flag is deprecated. Use `gleam deps outdated` instead.")
 
   case
     shellout.command(run: "gleam", with: ["deps", "outdated"], in: ".", opt: [

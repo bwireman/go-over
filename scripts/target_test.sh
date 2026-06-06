@@ -38,7 +38,7 @@ rm -rf .go-over/outdated
 
 snooze 15
 # shellcheck disable=SC2086
-gleam run $CMD -- --outdated --puller wget --local
+gleam run $CMD --  --puller wget --local
 
 # shellcheck disable=SC2086
 gleam test $CMD

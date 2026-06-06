@@ -189,8 +189,8 @@ pub fn spin_up_test() {
   let conf = test_spin_up("force", ["--force"])
   assert conf.force
 
-  let conf = test_spin_up("outdated", ["--outdated"])
-  assert conf.outdated
+  let conf = test_spin_up("outdated", [""])
+  assert !conf.outdated
 
   let conf = test_spin_up("ignore_indirect", ["--ignore-indirect"])
   assert conf.ignore_indirect
