@@ -1,0 +1,15 @@
+---
+version: 2.0.0
+title: Javascript@decode_licenses@test/testdata/hex/no_meta.json
+---
+#(
+  "{}
+",
+  Error(UnableToDecode([
+    DecodeError(
+      expected: "Field",
+      found: "Nothing",
+      path: ["meta"],
+    ),
+  ])),
+)

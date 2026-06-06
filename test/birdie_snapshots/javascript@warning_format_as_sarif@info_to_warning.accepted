@@ -1,0 +1,25 @@
+---
+version: 2.0.0
+title: Javascript@warning_format_as_sarif@info_to_warning
+---
+#(
+  Warning(
+    advisory_id: None,
+    package: "missing-package",
+    version: None,
+    reason: "Info: package 'missing-package' is not a dependency",
+    warning_reason_code: WarningReasonInfo,
+    severity: SeverityInfo,
+    dep: DirectDep,
+  ),
+  "{
+	"tool": {
+		"driver": {
+			"name": "go_over",
+			"version": "3.4.0",
+			"rules": []
+		}
+	},
+	"results": []
+}",
+)

@@ -13,9 +13,9 @@ pub fn release_path(pkg: packages.Package) -> String {
   |> filepath.join(pkg.version_raw)
 }
 
-pub fn hex_info_path(pkg: packages.Package) -> String {
+pub fn package_licenses_path(pkg: packages.Package) -> String {
   globals.go_over_path()
-  |> filepath.join("hex-info")
+  |> filepath.join("package-licenses")
   |> filepath.join(pkg.name)
   |> filepath.join(pkg.version_raw)
 }
@@ -33,10 +33,10 @@ pub fn release_filename(pkg) -> String {
   |> filepath.join("resp.json")
 }
 
-pub fn hex_info_filename(pkg) -> String {
+pub fn package_licenses_filename(pkg) -> String {
   pkg
-  |> hex_info_path()
-  |> filepath.join("hex-info-resp.json")
+  |> package_licenses_path()
+  |> filepath.join("licenses-resp.json")
 }
 
 pub fn print_ret(ret: ReleaseRetirement) -> String {

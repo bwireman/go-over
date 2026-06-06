@@ -1,7 +1,6 @@
 import gleam/dynamic/decode
 import gleam/json
 import gleam/list
-import gleam/option.{type Option}
 import go_over/hex/core
 import go_over/hex/puller
 import go_over/packages.{type Package}
@@ -13,13 +12,9 @@ import gxyz/function as gfunction
 import gxyz/list as glist
 import simplifile
 
-pub type HexInfo {
-  HexInfo(latest_stable_version: Option(String), licenses: List(String))
-}
-
-fn pull_hex_info(puller: puller.Puller, pkg: Package) -> Nil {
-  print.progress("Checking latest version: " <> pkg.name <> " From hex.pm")
-  let pkg_path = core.hex_info_path(pkg)
+fn pull_package_licenses(puller: puller.Puller, pkg: Package) -> Nil {
+  print.progress("Fetching licenses: " <> pkg.name <> " from hex.pm")
+  let pkg_path = core.package_licenses_path(pkg)
   let pkg_path_fail = core.pkg_pull_error(pkg, pkg_path)
 
   let _ = simplifile.delete(pkg_path)
@@ -29,39 +24,33 @@ fn pull_hex_info(puller: puller.Puller, pkg: Package) -> Nil {
   let resp = core.do_pull_hex(puller, pkg, core.package_url(pkg))
 
   pkg
-  |> core.hex_info_filename()
+  |> core.package_licenses_filename()
   |> simplifile.write(resp)
   |> cli.hard_fail_with_msg(pkg_path_fail)
 }
 
-pub fn decode_latest_stable_version_and_licenses(
-  data: String,
-) -> Result(HexInfo, json.DecodeError) {
+pub fn decode_licenses(data: String) -> Result(List(String), json.DecodeError) {
   let decoder = {
-    use latest_stable_version <- decode.field(
-      "latest_stable_version",
-      decode.optional(decode.string),
-    )
     use licenses <- decode.subfield(
       ["meta", "licenses"],
       decode.list(decode.string),
     )
-    decode.success(HexInfo(latest_stable_version:, licenses:))
+    decode.success(licenses)
   }
 
   json.parse(data, decoder)
 }
 
-fn pull(puller: puller.Puller, pkg: Package) {
+fn fetch_licenses(puller: puller.Puller, pkg: Package) -> List(String) {
   pkg
-  |> core.hex_info_path()
+  |> core.package_licenses_path()
   |> cache.pull_if_not_cached(
     constants.hour,
-    gfunction.freeze2(pull_hex_info, puller, pkg),
-    pkg.name <> ": latest stable version",
+    gfunction.freeze2(pull_package_licenses, puller, pkg),
+    pkg.name <> ": package licenses",
   )
 
-  let cached_file_name = core.hex_info_filename(pkg)
+  let cached_file_name = core.package_licenses_filename(pkg)
 
   let resp =
     cached_file_name
@@ -69,7 +58,7 @@ fn pull(puller: puller.Puller, pkg: Package) {
     |> cli.hard_fail_with_msg("failed to read " <> cached_file_name)
 
   cli.hard_fail_with_msg(
-    decode_latest_stable_version_and_licenses(resp),
+    decode_licenses(resp),
     "failed to parse " <> cached_file_name,
   )
 }
@@ -79,7 +68,7 @@ pub type HexWarningSource {
 }
 
 pub fn package_licenses(puller: puller.Puller, pkg: Package) -> List(String) {
-  pull(puller, pkg).licenses
+  fetch_licenses(puller, pkg)
 }
 
 pub fn get_hex_info(
