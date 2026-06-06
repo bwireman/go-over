@@ -6,6 +6,8 @@ import simplifile
 
 const skip_dirs = ["build", "deps", "node_modules", ".go-over", ".git"]
 
+const max_depth = 3
+
 fn is_project_dir(dir: String) -> Bool {
   let gleam_toml = filepath.join(dir, "gleam.toml")
   let manifest = filepath.join(dir, "manifest.toml")
@@ -20,22 +22,28 @@ fn should_skip(name: String) -> Bool {
   string.starts_with(name, ".") || list.contains(skip_dirs, name)
 }
 
-fn do_discover(dir: String) -> List(String) {
+fn do_discover(dir: String, depth: Int) -> List(String) {
   case is_project_dir(dir) {
     True -> [dir]
     False ->
-      case simplifile.read_directory(dir) {
-        Ok(names) ->
-          names
-          |> list.filter(fn(name) { !should_skip(name) })
-          |> list.flat_map(fn(name) { do_discover(filepath.join(dir, name)) })
-        Error(_) -> []
+      case depth >= max_depth {
+        True -> []
+        False ->
+          case simplifile.read_directory(dir) {
+            Ok(names) ->
+              names
+              |> list.filter(fn(name) { !should_skip(name) })
+              |> list.flat_map(fn(name) {
+                do_discover(filepath.join(dir, name), depth + 1)
+              })
+            Error(_) -> []
+          }
       }
   }
 }
 
 pub fn discover(scan_root: String) -> List(String) {
-  do_discover(scan_root)
+  do_discover(scan_root, 0)
   |> list.sort(fn(a, b) {
     case string.compare(a, b) {
       order.Eq -> order.Eq
