@@ -2,8 +2,6 @@ import gleam/dynamic/decode
 import gleam/json
 import gleam/list
 import gleam/option.{type Option}
-import gleam/order
-import gleamsver
 import go_over/hex/core
 import go_over/hex/puller
 import go_over/packages.{type Package}
@@ -76,24 +74,8 @@ fn pull(puller: puller.Puller, pkg: Package) {
   )
 }
 
-fn check_outdated(
-  latest_version: String,
-  pkg: Package,
-  cached_file_name: String,
-) {
-  let latest_semver =
-    gleamsver.parse(latest_version)
-    |> cli.hard_fail_with_msg("failed to parse: " <> cached_file_name)
-
-  case gleamsver.compare(latest_semver, pkg.version) {
-    order.Gt -> option.Some(latest_version)
-    _ -> option.None
-  }
-}
-
 pub type HexWarningSource {
   RejectedLicense(name: String)
-  Outdated(new_version: String)
 }
 
 pub fn get_hex_info(
@@ -102,20 +84,7 @@ pub fn get_hex_info(
   allowed_licenses: List(String),
 ) {
   let info = pull(puller, pkg)
-  let cached_file_name = core.hex_info_filename(pkg)
 
-  let outdated =
-    info.latest_stable_version
-    |> option.map(check_outdated(_, pkg, cached_file_name))
-    |> option.flatten()
-    |> option.map(Outdated)
-
-  let rejected_licenses =
-    glist.reject_contains(info.licenses, allowed_licenses)
-    |> list.map(RejectedLicense)
-
-  case outdated {
-    option.None -> rejected_licenses
-    option.Some(outdated) -> [outdated, ..rejected_licenses]
-  }
+  glist.reject_contains(info.licenses, allowed_licenses)
+  |> list.map(RejectedLicense)
 }

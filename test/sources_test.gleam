@@ -5,13 +5,12 @@ import go_over/hex/puller.{Mock}
 import go_over/packages
 import go_over/sources
 import go_over/warning.{
-  IndirectDep, Warning, WarningReasonOutdated, WarningReasonRejectedLicense,
-  WarningReasonRetired,
+  IndirectDep, Warning, WarningReasonRejectedLicense, WarningReasonRetired,
 }
 
 const conf = Config(
   dev_deps: [],
-  outdated: True,
+  outdated: False,
   ignore_indirect: False,
   force: True,
   format: Minimal,
@@ -85,30 +84,6 @@ pub fn get_rejected_license_test() {
         ..conf,
         puller: Mock("test/testdata/hex/rejected_licenses/good_license.json"),
       ),
-    )
-    == []
-}
-
-pub fn get_outdated_test() {
-  assert sources.get_hex_warnings(
-      pkgs,
-      Config(..conf, puller: Mock("test/testdata/hex/outdated/outdated.json")),
-    )
-    == [
-      Warning(
-        None,
-        "name",
-        Some("1.1.1"),
-        "New Version: '1.2.3' exists",
-        WarningReasonOutdated,
-        warning.SeverityPackageOutdated,
-        IndirectDep,
-      ),
-    ]
-
-  assert sources.get_hex_warnings(
-      pkgs,
-      Config(..conf, puller: Mock("test/testdata/hex/outdated/up_to_date.json")),
     )
     == []
 }

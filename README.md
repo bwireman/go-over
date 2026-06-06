@@ -57,7 +57,8 @@ gleam run -m go_over
 - `--puller` Specify the tool used to reach out to hex.pm, [native, curl, wget,
   httpie] (default: None)
 - `--force`: Force pulling new data even if the cached data is still valid
-- `--outdated`: Additionally check if newer versions of dependencies exist
+- `--outdated`: **[deprecated]** runs `gleam deps outdated` instead — use that
+  command directly
 - `--ignore-indirect`: Ignore all warnings for indirect dependencies
 - `--verbose`: Print progress as packages are checked
 - `--help,-h`: Print help
@@ -80,9 +81,9 @@ global = true
 # sets output format for warnings ["minimal", "detailed", "json"]
 # default: "minimal"
 format = "minimal"
-# will additionally check if newer versions of dependencies exist
-# default: true
-outdated = true
+# [deprecated] runs `gleam deps outdated` — use that command directly instead
+# default: false
+outdated = false
 # tool used to pull information from hex.pm ["native", "curl", "wget", "httpie"]
 # default: "curl" for JS and "native" for Erlang
 puller = "curl"

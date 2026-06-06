@@ -99,18 +99,11 @@ pub fn main() {
 
   let hex_warnings =
     gfunction.iff(
-      conf.outdated || !list.is_empty(conf.allowed_licenses),
+      !list.is_empty(conf.allowed_licenses),
       fn() {
-        let msg = case conf.outdated, !list.is_empty(conf.allowed_licenses) {
-          True, True -> "outdated & licenses"
-          True, False -> "outdated"
-          False, True -> "licenses"
-          False, False -> util.do_panic()
-        }
-
         spinner.set_text_spinner(
           spinner,
-          "Checking packages: " <> print.raw(msg, "brightmagenta"),
+          "Checking packages: " <> print.raw("licenses", "brightmagenta"),
         )
 
         pkgs
@@ -127,8 +120,30 @@ pub fn main() {
     |> config.filter_severity(conf, _)
 
   spinner.stop_spinner(spinner)
-  case warnings {
-    [] -> print.success("✅ No warnings found!")
-    vulns -> print_warnings(vulns, conf)
+
+  let outdated_failed = case conf.outdated {
+    False -> False
+    True -> run_deps_outdated()
+  }
+
+  case warnings, outdated_failed {
+    [], False -> print.success("✅ No warnings found!")
+    [], True -> shellout.exit(1)
+    vulns, _ -> print_warnings(vulns, conf)
+  }
+}
+
+fn run_deps_outdated() -> Bool {
+  print.warning(
+    "The --outdated flag is deprecated. Use `gleam deps outdated` instead.",
+  )
+
+  case
+    shellout.command(run: "gleam", with: ["deps", "outdated"], in: ".", opt: [
+      shellout.LetBeStdout,
+    ])
+  {
+    Ok(_) -> False
+    Error(_) -> True
   }
 }

@@ -312,7 +312,7 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
   ))
   |> clip.flag(flag.help(
     flag.new("outdated"),
-    "Additionally check if newer versions of dependencies exist",
+    "[deprecated] Use `gleam deps outdated` to check for newer dependency versions",
   ))
   |> clip.flag(flag.help(
     flag.new("ignore-indirect"),

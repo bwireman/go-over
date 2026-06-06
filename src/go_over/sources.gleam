@@ -1,5 +1,5 @@
 import gleam/list
-import gleam/option.{None, Some}
+import gleam/option
 import gleam/pair
 import go_over/advisories/advisories
 import go_over/config.{type Config}
@@ -34,24 +34,15 @@ pub fn get_retired_warnings(
 }
 
 pub fn get_hex_warnings(pkgs: List(Package), conf: Config) -> List(Warning) {
-  let check_licenses = !list.is_empty(conf.allowed_licenses)
-  let outdated = conf.outdated
   let allowed_licenses = conf.allowed_licenses
 
   list.flat_map(pkgs, fn(pkg) {
-    let sources = hex.get_hex_info(conf.puller, pkg, allowed_licenses)
-
-    list.map(sources, fn(source) {
-      case source, outdated, check_licenses {
-        hex.Outdated(new_version), True, _ ->
-          Some(warning.outdated_to_warning(pkg, new_version))
-
-        hex.RejectedLicense(name), _, True ->
-          Some(warning.rejected_license_to_warning(pkg, name))
-
-        _, _, _ -> None
+    hex.get_hex_info(conf.puller, pkg, allowed_licenses)
+    |> list.map(fn(source) {
+      case source {
+        hex.RejectedLicense(name) ->
+          warning.rejected_license_to_warning(pkg, name)
       }
     })
   })
-  |> option.values()
 }
