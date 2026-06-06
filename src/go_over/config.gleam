@@ -8,7 +8,7 @@ import gleam/list
 import gleam/option.{type Option, Some}
 import gleam/result
 import gleam/string
-import go_over/advisories/advisories.{type Advisory}
+import go_over/advisories/advisories.{type Advisory, fetch_all}
 import go_over/hex/puller
 import go_over/packages.{type Package}
 import go_over/util/constants
@@ -178,6 +178,120 @@ pub fn filter_severity(conf: Config, warnings: List(Warning)) -> List(Warning) {
     fn(w) { warning.severity_as_string(w.severity) },
     conf.ignore_severity,
   )
+}
+
+pub fn unnecessary_ignore_warnings(
+  conf: Config,
+  manifest_pkgs: List(Package),
+  audit_warnings: List(Warning),
+) -> List(Warning) {
+  let manifest_names = list.map(manifest_pkgs, fn(pkg) { pkg.name })
+  let severities_present =
+    audit_warnings
+    |> list.map(fn(w) { string.lowercase(warning.severity_as_string(w.severity)) })
+
+  let package_warnings =
+    conf.ignore_packages
+    |> list.filter(fn(name) { !list.contains(manifest_names, name) })
+    |> list.map(fn(name) {
+      warning.unnecessary_ignore_to_warning(
+        name,
+        "Unnecessary ignore: package '"
+          <> name
+          <> "' is not a dependency",
+      )
+    })
+
+  let severity_warnings =
+    conf.ignore_severity
+    |> list.filter(fn(sev) {
+      !list.contains(severities_present, string.lowercase(sev))
+    })
+    |> list.map(fn(sev) {
+      warning.unnecessary_ignore_to_warning(
+        sev,
+        "Unnecessary ignore: severity '"
+          <> sev
+          <> "' did not match any warnings",
+      )
+    })
+
+  let id_warnings =
+    unnecessary_ignore_id_warnings(conf, manifest_names, fetch_all())
+
+  let indirect_warnings = case conf.ignore_indirect {
+    False -> []
+    True ->
+      case list.any(manifest_pkgs, fn(pkg) { !pkg.direct }) {
+        True -> []
+        False -> [
+          warning.unnecessary_ignore_to_warning(
+            "indirect",
+            "Unnecessary ignore: indirect=true has no effect (no indirect dependencies)",
+          ),
+        ]
+      }
+  }
+
+  let dev_dep_warnings = case conf.ignore_dev_dependencies {
+    False -> []
+    True ->
+      case conf.dev_deps {
+        [] -> [
+          warning.unnecessary_ignore_to_warning(
+            "dev_dependencies",
+            "Unnecessary ignore: dev_dependencies=true has no effect (no dev-dependencies configured)",
+          ),
+        ]
+        dev_deps ->
+          case list.any(dev_deps, list.contains(manifest_names, _)) {
+            True -> []
+            False -> [
+              warning.unnecessary_ignore_to_warning(
+                "dev_dependencies",
+                "Unnecessary ignore: dev_dependencies=true has no effect (no dev-dependencies in manifest)",
+              ),
+            ]
+          }
+      }
+  }
+
+  package_warnings
+  |> list.append(severity_warnings)
+  |> list.append(id_warnings)
+  |> list.append(indirect_warnings)
+  |> list.append(dev_dep_warnings)
+}
+
+pub fn unnecessary_ignore_id_warnings(
+  conf: Config,
+  manifest_names: List(String),
+  all_advisories: List(Advisory),
+) -> List(Warning) {
+
+  conf.ignore_ids
+  |> list.flat_map(fn(id) {
+    case list.find(all_advisories, fn(a: Advisory) { a.id == id }) {
+      Error(_) -> [
+        warning.unnecessary_ignore_to_warning(
+          id,
+          "Unnecessary ignore: advisory id '" <> id <> "' is unknown",
+        ),
+      ]
+      Ok(adv) ->
+        case list.contains(manifest_names, adv.name) {
+          True -> []
+          False -> [
+            warning.unnecessary_ignore_to_warning(
+              id,
+              "Unnecessary ignore: advisory id '"
+                <> id
+                <> "' does not apply to any dependency",
+            ),
+          ]
+        }
+    }
+  })
 }
 
 pub fn parse_config_format(val: String) -> option.Option(Format) {

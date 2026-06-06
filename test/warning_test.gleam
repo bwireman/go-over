@@ -183,6 +183,17 @@ pub fn outdated_to_warning_test() {
   )
 }
 
+pub fn unnecessary_ignore_to_warning_test() {
+  to_warning_format(
+    "unnecessary_ignore_to_warning",
+    "missing-package",
+    warning.unnecessary_ignore_to_warning(
+      "missing-package",
+      "Unnecessary ignore: package 'missing-package' is not a dependency",
+    ),
+  )
+}
+
 pub fn rejected_license_to_warning_test() {
   let license = "closed-source-crap"
 
@@ -214,6 +225,8 @@ pub fn severity_as_string_test() {
   assert warning.severity_as_string(warning.SeverityHigh) == "high"
   assert warning.severity_as_string(warning.SeverityLow) == "low"
   assert warning.severity_as_string(warning.SeverityModerate) == "moderate"
+  assert warning.severity_as_string(warning.SeverityUnnecessaryIgnore)
+    == "unnecessary-ignore"
   assert warning.severity_as_string(warning.SeverityUnknown("something"))
     == "unknown-something"
 }
@@ -231,6 +244,8 @@ pub fn string_to_severity_test() {
     == warning.SeverityPackageRetiredOtherReason("something")
   assert warning.string_to_severity("package-outdated")
     == warning.SeverityPackageOutdated
+  assert warning.string_to_severity("unnecessary-ignore")
+    == warning.SeverityUnnecessaryIgnore
   assert warning.string_to_severity("rejected-license")
     == warning.SeverityRejectedLicense
   assert warning.string_to_severity("critical") == warning.SeverityCritical

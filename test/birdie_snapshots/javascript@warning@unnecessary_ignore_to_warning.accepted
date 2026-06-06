@@ -1,0 +1,16 @@
+---
+version: 2.0.0
+title: Javascript@warning@unnecessary_ignore_to_warning
+---
+#(
+  "missing-package",
+  Warning(
+    advisory_id: None,
+    package: "missing-package",
+    version: None,
+    reason: "Unnecessary ignore: package 'missing-package' is not a dependency",
+    warning_reason_code: WarningReasonUnnecessaryIgnore,
+    severity: SeverityUnnecessaryIgnore,
+    dep: DirectDep,
+  ),
+)

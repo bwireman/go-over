@@ -125,9 +125,7 @@ fn delete_and_clone() -> Nil {
   |> list.each(simplifile.delete)
 }
 
-pub fn check_for_advisories(
-  packages: List(packages.Package),
-) -> List(#(Package, List(Advisory))) {
+pub fn fetch_all() -> List(Advisory) {
   cache.pull_if_not_cached(
     advisories_path(),
     six_hours,
@@ -135,7 +133,13 @@ pub fn check_for_advisories(
     constants.advisories_repo,
   )
 
-  let advisories = read_all_adv()
+  read_all_adv()
+}
+
+pub fn check_for_advisories(
+  packages: List(packages.Package),
+) -> List(#(Package, List(Advisory))) {
+  let advisories = fetch_all()
 
   list.map(packages, fn(pkg) {
     case is_vulnerable(pkg, advisories) {

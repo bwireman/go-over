@@ -3,7 +3,7 @@ import gleamsver.{parse}
 import go_over/advisories/advisories.{Advisory}
 import go_over/config.{
   filter_advisory_ids, filter_dev_dependencies, filter_packages, filter_severity,
-  read_config,
+  read_config, unnecessary_ignore_id_warnings, unnecessary_ignore_warnings,
 }
 import go_over/hex/puller
 import go_over/packages.{Package}
@@ -310,6 +310,108 @@ pub fn merge_flags_and_config_conf_only_test() {
       config.Config(..empty_conf(), format: config.Detailed),
     )
     == Ok(config.Config(..empty_conf(), format: config.Detailed))
+}
+
+pub fn unnecessary_ignore_warnings_test() {
+  let assert Ok(v) = parse("1.1.1")
+  let a = Package("a", v, "", True, packages.PackageSourceHex)
+  let b = Package("b", v, "", False, packages.PackageSourceHex)
+  let manifest = [a, b]
+
+  let conf =
+    config.Config(
+      ..empty_conf(),
+      ignore_packages: ["a", "missing"],
+      ignore_severity: ["critical", "missing-severity"],
+      ignore_indirect: True,
+    )
+
+  let audit_warning =
+    Warning(
+      None,
+      "a",
+      None,
+      "",
+      warning.WarningReasonVulnerable,
+      warning.SeverityCritical,
+      warning.DirectDep,
+    )
+
+  assert unnecessary_ignore_warnings(conf, manifest, [audit_warning]) == [
+    warning.unnecessary_ignore_to_warning(
+      "missing",
+      "Unnecessary ignore: package 'missing' is not a dependency",
+    ),
+    warning.unnecessary_ignore_to_warning(
+      "missing-severity",
+      "Unnecessary ignore: severity 'missing-severity' did not match any warnings",
+    ),
+  ]
+}
+
+pub fn unnecessary_ignore_indirect_test() {
+  let assert Ok(v) = parse("1.1.1")
+  let direct = Package("a", v, "", True, packages.PackageSourceHex)
+  let conf = config.Config(..empty_conf(), ignore_indirect: True)
+
+  assert unnecessary_ignore_warnings(conf, [direct], []) == [
+    warning.unnecessary_ignore_to_warning(
+      "indirect",
+      "Unnecessary ignore: indirect=true has no effect (no indirect dependencies)",
+    ),
+  ]
+}
+
+pub fn unnecessary_ignore_dev_dependencies_test() {
+  let assert Ok(v) = parse("1.1.1")
+  let pkg = Package("a", v, "", True, packages.PackageSourceHex)
+  let no_dev_deps = config.Config(..empty_conf(), ignore_dev_dependencies: True)
+  let missing_dev_deps =
+    config.Config(
+      ..empty_conf(),
+      dev_deps: ["not-in-manifest"],
+      ignore_dev_dependencies: True,
+    )
+
+  assert unnecessary_ignore_warnings(no_dev_deps, [pkg], []) == [
+    warning.unnecessary_ignore_to_warning(
+      "dev_dependencies",
+      "Unnecessary ignore: dev_dependencies=true has no effect (no dev-dependencies configured)",
+    ),
+  ]
+
+  assert unnecessary_ignore_warnings(missing_dev_deps, [pkg], []) == [
+    warning.unnecessary_ignore_to_warning(
+      "dev_dependencies",
+      "Unnecessary ignore: dev_dependencies=true has no effect (no dev-dependencies in manifest)",
+    ),
+  ]
+}
+
+pub fn unnecessary_ignore_id_warnings_test() {
+  let conf = config.Config(..empty_conf(), ignore_ids: ["known", "unknown"])
+  let advisories = [
+    Advisory("known", "present", "", [], ""),
+    Advisory("other", "missing", "", [], ""),
+  ]
+
+  assert unnecessary_ignore_id_warnings(conf, ["present"], advisories) == [
+    warning.unnecessary_ignore_to_warning(
+      "unknown",
+      "Unnecessary ignore: advisory id 'unknown' is unknown",
+    ),
+  ]
+
+  let wrong_package =
+    config.Config(..empty_conf(), ignore_ids: ["other"])
+
+  assert unnecessary_ignore_id_warnings(wrong_package, ["present"], advisories)
+    == [
+      warning.unnecessary_ignore_to_warning(
+        "other",
+        "Unnecessary ignore: advisory id 'other' does not apply to any dependency",
+      ),
+    ]
 }
 
 pub fn merge_flags_and_config_both_test() {

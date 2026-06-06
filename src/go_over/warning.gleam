@@ -13,6 +13,7 @@ pub type WarningReasonCode {
   WarningReasonVulnerable
   WarningReasonOutdated
   WarningReasonRejectedLicense(name: String)
+  WarningReasonUnnecessaryIgnore
 }
 
 fn warning_reason_code_as_string(w: WarningReasonCode) -> String {
@@ -21,6 +22,7 @@ fn warning_reason_code_as_string(w: WarningReasonCode) -> String {
     WarningReasonVulnerable -> "Vulnerable"
     WarningReasonOutdated -> "Outdated"
     WarningReasonRejectedLicense(name) -> "Rejected License (" <> name <> ")"
+    WarningReasonUnnecessaryIgnore -> "Unnecessary Ignore"
   }
 }
 
@@ -36,6 +38,7 @@ pub type Severity {
   SeverityHigh
   SeverityLow
   SeverityModerate
+  SeverityUnnecessaryIgnore
   SeverityUnknown(info: String)
 }
 
@@ -53,6 +56,7 @@ pub fn severity_as_string(s: Severity) -> String {
     SeverityHigh -> "high"
     SeverityLow -> "low"
     SeverityModerate -> "moderate"
+    SeverityUnnecessaryIgnore -> "unnecessary-ignore"
     SeverityUnknown(value) ->
       string.join(["unknown", string.lowercase(value)], "-")
   }
@@ -71,6 +75,7 @@ pub fn string_to_severity(s: String) -> Severity {
     "high" -> SeverityHigh
     "low" -> SeverityLow
     "moderate" -> SeverityModerate
+    "unnecessary-ignore" -> SeverityUnnecessaryIgnore
     "unknown-" <> v -> SeverityUnknown(v)
     v -> SeverityUnknown(v)
   }
@@ -169,6 +174,18 @@ pub fn rejected_license_to_warning(pkg: Package, license: String) -> Warning {
   )
 }
 
+pub fn unnecessary_ignore_to_warning(target: String, reason: String) -> Warning {
+  Warning(
+    None,
+    target,
+    None,
+    reason,
+    WarningReasonUnnecessaryIgnore,
+    SeverityUnnecessaryIgnore,
+    DirectDep,
+  )
+}
+
 pub fn format_as_string(w: Warning) -> String {
   [
     "ID: " <> option.unwrap(w.advisory_id, "null"),
@@ -220,6 +237,7 @@ fn color(w: Warning, str: String) {
     | SeverityPackageRetiredDeprecated
     | SeverityPackageOutdated -> print.format_moderate(str)
     SeverityLow | SeverityPackageRetiredInvalid -> print.format_low(str)
+    SeverityUnnecessaryIgnore -> print.format_warning(str)
     SeverityUnknown(_) | SeverityPackageRetiredOtherReason(_) ->
       print.format_warning(str)
   }

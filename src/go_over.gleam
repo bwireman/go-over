@@ -76,8 +76,9 @@ pub fn main() {
   )
 
   spinner.set_text_spinner(spinner, "Reading manifest")
+  let manifest_pkgs = packages.read_manifest("manifest.toml")
   let pkgs =
-    packages.read_manifest("manifest.toml")
+    manifest_pkgs
     |> config.filter_dev_dependencies(conf, _)
     |> config.filter_packages(conf, _)
     |> config.filter_indirect(conf, _)
@@ -114,10 +115,17 @@ pub fn main() {
     )
 
   spinner.set_text_spinner(spinner, "Filtering warnings")
-  let warnings =
+  let audit_warnings =
     list.append(retired_warnings, vulnerable_warnings)
     |> list.append(hex_warnings)
+
+  let unnecessary_warnings =
+    config.unnecessary_ignore_warnings(conf, manifest_pkgs, audit_warnings)
+
+  let warnings =
+    audit_warnings
     |> config.filter_severity(conf, _)
+    |> list.append(unnecessary_warnings)
 
   spinner.stop_spinner(spinner)
 
