@@ -4,6 +4,7 @@ import gleam/json
 import gleam/list
 import gleam/string
 import go_over/config.{type Config}
+import go_over/hex/hex
 import go_over/packages
 import go_over/sources
 import go_over/util/constants
@@ -77,26 +78,25 @@ pub fn main() {
 
   spinner.set_text_spinner(spinner, "Reading manifest")
   let manifest_pkgs = packages.read_manifest("manifest.toml")
-  let pkgs =
+  let pkgs_audited =
     manifest_pkgs
     |> config.filter_dev_dependencies(conf, _)
-    |> config.filter_packages(conf, _)
     |> config.filter_indirect(conf, _)
+
+  let hex_pkgs =
+    list.filter(pkgs_audited, fn(p) { p.source == packages.PackageSourceHex })
 
   spinner.set_text_spinner(
     spinner,
     "Checking packages: " <> print.raw("vulnerable", "red"),
   )
-  let vulnerable_warnings = sources.get_vulnerable_warnings(pkgs, conf)
+  let vulnerable_warnings = sources.get_vulnerable_warnings(pkgs_audited, conf)
 
   spinner.set_text_spinner(
     spinner,
     "Checking packages: " <> print.raw("retired", "yellow"),
   )
-  let retired_warnings =
-    pkgs
-    |> list.filter(fn(p) { p.source == packages.PackageSourceHex })
-    |> sources.get_retired_warnings(conf)
+  let retired_warnings = sources.get_retired_warnings(hex_pkgs, conf)
 
   let hex_warnings =
     gfunction.iff(
@@ -107,10 +107,15 @@ pub fn main() {
           "Checking packages: " <> print.raw("licenses", "brightmagenta"),
         )
 
-        pkgs
-        |> list.filter(fn(p) { p.source == packages.PackageSourceHex })
-        |> sources.get_hex_warnings(conf)
+        sources.get_hex_warnings(hex_pkgs, conf)
       },
+      [],
+    )
+
+  let dependency_licenses =
+    gfunction.iff(
+      !list.is_empty(conf.allowed_licenses),
+      fn() { list.flat_map(hex_pkgs, hex.package_licenses(conf.puller, _)) },
       [],
     )
 
@@ -120,10 +125,16 @@ pub fn main() {
     |> list.append(hex_warnings)
 
   let unnecessary_warnings =
-    config.unnecessary_ignore_warnings(conf, manifest_pkgs, audit_warnings)
+    config.unnecessary_ignore_warnings(
+      conf,
+      manifest_pkgs,
+      audit_warnings,
+      dependency_licenses,
+    )
 
   let warnings =
     audit_warnings
+    |> config.filter_package_warnings(conf, _)
     |> config.filter_severity(conf, _)
     |> list.append(unnecessary_warnings)
 

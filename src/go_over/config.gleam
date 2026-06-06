@@ -172,6 +172,17 @@ pub fn filter_advisory_ids(
   glist.reject_contains_tap(advisories, fn(adv) { adv.id }, conf.ignore_ids)
 }
 
+pub fn filter_package_warnings(
+  conf: Config,
+  warnings: List(Warning),
+) -> List(Warning) {
+  glist.reject_contains_tap(
+    warnings,
+    fn(w) { w.package },
+    conf.ignore_packages,
+  )
+}
+
 pub fn filter_severity(conf: Config, warnings: List(Warning)) -> List(Warning) {
   glist.reject_contains_tap(
     warnings,
@@ -184,21 +195,50 @@ pub fn unnecessary_ignore_warnings(
   conf: Config,
   manifest_pkgs: List(Package),
   audit_warnings: List(Warning),
+  dependency_licenses: List(String),
 ) -> List(Warning) {
   let manifest_names = list.map(manifest_pkgs, fn(pkg) { pkg.name })
+  let packages_with_warnings = list.map(audit_warnings, fn(w) { w.package })
   let severities_present =
     audit_warnings
     |> list.map(fn(w) { string.lowercase(warning.severity_as_string(w.severity)) })
 
   let package_warnings =
     conf.ignore_packages
-    |> list.filter(fn(name) { !list.contains(manifest_names, name) })
-    |> list.map(fn(name) {
+    |> list.flat_map(fn(name) {
+      case list.contains(manifest_names, name) {
+        False -> [
+          warning.unnecessary_ignore_to_warning(
+            name,
+            "Unnecessary ignore: package '"
+              <> name
+              <> "' is not a dependency",
+          ),
+        ]
+        True ->
+          case list.contains(packages_with_warnings, name) {
+            True -> []
+            False -> [
+              warning.unnecessary_ignore_to_warning(
+                name,
+                "Unnecessary ignore: package '"
+                  <> name
+                  <> "' did not match any warnings",
+              ),
+            ]
+          }
+      }
+    })
+
+  let license_warnings =
+    conf.allowed_licenses
+    |> list.filter(fn(license) { !list.contains(dependency_licenses, license) })
+    |> list.map(fn(license) {
       warning.unnecessary_ignore_to_warning(
-        name,
-        "Unnecessary ignore: package '"
-          <> name
-          <> "' is not a dependency",
+        license,
+        "Unnecessary ignore: license '"
+          <> license
+          <> "' did not match any dependency licenses",
       )
     })
 
@@ -257,6 +297,7 @@ pub fn unnecessary_ignore_warnings(
   }
 
   package_warnings
+  |> list.append(license_warnings)
   |> list.append(severity_warnings)
   |> list.append(id_warnings)
   |> list.append(indirect_warnings)

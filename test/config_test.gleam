@@ -2,8 +2,9 @@ import gleam/option.{None}
 import gleamsver.{parse}
 import go_over/advisories/advisories.{Advisory}
 import go_over/config.{
-  filter_advisory_ids, filter_dev_dependencies, filter_packages, filter_severity,
-  read_config, unnecessary_ignore_id_warnings, unnecessary_ignore_warnings,
+  filter_advisory_ids, filter_dev_dependencies, filter_package_warnings,
+  filter_packages, filter_severity, read_config, unnecessary_ignore_id_warnings,
+  unnecessary_ignore_warnings,
 }
 import go_over/hex/puller
 import go_over/packages.{Package}
@@ -321,7 +322,7 @@ pub fn unnecessary_ignore_warnings_test() {
   let conf =
     config.Config(
       ..empty_conf(),
-      ignore_packages: ["a", "missing"],
+      ignore_packages: ["a", "b", "missing"],
       ignore_severity: ["critical", "missing-severity"],
       ignore_indirect: True,
     )
@@ -337,7 +338,11 @@ pub fn unnecessary_ignore_warnings_test() {
       warning.DirectDep,
     )
 
-  assert unnecessary_ignore_warnings(conf, manifest, [audit_warning]) == [
+  assert unnecessary_ignore_warnings(conf, manifest, [audit_warning], []) == [
+    warning.unnecessary_ignore_to_warning(
+      "b",
+      "Unnecessary ignore: package 'b' did not match any warnings",
+    ),
     warning.unnecessary_ignore_to_warning(
       "missing",
       "Unnecessary ignore: package 'missing' is not a dependency",
@@ -349,12 +354,50 @@ pub fn unnecessary_ignore_warnings_test() {
   ]
 }
 
+pub fn unnecessary_ignore_license_warnings_test() {
+  let conf =
+    config.Config(..empty_conf(), allowed_licenses: ["MIT", "Apache-2.0", "WTFPL"])
+
+  assert unnecessary_ignore_warnings(conf, [], [], ["MIT", "Apache-2.0"]) == [
+    warning.unnecessary_ignore_to_warning(
+      "WTFPL",
+      "Unnecessary ignore: license 'WTFPL' did not match any dependency licenses",
+    ),
+  ]
+}
+
+pub fn filter_package_warnings_test() {
+  let full = test_read_config("test/testdata/gleam/full.toml")
+  let warning_a =
+    Warning(
+      None,
+      "a",
+      None,
+      "",
+      warning.WarningReasonVulnerable,
+      warning.SeverityCritical,
+      warning.DirectDep,
+    )
+  let warning_c =
+    Warning(
+      None,
+      "c",
+      None,
+      "",
+      warning.WarningReasonVulnerable,
+      warning.SeverityCritical,
+      warning.DirectDep,
+    )
+
+  assert filter_package_warnings(full, [warning_a, warning_c]) == [warning_c]
+}
+
 pub fn unnecessary_ignore_indirect_test() {
   let assert Ok(v) = parse("1.1.1")
   let direct = Package("a", v, "", True, packages.PackageSourceHex)
   let conf = config.Config(..empty_conf(), ignore_indirect: True)
 
-  assert unnecessary_ignore_warnings(conf, [direct], []) == [
+  assert unnecessary_ignore_warnings(conf, [direct], [], []) == [
     warning.unnecessary_ignore_to_warning(
       "indirect",
       "Unnecessary ignore: indirect=true has no effect (no indirect dependencies)",
@@ -373,14 +416,14 @@ pub fn unnecessary_ignore_dev_dependencies_test() {
       ignore_dev_dependencies: True,
     )
 
-  assert unnecessary_ignore_warnings(no_dev_deps, [pkg], []) == [
+  assert unnecessary_ignore_warnings(no_dev_deps, [pkg], [], []) == [
     warning.unnecessary_ignore_to_warning(
       "dev_dependencies",
       "Unnecessary ignore: dev_dependencies=true has no effect (no dev-dependencies configured)",
     ),
   ]
 
-  assert unnecessary_ignore_warnings(missing_dev_deps, [pkg], []) == [
+  assert unnecessary_ignore_warnings(missing_dev_deps, [pkg], [], []) == [
     warning.unnecessary_ignore_to_warning(
       "dev_dependencies",
       "Unnecessary ignore: dev_dependencies=true has no effect (no dev-dependencies in manifest)",

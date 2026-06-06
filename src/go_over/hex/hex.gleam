@@ -78,13 +78,16 @@ pub type HexWarningSource {
   RejectedLicense(name: String)
 }
 
+pub fn package_licenses(puller: puller.Puller, pkg: Package) -> List(String) {
+  pull(puller, pkg).licenses
+}
+
 pub fn get_hex_info(
   puller: puller.Puller,
   pkg: Package,
   allowed_licenses: List(String),
 ) {
-  let info = pull(puller, pkg)
-
-  glist.reject_contains(info.licenses, allowed_licenses)
+  package_licenses(puller, pkg)
+  |> glist.reject_contains(allowed_licenses)
   |> list.map(RejectedLicense)
 }
