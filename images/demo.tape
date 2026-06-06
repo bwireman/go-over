@@ -1,5 +1,5 @@
 Output images/demo.gif
-Set FontSize 14
+Set FontSize 12
 Set PlaybackSpeed 1.35
 Set TypingSpeed 75ms
 Set FontFamily 'JetBrains Mono'
