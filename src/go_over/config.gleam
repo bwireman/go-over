@@ -59,6 +59,7 @@ pub type Flags {
     puller: option.Option(puller.Puller),
     single_root: option.Option(String),
     workspace_root: option.Option(String),
+    sarif_output: option.Option(String),
   )
 }
 
@@ -427,6 +428,14 @@ const help_named_opts = [
     ),
   ),
   arg_info.NamedInfo(
+    name: "sarif-output",
+    short: option.None,
+    default: option.None,
+    help: option.Some(
+      "Write SARIF output to PATH instead of stdout (requires --format sarif)",
+    ),
+  ),
+  arg_info.NamedInfo(
     name: "puller",
     short: option.None,
     default: option.None,
@@ -544,30 +553,41 @@ fn take_named_opts(
   Option(String),
   Option(String),
   Option(String),
+  Option(String),
   List(String),
 ) {
   case argv {
     ["--format", value, ..rest] -> {
-      let #(_, puller, root, workspace, remaining) = take_named_opts(rest)
-      #(Some(value), puller, root, workspace, remaining)
+      let #(_, puller, root, workspace, sarif_output, remaining) =
+        take_named_opts(rest)
+      #(Some(value), puller, root, workspace, sarif_output, remaining)
     }
     ["--puller", value, ..rest] -> {
-      let #(format, _, root, workspace, remaining) = take_named_opts(rest)
-      #(format, Some(value), root, workspace, remaining)
+      let #(format, _, root, workspace, sarif_output, remaining) =
+        take_named_opts(rest)
+      #(format, Some(value), root, workspace, sarif_output, remaining)
     }
     ["--root", value, ..rest] -> {
-      let #(format, puller, _, workspace, remaining) = take_named_opts(rest)
-      #(format, puller, Some(value), workspace, remaining)
+      let #(format, puller, _, workspace, sarif_output, remaining) =
+        take_named_opts(rest)
+      #(format, puller, Some(value), workspace, sarif_output, remaining)
     }
     ["--workspace", value, ..rest] -> {
-      let #(format, puller, root, _, remaining) = take_named_opts(rest)
-      #(format, puller, root, Some(value), remaining)
+      let #(format, puller, root, _, sarif_output, remaining) =
+        take_named_opts(rest)
+      #(format, puller, root, Some(value), sarif_output, remaining)
+    }
+    ["--sarif-output", value, ..rest] -> {
+      let #(format, puller, root, workspace, _, remaining) =
+        take_named_opts(rest)
+      #(format, puller, root, workspace, Some(value), remaining)
     }
     [head, ..rest] -> {
-      let #(format, puller, root, workspace, remaining) = take_named_opts(rest)
-      #(format, puller, root, workspace, [head, ..remaining])
+      let #(format, puller, root, workspace, sarif_output, remaining) =
+        take_named_opts(rest)
+      #(format, puller, root, workspace, sarif_output, [head, ..remaining])
     }
-    [] -> #(None, None, None, None, [])
+    [] -> #(None, None, None, None, None, [])
   }
 }
 
@@ -589,6 +609,7 @@ fn clip_command() {
       puller: option.None,
       single_root: option.None,
       workspace_root: option.None,
+      sarif_output: option.None,
     )
   })
   |> clip.flag(flag.help(
@@ -616,7 +637,7 @@ fn clip_command() {
 
 pub fn parse_flags(argv: List(String)) -> Result(Flags, String) {
   let argv = normalize_workspace_argv(argv)
-  let #(format, puller, single_root, workspace_root, argv) =
+  let #(format, puller, single_root, workspace_root, sarif_output, argv) =
     take_named_opts(argv)
 
   use base <- result.try(
@@ -631,6 +652,7 @@ pub fn parse_flags(argv: List(String)) -> Result(Flags, String) {
       puller: option.map(puller, parse_puller) |> option.flatten,
       single_root:,
       workspace_root:,
+      sarif_output:,
     ),
   )
 }

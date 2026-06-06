@@ -216,6 +216,7 @@ const empty_flags = config.Flags(
   puller: option.None,
   single_root: option.None,
   workspace_root: option.None,
+  sarif_output: option.None,
 )
 
 pub fn merge_flags_and_config_flags_only_test() {
@@ -566,6 +567,14 @@ pub fn spin_up_workspace_test() {
 
   assert conf.workspace_root == option.Some("monorepo")
   assert conf.single_root == option.None
+}
+
+pub fn parse_sarif_output_test() {
+  let assert Ok(flags) =
+    config.parse_flags(["--format", "sarif", "--sarif-output", "out.sarif"])
+
+  assert flags.sarif_output == option.Some("out.sarif")
+  assert flags.format == option.Some(config.SARIF)
 }
 
 pub fn merge_root_and_workspace_error_test() {

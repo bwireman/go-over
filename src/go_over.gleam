@@ -133,7 +133,10 @@ pub fn print_json_warnings(warnings: List(Warning)) -> Nil {
   |> io.print_error()
 }
 
-fn print_sarif(results: List(AuditResult)) -> Nil {
+fn write_sarif(
+  results: List(AuditResult),
+  output: option.Option(String),
+) -> Nil {
   let runs =
     list.map(results, fn(result) {
       #(
@@ -142,9 +145,21 @@ fn print_sarif(results: List(AuditResult)) -> Nil {
       )
     })
 
-  sarif.to_sarif_log(runs)
-  |> json.to_string()
-  |> io.println()
+  let content =
+    sarif.to_sarif_log(runs)
+    |> json.to_string()
+
+  case output {
+    option.None -> content |> io.println()
+    option.Some(path) ->
+      case path |> simplifile.write(content) {
+        Ok(Nil) -> Nil
+        Error(_) -> {
+          io.println_error("could not write SARIF output to " <> path)
+          shellout.exit(1)
+        }
+      }
+  }
 }
 
 pub fn skipped_workspace_warnings(skipped: List(String)) -> List(Warning) {
@@ -387,6 +402,14 @@ fn run(flags: config.Flags) -> Nil {
   let sarif_output = output_format == config.SARIF
   let json_output = output_format == config.JSON
 
+  case flags.sarif_output, sarif_output {
+    option.Some(_), False -> {
+      io.println_error("--sarif-output requires --format sarif")
+      shellout.exit(1)
+    }
+    _, _ -> Nil
+  }
+
   case sarif_output, json_output {
     False, False ->
       list.each(results, fn(result) {
@@ -406,7 +429,7 @@ fn run(flags: config.Flags) -> Nil {
 
   case any_fatal, any_outdated_failed, sarif_output, json_output {
     False, False, True, _ -> {
-      print_sarif(results)
+      write_sarif(results, flags.sarif_output)
       Nil
     }
     False, False, False, True -> {
@@ -434,12 +457,12 @@ fn run(flags: config.Flags) -> Nil {
       Nil
     }
     False, True, True, _ -> {
-      print_sarif(results)
+      write_sarif(results, flags.sarif_output)
       shellout.exit(1)
     }
     False, True, False, _ -> shellout.exit(1)
     True, _, True, _ -> {
-      print_sarif(results)
+      write_sarif(results, flags.sarif_output)
       shellout.exit(1)
     }
     True, _, False, True -> shellout.exit(1)

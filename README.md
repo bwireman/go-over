@@ -51,6 +51,8 @@ gleam run -m go_over
 
 - `--format` Specify the output format of any warnings, [minimal, detailed,
   json, sarif] (default: None)
+- `--sarif-output PATH` Write SARIF output to `PATH` instead of stdout (requires
+  `--format sarif`)
 - `--puller` Specify the tool used to reach out to hex.pm, [native, curl, wget,
   httpie] (default: None)
 - `--force`: Force pulling new data even if the cached data is still valid
@@ -154,15 +156,16 @@ log suitable for GitHub's code scanning upload action:
 
 ```yaml
 - run: gleam build
-- run: gleam run -m go_over -- --format sarif > go-over.sarif
+- run: gleam run -m go_over -- --format sarif --sarif-output go-over.sarif
 - uses: github/codeql-action/upload-sarif@v3
   with:
     sarif_file: go-over.sarif
 ```
 
-SARIF is written to stdout. Run `gleam build` first so compile output does not
-mix into the file. Info-level notices (unnecessary ignores, skipped workspace
-projects, git dependencies) are included as SARIF `note` results.
+By default SARIF is written to stdout. Use `--sarif-output` to write directly to
+a file instead of shell redirection. Run `gleam build` first so compile output
+does not mix into stdout. Info-level notices (unnecessary ignores, skipped
+workspace projects, git dependencies) are included as SARIF `note` results.
 
 You can validate SARIF output against GitHub ingestion rules at
 https://sarifweb.azurewebsites.net/Validation.
