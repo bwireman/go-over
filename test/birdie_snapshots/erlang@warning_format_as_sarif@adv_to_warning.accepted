@@ -1,0 +1,81 @@
+---
+version: 2.0.0
+title: Erlang@warning_format_as_sarif@adv_to_warning
+---
+#(
+  Warning(
+    Some("GHSA-test-1234"),
+    "package for warning tests",
+    Some("pre1.2.3-build"),
+    "example vulnerability",
+    WarningReasonVulnerable,
+    SeverityHigh,
+    DirectDep,
+  ),
+  "
+{
+"tool": 
+{
+"driver": 
+{
+"name": "go_over",
+"version": "3.4.0",
+"rules": 
+[
+
+{
+"id": "GHSA-test-1234",
+"shortDescription": 
+{
+"text": "GHSA-test-1234"
+}
+
+}
+
+]
+
+}
+
+}
+,
+"results": 
+[
+
+{
+"ruleId": "GHSA-test-1234",
+"level": "error",
+"message": 
+{
+"text": "package for warning tests@pre1.2.3-build: example vulnerability"
+}
+,
+"locations": 
+[
+
+{
+"physicalLocation": 
+{
+"artifactLocation": 
+{
+"uri": "backend/manifest.toml"
+}
+,
+"region": 
+{
+"startLine": 1,
+"startColumn": 1
+}
+
+}
+
+}
+
+]
+
+}
+
+]
+
+}
+",
+)

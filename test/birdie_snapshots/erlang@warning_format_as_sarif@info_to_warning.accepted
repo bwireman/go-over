@@ -1,0 +1,39 @@
+---
+version: 2.0.0
+title: Erlang@warning_format_as_sarif@info_to_warning
+---
+#(
+  Warning(
+    None,
+    "missing-package",
+    None,
+    "Info: package 'missing-package' is not a dependency",
+    WarningReasonInfo,
+    SeverityInfo,
+    DirectDep,
+  ),
+  "
+{
+"tool": 
+{
+"driver": 
+{
+"name": "go_over",
+"version": "3.4.0",
+"rules": 
+[
+
+]
+
+}
+
+}
+,
+"results": 
+[
+
+]
+
+}
+",
+)

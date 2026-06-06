@@ -18,5 +18,7 @@ title: Erlang@spin_up_test@outdated
     [],
     [],
     False,
+    None,
+    None,
   ),
 )

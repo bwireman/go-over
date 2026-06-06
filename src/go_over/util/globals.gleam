@@ -3,25 +3,28 @@ import filepath
 import global_value
 import gxyz/cli
 import gxyz/function
-import simplifile
+
+const project_root_key = "project_root.global.data"
+
+pub fn set_project_root(root: String) -> String {
+  global_value.create_with_unique_name(project_root_key, function.freeze(root))
+}
+
+pub fn project_root() -> String {
+  global_value.create_with_unique_name(project_root_key, function.freeze("."))
+}
 
 pub fn go_over_path() -> String {
-  global_value.create_with_unique_name("go_over_path.global.data", fn() {
-    let #(path, name) = case use_global_cache() {
-      True -> #(
-        directories.cache_dir()
-          |> cli.hard_fail_with_msg("could not get cache directory"),
-        "go-over",
-      )
-      False -> #(
-        simplifile.current_directory()
-          |> cli.hard_fail_with_msg("could not get current directory"),
-        ".go-over",
-      )
-    }
+  let #(path, name) = case use_global_cache() {
+    True -> #(
+      directories.cache_dir()
+        |> cli.hard_fail_with_msg("could not get cache directory"),
+      "go-over",
+    )
+    False -> #(project_root(), ".go-over")
+  }
 
-    filepath.join(path, name)
-  })
+  filepath.join(path, name)
 }
 
 const verbose_key = "verbose.global.data"

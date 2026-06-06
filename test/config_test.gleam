@@ -1,3 +1,4 @@
+import gleam/list
 import gleam/option.{None}
 import gleamsver.{parse}
 import go_over/advisories/advisories.{Advisory}
@@ -220,6 +221,8 @@ const empty_flags = config.Flags(
   global: False,
   local: False,
   puller: option.None,
+  single_root: option.None,
+  workspace_root: option.None,
 )
 
 pub fn merge_flags_and_config_flags_only_test() {
@@ -508,4 +511,50 @@ pub fn merge_flags_and_config_both_test() {
       config.Config(..empty_conf(), global: True),
     )
     == Ok(config.Config(..empty_conf(), global: False))
+}
+
+pub fn read_dev_dependencies_underscore_test() {
+  let conf = read_config("test/testdata/gleam/dev_dependencies_underscore.toml")
+  assert list.length(conf.dev_deps) == 2
+  assert list.contains(conf.dev_deps, "gleeunit")
+  assert list.contains(conf.dev_deps, "birdie")
+}
+
+pub fn normalize_workspace_argv_test() {
+  assert config.normalize_workspace_argv(["--workspace"])
+    == ["--workspace", "."]
+  assert config.normalize_workspace_argv(["--workspace", "backend"])
+    == ["--workspace", "backend"]
+}
+
+pub fn spin_up_root_test() {
+  let assert Ok(conf) =
+    empty_conf()
+    |> config.spin_up(["--root", "backend"])
+
+  assert conf.single_root == option.Some("backend")
+  assert conf.workspace_root == option.None
+}
+
+pub fn spin_up_workspace_test() {
+  let assert Ok(conf) =
+    empty_conf()
+    |> config.spin_up(["--workspace", "monorepo"])
+
+  assert conf.workspace_root == option.Some("monorepo")
+  assert conf.single_root == option.None
+}
+
+pub fn merge_root_and_workspace_error_test() {
+  let assert Error(msg) =
+    config.merge_flags_and_config(
+      config.Flags(
+        ..empty_flags,
+        single_root: option.Some("a"),
+        workspace_root: option.Some("b"),
+      ),
+      empty_conf(),
+    )
+
+  assert msg == "cannot set --root and --workspace"
 }

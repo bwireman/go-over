@@ -1,0 +1,16 @@
+---
+version: 2.0.0
+title: Erlang@warning@git_deps_to_warnings
+---
+#(
+  "c",
+  Warning(
+    None,
+    "git-dependencies",
+    None,
+    "Info: git dependencies have limited support (retirement and license checks are not performed): c",
+    WarningReasonInfo,
+    SeverityInfo,
+    DirectDep,
+  ),
+)

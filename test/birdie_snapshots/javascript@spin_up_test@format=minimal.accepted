@@ -1,5 +1,5 @@
 ---
-version: 1.3.1
+version: 2.0.0
 title: Javascript@spin_up_test@format=minimal
 ---
 #(
@@ -18,5 +18,7 @@ title: Javascript@spin_up_test@format=minimal
     ignore_severity: [],
     ignore_ids: [],
     ignore_dev_dependencies: False,
+    single_root: None,
+    workspace_root: None,
   ),
 )

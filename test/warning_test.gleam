@@ -5,7 +5,8 @@ import gleam/option
 import gleam/string
 import gleamsver.{SemVer}
 import go_over/advisories/advisories.{Advisory}
-import go_over/packages.{Package, PackageSourceHex}
+import go_over/packages.{Package, PackageSourceGit, PackageSourceHex}
+import go_over/sarif
 import go_over/warning.{type Warning}
 import go_over_test
 
@@ -173,13 +174,31 @@ pub fn retired_to_warning_test() {
   }
 }
 
-pub fn outdated_to_warning_test() {
-  let ver = "1.2.3"
+pub fn sarif_format_test() {
+  let warning =
+    warning.adv_to_warning(example_package, [
+      Advisory(
+        "GHSA-test-1234",
+        "package for warning tests",
+        "high",
+        [],
+        "example vulnerability",
+      ),
+    ])
+    |> list.first
+    |> fn(r) {
+      case r {
+        Ok(w) -> w
+        Error(_) -> panic as "expected warning"
+      }
+    }
 
-  to_warning_format(
-    "outdated_to_warning",
-    #(example_package, ver),
-    warning.outdated_to_warning(example_package, ver),
+  go_over_test.birdie_snap_with_input(
+    sarif.to_sarif_run("backend", [warning])
+      |> json.to_string()
+      |> pprint_json(),
+    warning,
+    "warning_format_as_sarif@adv_to_warning",
   )
 }
 
@@ -191,6 +210,46 @@ pub fn info_to_warning_test() {
       "missing-package",
       "Info: package 'missing-package' is not a dependency",
     ),
+  )
+}
+
+pub fn git_deps_to_warnings_test() {
+  to_warning_format(
+    "git_deps_to_warnings",
+    "c",
+    warning.git_deps_to_warnings([
+      Package(
+        "a",
+        SemVer(1, 0, 0, "", ""),
+        "1.0.0",
+        True,
+        PackageSourceHex,
+      ),
+      Package("c", SemVer(0, 1, 0, "", ""), "0.1.0", False, PackageSourceGit),
+    ])
+    |> list.first
+    |> fn(r) {
+      case r {
+        Ok(w) -> w
+        Error(_) -> panic as "expected warning"
+      }
+    },
+  )
+}
+
+pub fn sarif_excludes_info_warnings_test() {
+  let info =
+    warning.info_to_warning(
+      "missing-package",
+      "Info: package 'missing-package' is not a dependency",
+    )
+
+  go_over_test.birdie_snap_with_input(
+    sarif.to_sarif_run("backend", [info])
+      |> json.to_string()
+      |> pprint_json(),
+    info,
+    "warning_format_as_sarif@info_to_warning",
   )
 }
 
@@ -217,8 +276,6 @@ pub fn severity_as_string_test() {
       "something",
     ))
     == "package-retired:something"
-  assert warning.severity_as_string(warning.SeverityPackageOutdated)
-    == "package-outdated"
   assert warning.severity_as_string(warning.SeverityRejectedLicense)
     == "rejected-license"
   assert warning.severity_as_string(warning.SeverityCritical) == "critical"
@@ -241,8 +298,6 @@ pub fn string_to_severity_test() {
     == warning.SeverityPackageRetiredRenamed
   assert warning.string_to_severity("package-retired:something")
     == warning.SeverityPackageRetiredOtherReason("something")
-  assert warning.string_to_severity("package-outdated")
-    == warning.SeverityPackageOutdated
   assert warning.string_to_severity("info") == warning.SeverityInfo
   assert warning.string_to_severity("rejected-license")
     == warning.SeverityRejectedLicense

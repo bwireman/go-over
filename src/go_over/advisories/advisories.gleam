@@ -1,7 +1,6 @@
 import filepath
 import gleam/list
 import gleam/option.{None, Some}
-import global_value
 import go_over/advisories/comparisons
 import go_over/packages.{type Package}
 import go_over/util/cache
@@ -23,10 +22,8 @@ pub type Advisory {
 }
 
 fn advisories_path() -> String {
-  global_value.create_with_unique_name("advisories.path.global.data", fn() {
-    globals.go_over_path()
-    |> filepath.join("mirego-elixir-security-advisories")
-  })
+  globals.go_over_path()
+  |> filepath.join("mirego-elixir-security-advisories")
 }
 
 @external(erlang, "go_over@ffi", "parse_adv")

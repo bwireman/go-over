@@ -2,10 +2,9 @@ import clip
 import clip/arg_info
 import clip/flag
 import clip/help
-import clip/opt
 import gleam/dict
 import gleam/list
-import gleam/option.{type Option, Some}
+import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
 import go_over/advisories/advisories.{type Advisory, fetch_all}
@@ -25,6 +24,7 @@ pub type Format {
   Minimal
   Detailed
   JSON
+  SARIF
 }
 
 pub type Config {
@@ -42,6 +42,8 @@ pub type Config {
     ignore_severity: List(String),
     ignore_ids: List(String),
     ignore_dev_dependencies: Bool,
+    single_root: Option(String),
+    workspace_root: Option(String),
   )
 }
 
@@ -55,7 +57,40 @@ pub type Flags {
     verbose: Bool,
     format: option.Option(Format),
     puller: option.Option(puller.Puller),
+    single_root: option.Option(String),
+    workspace_root: option.Option(String),
   )
+}
+
+pub fn default_config() -> Config {
+  Config(
+    dev_deps: [],
+    outdated: False,
+    ignore_indirect: False,
+    force: False,
+    format: Minimal,
+    verbose: False,
+    global: True,
+    puller: puller.default,
+    allowed_licenses: [],
+    ignore_packages: [],
+    ignore_severity: [],
+    ignore_ids: [],
+    ignore_dev_dependencies: False,
+    single_root: option.None,
+    workspace_root: option.None,
+  )
+}
+
+fn read_dev_dependency_names(gleam: dict.Dict(String, Toml)) -> List(String) {
+  let hyphen =
+    tom.get_table(gleam, ["dev-dependencies"])
+    |> result.unwrap(dict.new())
+  let underscore =
+    tom.get_table(gleam, ["dev_dependencies"])
+    |> result.unwrap(dict.new())
+
+  dict.merge(hyphen, underscore) |> dict.keys()
 }
 
 pub fn read_config(path: String) -> Config {
@@ -65,10 +100,7 @@ pub fn read_config(path: String) -> Config {
   let gleam =
     tom.parse(res)
     |> cli.hard_fail_with_msg("could not read config file at " <> path)
-  let dev_deps =
-    tom.get_table(gleam, ["dev-dependencies"])
-    |> result.unwrap(dict.new())
-    |> dict.keys()
+  let dev_deps = read_dev_dependency_names(gleam)
 
   let go_over =
     tom.get_table(gleam, ["go-over"])
@@ -141,6 +173,8 @@ pub fn read_config(path: String) -> Config {
     ignore_severity:,
     ignore_ids:,
     ignore_dev_dependencies:,
+    single_root: option.None,
+    workspace_root: option.None,
   )
 }
 
@@ -329,13 +363,14 @@ pub fn unnecessary_ignore_id_warnings(
 pub fn parse_config_format(val: String) -> option.Option(Format) {
   case string.lowercase(val) {
     "json" -> option.Some(JSON)
+    "sarif" -> option.Some(SARIF)
     "detailed" -> option.Some(Detailed)
     "minimal" -> option.Some(Minimal)
     format -> {
       print.warning(
         "Invalid format '"
         <> format
-        <> "' valid options are ['json', 'detailed', 'minimal'], defaulting to minimal",
+        <> "' valid options are ['json', 'sarif', 'detailed', 'minimal'], defaulting to minimal",
       )
       option.None
     }
@@ -377,9 +412,40 @@ const logo = "                       ____  ____      ____ _   _____  _____
                        \\__, /\\____/____\\____/|___/\\___/_/
                       /____/     /_____/"
 
+const help_named_opts = [
+  arg_info.NamedInfo(
+    name: "format",
+    short: option.None,
+    default: option.None,
+    help: option.Some(
+      "Specify the output format of any warnings, [minimal, detailed, json, sarif]",
+    ),
+  ),
+  arg_info.NamedInfo(
+    name: "puller",
+    short: option.None,
+    default: option.None,
+    help: option.Some(
+      "Specify the tool used to reach out to hex.pm, [native, curl, wget, httpie]",
+    ),
+  ),
+  arg_info.NamedInfo(
+    name: "root",
+    short: option.None,
+    default: option.None,
+    help: option.Some("Audit a single Gleam project at PATH"),
+  ),
+  arg_info.NamedInfo(
+    name: "workspace",
+    short: option.None,
+    default: option.None,
+    help: option.Some("Audit all Gleam projects under PATH (defaults to .)"),
+  ),
+]
+
 fn help_message(args: arg_info.ArgInfo) -> String {
   arg_info.ArgInfo(
-    named: args.named,
+    named: list.append(help_named_opts, args.named),
     positional: args.positional,
     flags: args.flags,
     subcommands: args.subcommands,
@@ -393,6 +459,19 @@ fn help_message(args: arg_info.ArgInfo) -> String {
   |> string.crop(" ")
 }
 
+pub fn normalize_workspace_argv(argv: List(String)) -> List(String) {
+  case argv {
+    ["--workspace", next, ..rest] ->
+      case string.starts_with(next, "-") {
+        True -> ["--workspace", ".", ..rest]
+        False -> argv
+      }
+    ["--workspace", ..rest] -> ["--workspace", ".", ..rest]
+    [head, ..rest] -> [head, ..normalize_workspace_argv(rest)]
+    [] -> []
+  }
+}
+
 pub fn merge_flags_and_config(
   flags: Flags,
   cfg: Config,
@@ -400,6 +479,12 @@ pub fn merge_flags_and_config(
   let invalid = case flags.global && flags.local {
     True -> Error("cannot set --local && global")
     _ -> Ok(Nil)
+  }
+  use _ <- result.try(invalid)
+
+  let invalid = case flags.single_root, flags.workspace_root {
+    option.Some(_), option.Some(_) -> Error("cannot set --root and --workspace")
+    _, _ -> Ok(Nil)
   }
   use _ <- result.try(invalid)
 
@@ -424,10 +509,46 @@ pub fn merge_flags_and_config(
     ignore_severity: cfg.ignore_severity,
     ignore_ids: cfg.ignore_ids,
     ignore_dev_dependencies: cfg.ignore_dev_dependencies,
+    single_root: flags.single_root,
+    workspace_root: flags.workspace_root,
   ))
 }
 
-pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
+fn take_named_opts(
+  argv: List(String),
+) -> #(
+  Option(String),
+  Option(String),
+  Option(String),
+  Option(String),
+  List(String),
+) {
+  case argv {
+    ["--format", value, ..rest] -> {
+      let #(_, puller, root, workspace, remaining) = take_named_opts(rest)
+      #(Some(value), puller, root, workspace, remaining)
+    }
+    ["--puller", value, ..rest] -> {
+      let #(format, _, root, workspace, remaining) = take_named_opts(rest)
+      #(format, Some(value), root, workspace, remaining)
+    }
+    ["--root", value, ..rest] -> {
+      let #(format, puller, _, workspace, remaining) = take_named_opts(rest)
+      #(format, puller, Some(value), workspace, remaining)
+    }
+    ["--workspace", value, ..rest] -> {
+      let #(format, puller, root, _, remaining) = take_named_opts(rest)
+      #(format, puller, root, Some(value), remaining)
+    }
+    [head, ..rest] -> {
+      let #(format, puller, root, workspace, remaining) = take_named_opts(rest)
+      #(format, puller, root, workspace, [head, ..remaining])
+    }
+    [] -> #(None, None, None, None, [])
+  }
+}
+
+fn clip_command() {
   clip.command({
     use force <- clip.parameter
     use outdated <- clip.parameter
@@ -435,21 +556,18 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
     use global <- clip.parameter
     use local <- clip.parameter
     use verbose <- clip.parameter
-    use format <- clip.parameter
-    use puller <- clip.parameter
 
-    merge_flags_and_config(
-      Flags(
-        force:,
-        outdated:,
-        ignore_indirect:,
-        verbose:,
-        format:,
-        global:,
-        local:,
-        puller:,
-      ),
-      cfg,
+    Flags(
+      force:,
+      outdated:,
+      ignore_indirect:,
+      verbose:,
+      format: option.None,
+      global:,
+      local:,
+      puller: option.None,
+      single_root: option.None,
+      workspace_root: option.None,
     )
   })
   |> clip.flag(flag.help(
@@ -470,29 +588,34 @@ pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
   ))
   |> clip.flag(flag.help(
     flag.new("local"),
-    "Cache data local in user's home directory for use only by this project",
+    "Cache data in the project's .go-over/ directory for use only by this project",
   ))
   |> clip.flag(flag.help(
     flag.new("verbose"),
     "Print progress as packages are checked",
   ))
-  |> clip.opt(
-    opt.new("format")
-    |> opt.help(
-      "Specify the output format of any warnings, [minimal, verbose, json]",
-    )
-    |> opt.map(parse_config_format)
-    |> opt.default(option.None),
-  )
-  |> clip.opt(
-    opt.new("puller")
-    |> opt.help(
-      "Specify the tool used to reach out to hex.pm, [native, curl, wget, httpie]",
-    )
-    |> opt.map(parse_puller)
-    |> opt.default(option.None),
-  )
   |> clip.help(help.custom(help_message))
-  |> clip.run(cli.strip_js_from_argv(argv))
-  |> result.flatten
+}
+
+pub fn parse_flags(argv: List(String)) -> Result(Flags, String) {
+  let argv = normalize_workspace_argv(argv)
+  let #(format, puller, single_root, workspace_root, argv) = take_named_opts(argv)
+
+  use base <- result.try(
+    clip_command()
+    |> clip.run(cli.strip_js_from_argv(argv)),
+  )
+
+  Ok(Flags(
+    ..base,
+    format: option.map(format, parse_config_format) |> option.flatten,
+    puller: option.map(puller, parse_puller) |> option.flatten,
+    single_root:,
+    workspace_root:,
+  ))
+}
+
+pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {
+  use flags <- result.try(parse_flags(argv))
+  merge_flags_and_config(flags, cfg)
 }

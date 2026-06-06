@@ -72,6 +72,11 @@ pub fn main() {
 
   gfunction.iff_nil(
     True,
-    gfunction.freeze2(go_over.print_warnings, example_warnings, conf),
+    gfunction.freeze3(
+      go_over.print_warnings,
+      example_warnings,
+      conf,
+      option.None,
+    ),
   )
 }

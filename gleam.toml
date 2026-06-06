@@ -51,8 +51,8 @@ actions = [
     { command = "./scripts/update.sh", kind = "binary" },
     { command = "./scripts/target_test.sh", kind = "binary", args = ["erlang"], files = [".erl", ".gleam", "manifest.toml", "gleam.toml"] },
     { command = "./scripts/target_test.sh", kind = "binary", args = ["javascript", "node"], files = [".mjs", ".js", ".gleam", "manifest.toml", "gleam.toml"] },
-    { command = "./scripts/target_test.sh", kind = "binary", args = ["javascript", "deno"], files = [".mjs", ".js", ".gleam", "manifest.toml", "gleam.toml"] },
-    { command = "./scripts/target_test.sh", kind = "binary", args = ["javascript", "bun"], files = [".mjs", ".js", ".gleam", "manifest.toml", "gleam.toml"] },
+    { command = "./scripts/target_test.sh", kind = "binary", args = ["javascript", "deno"], files = [".mjs", ".js", "manifest.toml", "gleam.toml"] },
+    { command = "./scripts/target_test.sh", kind = "binary", args = ["javascript", "bun"], files = [".mjs", ".js", "manifest.toml", "gleam.toml"] },
 ]
 
 [go-over]

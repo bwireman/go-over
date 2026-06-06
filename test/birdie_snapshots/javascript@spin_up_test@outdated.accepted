@@ -18,5 +18,7 @@ title: Javascript@spin_up_test@outdated
     ignore_severity: [],
     ignore_ids: [],
     ignore_dev_dependencies: False,
+    single_root: None,
+    workspace_root: None,
   ),
 )

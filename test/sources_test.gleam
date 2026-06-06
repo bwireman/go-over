@@ -22,6 +22,8 @@ const conf = Config(
   ignore_severity: [],
   ignore_ids: [],
   ignore_dev_dependencies: False,
+  single_root: option.None,
+  workspace_root: option.None,
 )
 
 const pkgs = [
