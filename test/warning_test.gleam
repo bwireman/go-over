@@ -218,22 +218,16 @@ pub fn git_deps_to_warnings_test() {
     "git_deps_to_warnings",
     "c",
     warning.git_deps_to_warnings([
-      Package(
-        "a",
-        SemVer(1, 0, 0, "", ""),
-        "1.0.0",
-        True,
-        PackageSourceHex,
-      ),
+      Package("a", SemVer(1, 0, 0, "", ""), "1.0.0", True, PackageSourceHex),
       Package("c", SemVer(0, 1, 0, "", ""), "0.1.0", False, PackageSourceGit),
     ])
-    |> list.first
-    |> fn(r) {
-      case r {
-        Ok(w) -> w
-        Error(_) -> panic as "expected warning"
-      }
-    },
+      |> list.first
+      |> fn(r) {
+        case r {
+          Ok(w) -> w
+          Error(_) -> panic as "expected warning"
+        }
+      },
   )
 }
 

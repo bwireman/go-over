@@ -599,20 +599,23 @@ fn clip_command() {
 
 pub fn parse_flags(argv: List(String)) -> Result(Flags, String) {
   let argv = normalize_workspace_argv(argv)
-  let #(format, puller, single_root, workspace_root, argv) = take_named_opts(argv)
+  let #(format, puller, single_root, workspace_root, argv) =
+    take_named_opts(argv)
 
   use base <- result.try(
     clip_command()
     |> clip.run(cli.strip_js_from_argv(argv)),
   )
 
-  Ok(Flags(
-    ..base,
-    format: option.map(format, parse_config_format) |> option.flatten,
-    puller: option.map(puller, parse_puller) |> option.flatten,
-    single_root:,
-    workspace_root:,
-  ))
+  Ok(
+    Flags(
+      ..base,
+      format: option.map(format, parse_config_format) |> option.flatten,
+      puller: option.map(puller, parse_puller) |> option.flatten,
+      single_root:,
+      workspace_root:,
+    ),
+  )
 }
 
 pub fn spin_up(cfg: Config, argv: List(String)) -> Result(Config, String) {

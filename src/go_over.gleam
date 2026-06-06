@@ -249,7 +249,10 @@ pub fn audit_project(
   }
 
   let info_warnings =
-    list.append(unnecessary_warnings, warning.git_deps_to_warnings(manifest_pkgs))
+    list.append(
+      unnecessary_warnings,
+      warning.git_deps_to_warnings(manifest_pkgs),
+    )
 
   Ok(AuditResult(
     project_root:,

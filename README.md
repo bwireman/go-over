@@ -49,8 +49,8 @@ gleam run -m go_over
 
 ### 🏴 Flags
 
-- `--format` Specify the output format of any warnings, [minimal, detailed, json,
-  sarif] (default: None)
+- `--format` Specify the output format of any warnings, [minimal, detailed,
+  json, sarif] (default: None)
 - `--puller` Specify the tool used to reach out to hex.pm, [native, curl, wget,
   httpie] (default: None)
 - `--force`: Force pulling new data even if the cached data is still valid
@@ -58,8 +58,8 @@ gleam run -m go_over
   command directly
 - `--ignore-indirect`: Ignore all warnings for indirect dependencies
 - `--verbose`: Print progress as packages are checked
-- `--root PATH`: Audit a single Gleam project at `PATH` (uses
-  `PATH/gleam.toml` and `PATH/manifest.toml`)
+- `--root PATH`: Audit a single Gleam project at `PATH` (uses `PATH/gleam.toml`
+  and `PATH/manifest.toml`)
 - `--workspace [PATH]`: Audit every Gleam project under `PATH` (default: `.`).
   Finds directories containing both `gleam.toml` and `manifest.toml`.
 - `--local`: Cache data in the project's `.go-over/` directory
@@ -134,7 +134,8 @@ actions = [
 ## ⚙️ CI
 
 You can schedule daily runs to keep your deps up to date and open issues when
-necessary! [Example ▶️](https://github.com/bwireman/go-over/blob/main/.github/workflows/deps.yml)
+necessary!
+[Example ▶️](https://github.com/bwireman/go-over/blob/main/.github/workflows/deps.yml)
 
 ```yaml
 - run: gleam run -m go_over -- --local
@@ -142,7 +143,9 @@ necessary! [Example ▶️](https://github.com/bwireman/go-over/blob/main/.githu
 
 ### SARIF output (GitHub Code Scanning)
 
-Use `--format sarif` to emit a [SARIF 2.1.0](https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning) log suitable for GitHub's code scanning upload action:
+Use `--format sarif` to emit a
+[SARIF 2.1.0](https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning)
+log suitable for GitHub's code scanning upload action:
 
 ```yaml
 - run: gleam run -m go_over -- --format sarif > go-over.sarif
@@ -165,12 +168,12 @@ in the SARIF document.
 # License
 
 This tool uses
-  [mirego/elixir-security-advisories](https://github.com/mirego/elixir-security-advisories)
-  which is it self licensed with
+[mirego/elixir-security-advisories](https://github.com/mirego/elixir-security-advisories)
+which is it self licensed with
 
-  - `BSD-3-Clause`
-  - `CC-BY 4.0 open source`
-    - See their
+- `BSD-3-Clause`
+- `CC-BY 4.0 open source`
+  - See their
     [#license section](https://github.com/mirego/elixir-security-advisories?tab=readme-ov-file#license)
 
 Code original to this repo is Licensed under `MIT`
