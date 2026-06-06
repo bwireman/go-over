@@ -340,17 +340,17 @@ pub fn unnecessary_ignore_warnings_test() {
 
   assert unnecessary_ignore_warnings(conf, manifest, [audit_warning], [])
     == [
-      warning.unnecessary_ignore_to_warning(
+      warning.info_to_warning(
         "b",
-        "Unnecessary ignore: package 'b' did not match any warnings",
+        "Info: package 'b' did not match any warnings",
       ),
-      warning.unnecessary_ignore_to_warning(
+      warning.info_to_warning(
         "missing",
-        "Unnecessary ignore: package 'missing' is not a dependency",
+        "Info: package 'missing' is not a dependency",
       ),
-      warning.unnecessary_ignore_to_warning(
+      warning.info_to_warning(
         "missing-severity",
-        "Unnecessary ignore: severity 'missing-severity' did not match any warnings",
+        "Info: severity 'missing-severity' did not match any warnings",
       ),
     ]
 }
@@ -365,9 +365,9 @@ pub fn unnecessary_ignore_license_warnings_test() {
 
   assert unnecessary_ignore_warnings(conf, [], [], ["MIT", "Apache-2.0"])
     == [
-      warning.unnecessary_ignore_to_warning(
+      warning.info_to_warning(
         "WTFPL",
-        "Unnecessary ignore: license 'WTFPL' did not match any dependency licenses",
+        "Info: license 'WTFPL' did not match any dependency licenses",
       ),
     ]
 }
@@ -405,9 +405,9 @@ pub fn unnecessary_ignore_indirect_test() {
 
   assert unnecessary_ignore_warnings(conf, [direct], [], [])
     == [
-      warning.unnecessary_ignore_to_warning(
+      warning.info_to_warning(
         "indirect",
-        "Unnecessary ignore: indirect=true has no effect (no indirect dependencies)",
+        "Info: indirect=true has no effect (no indirect dependencies)",
       ),
     ]
 }
@@ -425,17 +425,17 @@ pub fn unnecessary_ignore_dev_dependencies_test() {
 
   assert unnecessary_ignore_warnings(no_dev_deps, [pkg], [], [])
     == [
-      warning.unnecessary_ignore_to_warning(
+      warning.info_to_warning(
         "dev_dependencies",
-        "Unnecessary ignore: dev_dependencies=true has no effect (no dev-dependencies configured)",
+        "Info: dev_dependencies=true has no effect (no dev-dependencies configured)",
       ),
     ]
 
   assert unnecessary_ignore_warnings(missing_dev_deps, [pkg], [], [])
     == [
-      warning.unnecessary_ignore_to_warning(
+      warning.info_to_warning(
         "dev_dependencies",
-        "Unnecessary ignore: dev_dependencies=true has no effect (no dev-dependencies in manifest)",
+        "Info: dev_dependencies=true has no effect (no dev-dependencies in manifest)",
       ),
     ]
 }
@@ -449,9 +449,9 @@ pub fn unnecessary_ignore_id_warnings_test() {
 
   assert unnecessary_ignore_id_warnings(conf, ["present"], advisories)
     == [
-      warning.unnecessary_ignore_to_warning(
+      warning.info_to_warning(
         "unknown",
-        "Unnecessary ignore: advisory id 'unknown' is unknown",
+        "Info: advisory id 'unknown' is unknown",
       ),
     ]
 
@@ -459,9 +459,9 @@ pub fn unnecessary_ignore_id_warnings_test() {
 
   assert unnecessary_ignore_id_warnings(wrong_package, ["present"], advisories)
     == [
-      warning.unnecessary_ignore_to_warning(
+      warning.info_to_warning(
         "other",
-        "Unnecessary ignore: advisory id 'other' does not apply to any dependency",
+        "Info: advisory id 'other' does not apply to any dependency",
       ),
     ]
 }

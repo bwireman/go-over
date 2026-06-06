@@ -1,0 +1,18 @@
+---
+version: 2.0.0
+title: Erlang@warning_format_as_json@info_to_warning
+---
+#(
+  "missing-package",
+  "
+{
+"id": null,
+"package": "missing-package",
+"version": null,
+"warning_reason": "Info",
+"dependency_type": "Direct",
+"severity": "info",
+"reason": "Info: package 'missing-package' is not a dependency"
+}
+",
+)

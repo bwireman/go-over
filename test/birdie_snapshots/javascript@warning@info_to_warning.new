@@ -1,0 +1,16 @@
+---
+version: 2.0.0
+title: Javascript@warning@info_to_warning
+---
+#(
+  "missing-package",
+  Warning(
+    advisory_id: None,
+    package: "missing-package",
+    version: None,
+    reason: "Info: package 'missing-package' is not a dependency",
+    warning_reason_code: WarningReasonInfo,
+    severity: SeverityInfo,
+    dep: DirectDep,
+  ),
+)

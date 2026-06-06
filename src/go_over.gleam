@@ -17,22 +17,22 @@ import gxyz/function as gfunction
 import shellout
 import simplifile
 
-fn print_warnings_count(vulns: List(Warning)) -> List(Warning) {
-  {
-    "⛔ "
-    <> int.to_string(list.length(vulns))
-    <> " WARNING(s) FOUND!"
-    <> constants.long_ass_dashes
-  }
-  |> io.print_error()
+fn print_warnings_count(vulns: List(Warning), label: String) -> List(Warning) {
+  label |> io.print_error()
   vulns
 }
 
-pub fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
+fn print_warnings_list(
+  vulns: List(Warning),
+  conf: Config,
+  label: String,
+) -> Nil {
+  let label = warnings_label(vulns, label)
+
   case conf.format {
     config.Minimal ->
       vulns
-      |> print_warnings_count
+      |> print_warnings_count(label)
       |> list.map(warning.format_as_string_minimal)
       |> string.join("")
       |> io.print_error()
@@ -46,11 +46,62 @@ pub fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
 
     _ ->
       vulns
-      |> print_warnings_count
+      |> print_warnings_count(label)
       |> list.map(warning.format_as_string)
       |> string.join(constants.long_ass_dashes)
       |> io.print_error()
   }
+}
+
+fn warnings_label(vulns: List(Warning), kind: String) -> String {
+  "⛔ "
+  <> int.to_string(list.length(vulns))
+  <> " "
+  <> kind
+  <> "(s) FOUND!"
+  <> constants.long_ass_dashes
+}
+
+fn info_label(vulns: List(Warning)) -> String {
+  "ℹ️  "
+  <> int.to_string(list.length(vulns))
+  <> " Item(s) of Note"
+  <> constants.long_ass_dashes
+}
+
+fn print_info_list(vulns: List(Warning), conf: Config) -> Nil {
+  let label = info_label(vulns)
+
+  case conf.format {
+    config.Minimal ->
+      vulns
+      |> print_warnings_count(label)
+      |> list.map(warning.format_as_string_minimal)
+      |> string.join("")
+      |> io.print_error()
+
+    config.JSON ->
+      vulns
+      |> list.map(warning.format_as_json)
+      |> json.preprocessed_array()
+      |> json.to_string()
+      |> io.print_error()
+
+    _ ->
+      vulns
+      |> print_warnings_count(label)
+      |> list.map(warning.format_as_string)
+      |> string.join(constants.long_ass_dashes)
+      |> io.print_error()
+  }
+}
+
+pub fn print_info(vulns: List(Warning), conf: Config) -> Nil {
+  print_info_list(vulns, conf)
+}
+
+pub fn print_warnings(vulns: List(Warning), conf: Config) -> Nil {
+  print_warnings_list(vulns, conf, "WARNING")
   shellout.exit(1)
 }
 
@@ -132,11 +183,10 @@ pub fn main() {
       dependency_licenses,
     )
 
-  let warnings =
+  let fatal_warnings =
     audit_warnings
     |> config.filter_package_warnings(conf, _)
     |> config.filter_severity(conf, _)
-    |> list.append(unnecessary_warnings)
 
   spinner.stop_spinner(spinner)
 
@@ -145,7 +195,12 @@ pub fn main() {
     True -> run_deps_outdated()
   }
 
-  case warnings, outdated_failed {
+  case unnecessary_warnings {
+    [] -> Nil
+    info -> print_info(info, conf)
+  }
+
+  case fatal_warnings, outdated_failed {
     [], False -> print.success("✅ No warnings found!")
     [], True -> shellout.exit(1)
     vulns, _ -> print_warnings(vulns, conf)
@@ -153,7 +208,7 @@ pub fn main() {
 }
 
 fn run_deps_outdated() -> Bool {
-  print.warning(
+  print.high(
     "The --outdated flag is deprecated. Use `gleam deps outdated` instead.",
   )
 

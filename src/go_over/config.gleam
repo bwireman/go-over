@@ -206,20 +206,18 @@ pub fn unnecessary_ignore_warnings(
     |> list.flat_map(fn(name) {
       case list.contains(manifest_names, name) {
         False -> [
-          warning.unnecessary_ignore_to_warning(
+          warning.info_to_warning(
             name,
-            "Unnecessary ignore: package '" <> name <> "' is not a dependency",
+            "Info: package '" <> name <> "' is not a dependency",
           ),
         ]
         True ->
           case list.contains(packages_with_warnings, name) {
             True -> []
             False -> [
-              warning.unnecessary_ignore_to_warning(
+              warning.info_to_warning(
                 name,
-                "Unnecessary ignore: package '"
-                  <> name
-                  <> "' did not match any warnings",
+                "Info: package '" <> name <> "' did not match any warnings",
               ),
             ]
           }
@@ -230,9 +228,9 @@ pub fn unnecessary_ignore_warnings(
     conf.allowed_licenses
     |> list.filter(fn(license) { !list.contains(dependency_licenses, license) })
     |> list.map(fn(license) {
-      warning.unnecessary_ignore_to_warning(
+      warning.info_to_warning(
         license,
-        "Unnecessary ignore: license '"
+        "Info: license '"
           <> license
           <> "' did not match any dependency licenses",
       )
@@ -244,11 +242,9 @@ pub fn unnecessary_ignore_warnings(
       !list.contains(severities_present, string.lowercase(sev))
     })
     |> list.map(fn(sev) {
-      warning.unnecessary_ignore_to_warning(
+      warning.info_to_warning(
         sev,
-        "Unnecessary ignore: severity '"
-          <> sev
-          <> "' did not match any warnings",
+        "Info: severity '" <> sev <> "' did not match any warnings",
       )
     })
 
@@ -261,9 +257,9 @@ pub fn unnecessary_ignore_warnings(
       case list.any(manifest_pkgs, fn(pkg) { !pkg.direct }) {
         True -> []
         False -> [
-          warning.unnecessary_ignore_to_warning(
+          warning.info_to_warning(
             "indirect",
-            "Unnecessary ignore: indirect=true has no effect (no indirect dependencies)",
+            "Info: indirect=true has no effect (no indirect dependencies)",
           ),
         ]
       }
@@ -274,18 +270,18 @@ pub fn unnecessary_ignore_warnings(
     True ->
       case conf.dev_deps {
         [] -> [
-          warning.unnecessary_ignore_to_warning(
+          warning.info_to_warning(
             "dev_dependencies",
-            "Unnecessary ignore: dev_dependencies=true has no effect (no dev-dependencies configured)",
+            "Info: dev_dependencies=true has no effect (no dev-dependencies configured)",
           ),
         ]
         dev_deps ->
           case list.any(dev_deps, list.contains(manifest_names, _)) {
             True -> []
             False -> [
-              warning.unnecessary_ignore_to_warning(
+              warning.info_to_warning(
                 "dev_dependencies",
-                "Unnecessary ignore: dev_dependencies=true has no effect (no dev-dependencies in manifest)",
+                "Info: dev_dependencies=true has no effect (no dev-dependencies in manifest)",
               ),
             ]
           }
@@ -309,18 +305,18 @@ pub fn unnecessary_ignore_id_warnings(
   |> list.flat_map(fn(id) {
     case list.find(all_advisories, fn(a: Advisory) { a.id == id }) {
       Error(_) -> [
-        warning.unnecessary_ignore_to_warning(
+        warning.info_to_warning(
           id,
-          "Unnecessary ignore: advisory id '" <> id <> "' is unknown",
+          "Info: advisory id '" <> id <> "' is unknown",
         ),
       ]
       Ok(adv) ->
         case list.contains(manifest_names, adv.name) {
           True -> []
           False -> [
-            warning.unnecessary_ignore_to_warning(
+            warning.info_to_warning(
               id,
-              "Unnecessary ignore: advisory id '"
+              "Info: advisory id '"
                 <> id
                 <> "' does not apply to any dependency",
             ),

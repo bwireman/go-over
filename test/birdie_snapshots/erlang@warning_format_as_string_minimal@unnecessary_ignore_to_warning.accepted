@@ -1,9 +1,0 @@
----
-version: 2.0.0
-title: Erlang@warning_format_as_string_minimal@unnecessary_ignore_to_warning
----
-#(
-  "missing-package",
-  "[31mmissing-package: unnecessary-ignore
-[0m[K",
-)

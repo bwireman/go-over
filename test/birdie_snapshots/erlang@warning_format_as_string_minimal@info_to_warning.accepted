@@ -1,0 +1,9 @@
+---
+version: 2.0.0
+title: Erlang@warning_format_as_string_minimal@info_to_warning
+---
+#(
+  "missing-package",
+  "[33mmissing-package: info
+[0m[K",
+)

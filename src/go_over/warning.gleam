@@ -13,7 +13,7 @@ pub type WarningReasonCode {
   WarningReasonVulnerable
   WarningReasonOutdated
   WarningReasonRejectedLicense(name: String)
-  WarningReasonUnnecessaryIgnore
+  WarningReasonInfo
 }
 
 fn warning_reason_code_as_string(w: WarningReasonCode) -> String {
@@ -22,7 +22,7 @@ fn warning_reason_code_as_string(w: WarningReasonCode) -> String {
     WarningReasonVulnerable -> "Vulnerable"
     WarningReasonOutdated -> "Outdated"
     WarningReasonRejectedLicense(name) -> "Rejected License (" <> name <> ")"
-    WarningReasonUnnecessaryIgnore -> "Unnecessary Ignore"
+    WarningReasonInfo -> "Info"
   }
 }
 
@@ -38,7 +38,7 @@ pub type Severity {
   SeverityHigh
   SeverityLow
   SeverityModerate
-  SeverityUnnecessaryIgnore
+  SeverityInfo
   SeverityUnknown(info: String)
 }
 
@@ -56,7 +56,7 @@ pub fn severity_as_string(s: Severity) -> String {
     SeverityHigh -> "high"
     SeverityLow -> "low"
     SeverityModerate -> "moderate"
-    SeverityUnnecessaryIgnore -> "unnecessary-ignore"
+    SeverityInfo -> "info"
     SeverityUnknown(value) ->
       string.join(["unknown", string.lowercase(value)], "-")
   }
@@ -75,7 +75,7 @@ pub fn string_to_severity(s: String) -> Severity {
     "high" -> SeverityHigh
     "low" -> SeverityLow
     "moderate" -> SeverityModerate
-    "unnecessary-ignore" -> SeverityUnnecessaryIgnore
+    "info" -> SeverityInfo
     "unknown-" <> v -> SeverityUnknown(v)
     v -> SeverityUnknown(v)
   }
@@ -174,19 +174,23 @@ pub fn rejected_license_to_warning(pkg: Package, license: String) -> Warning {
   )
 }
 
-pub fn unnecessary_ignore_to_warning(
-  target: String,
-  reason: String,
-) -> Warning {
+pub fn info_to_warning(target: String, reason: String) -> Warning {
   Warning(
     None,
     target,
     None,
     reason,
-    WarningReasonUnnecessaryIgnore,
-    SeverityUnnecessaryIgnore,
+    WarningReasonInfo,
+    SeverityInfo,
     DirectDep,
   )
+}
+
+pub fn is_info(w: Warning) -> Bool {
+  case w.severity {
+    SeverityInfo -> True
+    _ -> False
+  }
 }
 
 pub fn format_as_string(w: Warning) -> String {
@@ -240,7 +244,7 @@ fn color(w: Warning, str: String) {
     | SeverityPackageRetiredDeprecated
     | SeverityPackageOutdated -> print.format_moderate(str)
     SeverityLow | SeverityPackageRetiredInvalid -> print.format_low(str)
-    SeverityUnnecessaryIgnore -> print.format_warning(str)
+    SeverityInfo -> print.format_high(str)
     SeverityUnknown(_) | SeverityPackageRetiredOtherReason(_) ->
       print.format_warning(str)
   }
