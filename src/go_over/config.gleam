@@ -176,11 +176,7 @@ pub fn filter_package_warnings(
   conf: Config,
   warnings: List(Warning),
 ) -> List(Warning) {
-  glist.reject_contains_tap(
-    warnings,
-    fn(w) { w.package },
-    conf.ignore_packages,
-  )
+  glist.reject_contains_tap(warnings, fn(w) { w.package }, conf.ignore_packages)
 }
 
 pub fn filter_severity(conf: Config, warnings: List(Warning)) -> List(Warning) {
@@ -201,7 +197,9 @@ pub fn unnecessary_ignore_warnings(
   let packages_with_warnings = list.map(audit_warnings, fn(w) { w.package })
   let severities_present =
     audit_warnings
-    |> list.map(fn(w) { string.lowercase(warning.severity_as_string(w.severity)) })
+    |> list.map(fn(w) {
+      string.lowercase(warning.severity_as_string(w.severity))
+    })
 
   let package_warnings =
     conf.ignore_packages
@@ -210,9 +208,7 @@ pub fn unnecessary_ignore_warnings(
         False -> [
           warning.unnecessary_ignore_to_warning(
             name,
-            "Unnecessary ignore: package '"
-              <> name
-              <> "' is not a dependency",
+            "Unnecessary ignore: package '" <> name <> "' is not a dependency",
           ),
         ]
         True ->
@@ -309,7 +305,6 @@ pub fn unnecessary_ignore_id_warnings(
   manifest_names: List(String),
   all_advisories: List(Advisory),
 ) -> List(Warning) {
-
   conf.ignore_ids
   |> list.flat_map(fn(id) {
     case list.find(all_advisories, fn(a: Advisory) { a.id == id }) {

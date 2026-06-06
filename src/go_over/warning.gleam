@@ -174,7 +174,10 @@ pub fn rejected_license_to_warning(pkg: Package, license: String) -> Warning {
   )
 }
 
-pub fn unnecessary_ignore_to_warning(target: String, reason: String) -> Warning {
+pub fn unnecessary_ignore_to_warning(
+  target: String,
+  reason: String,
+) -> Warning {
   Warning(
     None,
     target,

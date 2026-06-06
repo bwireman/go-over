@@ -338,32 +338,38 @@ pub fn unnecessary_ignore_warnings_test() {
       warning.DirectDep,
     )
 
-  assert unnecessary_ignore_warnings(conf, manifest, [audit_warning], []) == [
-    warning.unnecessary_ignore_to_warning(
-      "b",
-      "Unnecessary ignore: package 'b' did not match any warnings",
-    ),
-    warning.unnecessary_ignore_to_warning(
-      "missing",
-      "Unnecessary ignore: package 'missing' is not a dependency",
-    ),
-    warning.unnecessary_ignore_to_warning(
-      "missing-severity",
-      "Unnecessary ignore: severity 'missing-severity' did not match any warnings",
-    ),
-  ]
+  assert unnecessary_ignore_warnings(conf, manifest, [audit_warning], [])
+    == [
+      warning.unnecessary_ignore_to_warning(
+        "b",
+        "Unnecessary ignore: package 'b' did not match any warnings",
+      ),
+      warning.unnecessary_ignore_to_warning(
+        "missing",
+        "Unnecessary ignore: package 'missing' is not a dependency",
+      ),
+      warning.unnecessary_ignore_to_warning(
+        "missing-severity",
+        "Unnecessary ignore: severity 'missing-severity' did not match any warnings",
+      ),
+    ]
 }
 
 pub fn unnecessary_ignore_license_warnings_test() {
   let conf =
-    config.Config(..empty_conf(), allowed_licenses: ["MIT", "Apache-2.0", "WTFPL"])
-
-  assert unnecessary_ignore_warnings(conf, [], [], ["MIT", "Apache-2.0"]) == [
-    warning.unnecessary_ignore_to_warning(
+    config.Config(..empty_conf(), allowed_licenses: [
+      "MIT",
+      "Apache-2.0",
       "WTFPL",
-      "Unnecessary ignore: license 'WTFPL' did not match any dependency licenses",
-    ),
-  ]
+    ])
+
+  assert unnecessary_ignore_warnings(conf, [], [], ["MIT", "Apache-2.0"])
+    == [
+      warning.unnecessary_ignore_to_warning(
+        "WTFPL",
+        "Unnecessary ignore: license 'WTFPL' did not match any dependency licenses",
+      ),
+    ]
 }
 
 pub fn filter_package_warnings_test() {
@@ -397,12 +403,13 @@ pub fn unnecessary_ignore_indirect_test() {
   let direct = Package("a", v, "", True, packages.PackageSourceHex)
   let conf = config.Config(..empty_conf(), ignore_indirect: True)
 
-  assert unnecessary_ignore_warnings(conf, [direct], [], []) == [
-    warning.unnecessary_ignore_to_warning(
-      "indirect",
-      "Unnecessary ignore: indirect=true has no effect (no indirect dependencies)",
-    ),
-  ]
+  assert unnecessary_ignore_warnings(conf, [direct], [], [])
+    == [
+      warning.unnecessary_ignore_to_warning(
+        "indirect",
+        "Unnecessary ignore: indirect=true has no effect (no indirect dependencies)",
+      ),
+    ]
 }
 
 pub fn unnecessary_ignore_dev_dependencies_test() {
@@ -416,19 +423,21 @@ pub fn unnecessary_ignore_dev_dependencies_test() {
       ignore_dev_dependencies: True,
     )
 
-  assert unnecessary_ignore_warnings(no_dev_deps, [pkg], [], []) == [
-    warning.unnecessary_ignore_to_warning(
-      "dev_dependencies",
-      "Unnecessary ignore: dev_dependencies=true has no effect (no dev-dependencies configured)",
-    ),
-  ]
+  assert unnecessary_ignore_warnings(no_dev_deps, [pkg], [], [])
+    == [
+      warning.unnecessary_ignore_to_warning(
+        "dev_dependencies",
+        "Unnecessary ignore: dev_dependencies=true has no effect (no dev-dependencies configured)",
+      ),
+    ]
 
-  assert unnecessary_ignore_warnings(missing_dev_deps, [pkg], [], []) == [
-    warning.unnecessary_ignore_to_warning(
-      "dev_dependencies",
-      "Unnecessary ignore: dev_dependencies=true has no effect (no dev-dependencies in manifest)",
-    ),
-  ]
+  assert unnecessary_ignore_warnings(missing_dev_deps, [pkg], [], [])
+    == [
+      warning.unnecessary_ignore_to_warning(
+        "dev_dependencies",
+        "Unnecessary ignore: dev_dependencies=true has no effect (no dev-dependencies in manifest)",
+      ),
+    ]
 }
 
 pub fn unnecessary_ignore_id_warnings_test() {
@@ -438,15 +447,15 @@ pub fn unnecessary_ignore_id_warnings_test() {
     Advisory("other", "missing", "", [], ""),
   ]
 
-  assert unnecessary_ignore_id_warnings(conf, ["present"], advisories) == [
-    warning.unnecessary_ignore_to_warning(
-      "unknown",
-      "Unnecessary ignore: advisory id 'unknown' is unknown",
-    ),
-  ]
+  assert unnecessary_ignore_id_warnings(conf, ["present"], advisories)
+    == [
+      warning.unnecessary_ignore_to_warning(
+        "unknown",
+        "Unnecessary ignore: advisory id 'unknown' is unknown",
+      ),
+    ]
 
-  let wrong_package =
-    config.Config(..empty_conf(), ignore_ids: ["other"])
+  let wrong_package = config.Config(..empty_conf(), ignore_ids: ["other"])
 
   assert unnecessary_ignore_id_warnings(wrong_package, ["present"], advisories)
     == [
