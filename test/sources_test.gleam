@@ -22,6 +22,7 @@ const conf = Config(
   ignore_severity: [],
   ignore_ids: [],
   ignore_dev_dependencies: False,
+  workspace_max_depth: 3,
   single_root: option.None,
   workspace_root: option.None,
 )
@@ -61,13 +62,16 @@ pub fn get_retired_warnings_test() {
 }
 
 pub fn get_rejected_license_test() {
-  assert sources.get_hex_warnings(
+  let #(warnings, _licenses) =
+    sources.get_hex_warnings(
       pkgs,
       Config(
         ..conf,
         puller: Mock("test/testdata/hex/rejected_licenses/bad_license.json"),
       ),
     )
+
+  assert warnings
     == [
       Warning(
         None,
@@ -80,12 +84,14 @@ pub fn get_rejected_license_test() {
       ),
     ]
 
-  assert sources.get_hex_warnings(
+  let #(warnings, _licenses) =
+    sources.get_hex_warnings(
       pkgs,
       Config(
         ..conf,
         puller: Mock("test/testdata/hex/rejected_licenses/good_license.json"),
       ),
     )
-    == []
+
+  assert warnings == []
 }

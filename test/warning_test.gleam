@@ -68,7 +68,6 @@ pub fn adv_to_warning_test() {
   ))
 }
 
-// SOMETHING IS WRONG HERE
 pub fn retired_to_warning_test() {
   // with message
   {
@@ -231,7 +230,7 @@ pub fn git_deps_to_warnings_test() {
   )
 }
 
-pub fn sarif_excludes_info_warnings_test() {
+pub fn sarif_includes_info_warnings_test() {
   let info =
     warning.info_to_warning(
       "missing-package",

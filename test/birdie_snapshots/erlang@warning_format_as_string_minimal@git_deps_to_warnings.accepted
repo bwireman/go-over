@@ -4,6 +4,6 @@ title: Erlang@warning_format_as_string_minimal@git_deps_to_warnings
 ---
 #(
   "c",
-  "[33mgit-dependencies: info
+  "[92mgit-dependencies: info
 [0m[K",
 )

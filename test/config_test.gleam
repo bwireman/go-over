@@ -191,12 +191,6 @@ pub fn spin_up_test() {
   let conf = test_spin_up("force", ["--force"])
   assert conf.force
 
-  let conf = test_spin_up("outdated", [""])
-  assert !conf.outdated
-
-  let conf = test_spin_up("ignore_indirect", ["--ignore-indirect"])
-  assert conf.ignore_indirect
-
   let conf = test_spin_up("verbose", ["--verbose"])
   assert conf.verbose
 }
@@ -215,7 +209,6 @@ pub fn spin_up_format_test() {
 const empty_flags = config.Flags(
   force: False,
   outdated: False,
-  ignore_indirect: False,
   verbose: False,
   format: option.None,
   global: False,
@@ -234,12 +227,6 @@ pub fn merge_flags_and_config_flags_only_test() {
       empty_conf(),
     )
     == Ok(config.Config(..empty_conf(), outdated: True))
-
-  assert config.merge_flags_and_config(
-      config.Flags(..empty_flags, ignore_indirect: True),
-      empty_conf(),
-    )
-    == Ok(config.Config(..empty_conf(), ignore_indirect: True))
 
   assert config.merge_flags_and_config(
       config.Flags(..empty_flags, force: True),
@@ -356,6 +343,42 @@ pub fn unnecessary_ignore_warnings_test() {
         "Info: severity 'missing-severity' did not match any warnings",
       ),
     ]
+}
+
+pub fn unnecessary_ignore_ignored_package_with_warning_test() {
+  let assert Ok(v) = parse("1.1.1")
+  let a = Package("a", v, "", True, packages.PackageSourceHex)
+  let conf = config.Config(..empty_conf(), ignore_packages: ["a"])
+
+  let audit_warning =
+    Warning(
+      None,
+      "a",
+      None,
+      "",
+      warning.WarningReasonVulnerable,
+      warning.SeverityCritical,
+      warning.DirectDep,
+    )
+
+  assert unnecessary_ignore_warnings(conf, [a], [audit_warning], [], []) == []
+}
+
+pub fn validate_workspace_formats_test() {
+  let assert Error(msg) =
+    config.validate_workspace_formats([
+      #(config.Minimal, "a"),
+      #(config.JSON, "b"),
+    ])
+
+  assert msg
+    == "workspace projects have mismatched output formats; set format consistently or use --format"
+
+  assert config.validate_workspace_formats([
+      #(config.Minimal, "a"),
+      #(config.Minimal, "b"),
+    ])
+    == Ok(Nil)
 }
 
 pub fn unnecessary_ignore_license_warnings_test() {

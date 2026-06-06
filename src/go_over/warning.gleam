@@ -243,9 +243,10 @@ fn color(w: Warning, str: String) {
     SeverityModerate
     | SeverityPackageRetiredRenamed
     | SeverityPackageRetiredDeprecated -> print.format_moderate(str)
-    SeverityLow | SeverityPackageRetiredInvalid -> print.format_low(str)
-    SeverityInfo -> print.format_high(str)
-    SeverityUnknown(_) | SeverityPackageRetiredOtherReason(_) ->
-      print.format_warning(str)
+    SeverityLow
+    | SeverityPackageRetiredInvalid
+    | SeverityPackageRetiredOtherReason(_) -> print.format_low(str)
+    SeverityInfo -> print.format_info(str)
+    SeverityUnknown(_) -> print.format_warning(str)
   }
 }

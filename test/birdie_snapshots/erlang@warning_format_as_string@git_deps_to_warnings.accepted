@@ -4,7 +4,7 @@ title: Erlang@warning_format_as_string@git_deps_to_warnings
 ---
 #(
   "c",
-  "[33mID: null
+  "[92mID: null
 Package: git-dependencies
 Version: null
 WarningReason: Info

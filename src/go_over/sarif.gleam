@@ -10,7 +10,7 @@ import go_over/warning.{
   SeverityPackageRetiredRenamed, SeverityPackageRetiredSecurity,
   SeverityRejectedLicense, SeverityUnknown, WarningReasonInfo,
   WarningReasonRejectedLicense, WarningReasonRetired, WarningReasonVulnerable,
-  is_info, severity_as_string,
+  severity_as_string,
 }
 
 const schema = "https://json.schemastore.org/sarif-2.1.0.json"
@@ -32,7 +32,6 @@ pub fn to_sarif_log(runs: List(#(String, List(Warning)))) -> Json {
 }
 
 pub fn to_sarif_run(project_root: String, warnings: List(Warning)) -> Json {
-  let warnings = list.filter(warnings, fn(w) { !is_info(w) })
   let rules = build_rules(warnings)
   let results = list.map(warnings, fn(w) { to_result(w, project_root) })
 

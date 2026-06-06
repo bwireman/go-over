@@ -56,12 +56,14 @@ gleam run -m go_over
 - `--force`: Force pulling new data even if the cached data is still valid
 - `--outdated`: **[deprecated]** runs `gleam deps outdated` instead — use that
   command directly
-- `--ignore-indirect`: Ignore all warnings for indirect dependencies
 - `--verbose`: Print progress as packages are checked
 - `--root PATH`: Audit a single Gleam project at `PATH` (uses `PATH/gleam.toml`
   and `PATH/manifest.toml`)
 - `--workspace [PATH]`: Audit every Gleam project under `PATH` (default: `.`).
-  Finds directories containing both `gleam.toml` and `manifest.toml`.
+  Finds directories containing both `gleam.toml` and `manifest.toml`. Each
+  project's own `[go-over]` settings apply during its audit. Set
+  `workspace_max_depth` in the scan root's `gleam.toml` to control discovery
+  depth (default: `3`).
 - `--local`: Cache data in the project's `.go-over/` directory
 - `--global`: Cache data in the user's home directory (shared across projects)
 - `--help,-h`: Print help
@@ -74,9 +76,12 @@ Optional settings that can be added to your project's `gleam.toml`
 
 ```toml
 [go-over]
-# disables caching if false
-# default: true
-cache = true
+# force pulling new data even if cached data is still valid
+# default: false
+force = false
+# maximum directory depth when scanning with --workspace (set on the scan root)
+# default: 3
+workspace_max_depth = 3
 # if true all cached data will be stored in user's home directory
 # allowing cache to be shared between projects
 # default: true
@@ -148,14 +153,23 @@ Use `--format sarif` to emit a
 log suitable for GitHub's code scanning upload action:
 
 ```yaml
+- run: gleam build
 - run: gleam run -m go_over -- --format sarif > go-over.sarif
 - uses: github/codeql-action/upload-sarif@v3
   with:
     sarif_file: go-over.sarif
 ```
 
+SARIF is written to stdout. Run `gleam build` first so compile output does not
+mix into the file. Info-level notices (unnecessary ignores, skipped workspace
+projects, git dependencies) are included as SARIF `note` results.
+
+You can validate SARIF output against GitHub ingestion rules at
+https://sarifweb.azurewebsites.net/Validation.
+
 In workspace mode (`--workspace`), each Gleam project appears as a separate run
-in the SARIF document.
+in the SARIF document. All projects must use the same output `format` (or pass
+`--format` on the CLI).
 
 # Other Art
 

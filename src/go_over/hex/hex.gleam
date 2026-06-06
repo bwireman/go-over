@@ -71,12 +71,19 @@ pub fn package_licenses(puller: puller.Puller, pkg: Package) -> List(String) {
   fetch_licenses(puller, pkg)
 }
 
+pub fn rejected_license_sources(
+  licenses: List(String),
+  allowed_licenses: List(String),
+) -> List(HexWarningSource) {
+  glist.reject_contains(licenses, allowed_licenses)
+  |> list.map(RejectedLicense)
+}
+
 pub fn get_hex_info(
   puller: puller.Puller,
   pkg: Package,
   allowed_licenses: List(String),
-) {
+) -> List(HexWarningSource) {
   package_licenses(puller, pkg)
-  |> glist.reject_contains(allowed_licenses)
-  |> list.map(RejectedLicense)
+  |> rejected_license_sources(allowed_licenses)
 }

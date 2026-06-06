@@ -34,16 +34,24 @@ pub fn get_retired_warnings(
   |> list.map(tuple.apply_from2(_, warning.retired_to_warning))
 }
 
-pub fn get_hex_warnings(pkgs: List(Package), conf: Config) -> List(Warning) {
+pub fn get_hex_warnings(
+  pkgs: List(Package),
+  conf: Config,
+) -> #(List(Warning), List(String)) {
   let allowed_licenses = conf.allowed_licenses
 
-  list.flat_map(pkgs, fn(pkg) {
-    hex.get_hex_info(conf.puller, pkg, allowed_licenses)
-    |> list.map(fn(source) {
-      case source {
-        hex.RejectedLicense(name) ->
-          warning.rejected_license_to_warning(pkg, name)
-      }
-    })
+  list.fold(pkgs, #([], []), fn(acc, pkg) {
+    let #(warnings, licenses) = acc
+    let pkg_licenses = hex.package_licenses(conf.puller, pkg)
+    let pkg_warnings =
+      hex.rejected_license_sources(pkg_licenses, allowed_licenses)
+      |> list.map(fn(source) {
+        case source {
+          hex.RejectedLicense(name) ->
+            warning.rejected_license_to_warning(pkg, name)
+        }
+      })
+
+    #(list.append(warnings, pkg_warnings), list.append(licenses, pkg_licenses))
   })
 }

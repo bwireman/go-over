@@ -18,6 +18,7 @@ title: Erlang@spin_up_test@format=minimal
     [],
     [],
     False,
+    3,
     None,
     None,
   ),

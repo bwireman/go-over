@@ -8,7 +8,6 @@ import gleam/result
 import gleam/string
 import go_over/advisories/advisories
 import go_over/config.{type Config, type Flags}
-import go_over/hex/hex
 import go_over/packages
 import go_over/sarif
 import go_over/sources
@@ -61,12 +60,7 @@ fn print_warnings_list(
       |> string.join("")
       |> io.print_error()
 
-    config.JSON ->
-      vulns
-      |> list.map(warning.format_as_json)
-      |> json.preprocessed_array()
-      |> json.to_string()
-      |> io.print_error()
+    config.JSON -> Nil
 
     config.SARIF -> Nil
 
@@ -110,12 +104,7 @@ fn print_info_list(
       |> string.join("")
       |> io.print_error()
 
-    config.JSON ->
-      vulns
-      |> list.map(warning.format_as_json)
-      |> json.preprocessed_array()
-      |> json.to_string()
-      |> io.print_error()
+    config.JSON -> Nil
 
     config.SARIF -> Nil
 
@@ -128,15 +117,45 @@ fn print_info_list(
   }
 }
 
+pub fn warnings_for_json(result: AuditResult) -> List(Warning) {
+  list.append(result.info_warnings, result.fatal_warnings)
+}
+
+pub fn warnings_for_json_results(results: List(AuditResult)) -> List(Warning) {
+  list.flat_map(results, warnings_for_json)
+}
+
+pub fn print_json_warnings(warnings: List(Warning)) -> Nil {
+  warnings
+  |> list.map(warning.format_as_json)
+  |> json.preprocessed_array()
+  |> json.to_string()
+  |> io.print_error()
+}
+
 fn print_sarif(results: List(AuditResult)) -> Nil {
   let runs =
     list.map(results, fn(result) {
-      #(result.project_root, result.fatal_warnings)
+      #(
+        result.project_root,
+        list.append(result.info_warnings, result.fatal_warnings),
+      )
     })
 
   sarif.to_sarif_log(runs)
   |> json.to_string()
-  |> io.print_error()
+  |> io.println()
+}
+
+pub fn skipped_workspace_warnings(skipped: List(String)) -> List(Warning) {
+  list.map(skipped, fn(path) {
+    warning.info_to_warning(
+      path,
+      "Info: project at '"
+        <> path
+        <> "' was skipped (exceeds workspace_max_depth)",
+    )
+  })
 }
 
 pub fn print_info(
@@ -175,7 +194,12 @@ pub fn audit_project(
   globals.set_use_global_cache(conf.global)
   globals.set_force(conf.force)
 
-  let spinner = spinner.new_spinner("Let's do this!")
+  let machine_output = conf.format == config.SARIF || conf.format == config.JSON
+  let spinner = case machine_output {
+    True -> option.None
+    False -> spinner.new_spinner("Let's do this!")
+  }
+
   gfunction.ignore_result(
     conf.force,
     gfunction.freeze1(simplifile.delete, globals.go_over_path()),
@@ -205,26 +229,17 @@ pub fn audit_project(
   )
   let retired_warnings = sources.get_retired_warnings(hex_pkgs, conf)
 
-  let hex_warnings =
-    gfunction.iff(
-      !list.is_empty(conf.allowed_licenses),
-      fn() {
-        spinner.set_text_spinner(
-          spinner,
-          "Checking packages: " <> print.raw("licenses", "brightmagenta"),
-        )
+  let #(hex_warnings, dependency_licenses) = case conf.allowed_licenses {
+    [] -> #([], [])
+    _ -> {
+      spinner.set_text_spinner(
+        spinner,
+        "Checking packages: " <> print.raw("licenses", "brightmagenta"),
+      )
 
-        sources.get_hex_warnings(hex_pkgs, conf)
-      },
-      [],
-    )
-
-  let dependency_licenses =
-    gfunction.iff(
-      !list.is_empty(conf.allowed_licenses),
-      fn() { list.flat_map(hex_pkgs, hex.package_licenses(conf.puller, _)) },
-      [],
-    )
+      sources.get_hex_warnings(hex_pkgs, conf)
+    }
+  }
 
   spinner.set_text_spinner(spinner, "Filtering warnings")
   let audit_warnings =
@@ -274,14 +289,26 @@ pub fn main() {
   }
 }
 
+fn scan_root_config(scan_root: String) -> config.Config {
+  let gleam_toml = filepath.join(scan_root, "gleam.toml")
+
+  case simplifile.read(gleam_toml) {
+    Ok(_) -> config.read_config(gleam_toml)
+    Error(_) -> config.default_config()
+  }
+}
+
 fn run(flags: config.Flags) -> Nil {
   let workspace_mode = option.is_some(flags.workspace_root)
 
-  let results = case flags.workspace_root {
-    option.Some(scan_root) ->
-      case workspace.discover_or_error(scan_root) {
-        Ok(project_roots) ->
-          list.map(project_roots, fn(project_root) {
+  let #(results, workspace_skipped) = case flags.workspace_root {
+    option.Some(scan_root) -> {
+      let scan_config = scan_root_config(scan_root)
+      let max_depth = scan_config.workspace_max_depth
+
+      case workspace.discover_or_error(scan_root, max_depth) {
+        Ok(workspace.DiscoverResult(projects, skipped)) -> #(
+          list.map(projects, fn(project_root) {
             case audit_project(flags, project_root) {
               Ok(result) -> result
               Error(e) -> {
@@ -290,18 +317,55 @@ fn run(flags: config.Flags) -> Nil {
                 util.do_panic()
               }
             }
-          })
+          }),
+          skipped,
+        )
         Error(e) -> {
           io.println_error(e)
           shellout.exit(1)
           util.do_panic()
         }
       }
+    }
     option.None -> {
       let project_root = option.unwrap(flags.single_root, ".")
       let assert Ok(result) = audit_project(flags, project_root)
-      [result]
+      #([result], [])
     }
+  }
+
+  let skipped_warnings = skipped_workspace_warnings(workspace_skipped)
+  let results = case skipped_warnings {
+    [] -> results
+    _ -> {
+      case results {
+        [first, ..rest] -> [
+          AuditResult(
+            ..first,
+            info_warnings: list.append(skipped_warnings, first.info_warnings),
+          ),
+          ..rest
+        ]
+        [] -> results
+      }
+    }
+  }
+
+  case workspace_mode {
+    True ->
+      case
+        config.validate_workspace_formats(
+          list.map(results, fn(r) { #(r.format, r.project_root) }),
+        )
+      {
+        Error(e) -> {
+          io.println_error(e)
+          shellout.exit(1)
+          util.do_panic()
+        }
+        Ok(Nil) -> Nil
+      }
+    False -> Nil
   }
 
   let prefix_for = fn(result: AuditResult) {
@@ -315,38 +379,71 @@ fn run(flags: config.Flags) -> Nil {
     config.Config(..config.default_config(), format: result.format)
   }
 
-  let sarif_output = list.any(results, fn(r) { r.format == config.SARIF })
+  let output_format = case results {
+    [] -> config.Minimal
+    [first, ..] -> first.format
+  }
 
-  case sarif_output {
-    False ->
+  let sarif_output = output_format == config.SARIF
+  let json_output = output_format == config.JSON
+
+  case sarif_output, json_output {
+    False, False ->
       list.each(results, fn(result) {
         case result.info_warnings {
           [] -> Nil
           info -> print_info(info, display_conf(result), prefix_for(result))
         }
       })
-    True -> Nil
+    False, True -> print_json_warnings(warnings_for_json_results(results))
+    True, _ -> Nil
   }
 
   let any_fatal = list.any(results, fn(r) { !list.is_empty(r.fatal_warnings) })
   let any_outdated_failed = list.any(results, fn(r) { r.outdated_failed })
+  let info_count =
+    list.flat_map(results, fn(r) { r.info_warnings }) |> list.length
 
-  case any_fatal, any_outdated_failed, sarif_output {
-    False, False, True -> {
+  case any_fatal, any_outdated_failed, sarif_output, json_output {
+    False, False, True, _ -> {
       print_sarif(results)
       Nil
     }
-    False, False, False -> print.success("✅ No warnings found!")
-    False, True, True -> {
+    False, False, False, True -> {
+      case info_count {
+        0 -> print.success("✅ No warnings found!")
+        _ ->
+          print.success(
+            "✅ No security issues found ("
+            <> int.to_string(info_count)
+            <> " item(s) of note)",
+          )
+      }
+      Nil
+    }
+    False, False, False, False -> {
+      case info_count {
+        0 -> print.success("✅ No warnings found!")
+        _ ->
+          print.success(
+            "✅ No security issues found ("
+            <> int.to_string(info_count)
+            <> " item(s) of note)",
+          )
+      }
+      Nil
+    }
+    False, True, True, _ -> {
       print_sarif(results)
       shellout.exit(1)
     }
-    False, True, False -> shellout.exit(1)
-    True, _, True -> {
+    False, True, False, _ -> shellout.exit(1)
+    True, _, True, _ -> {
       print_sarif(results)
       shellout.exit(1)
     }
-    True, _, False -> {
+    True, _, False, True -> shellout.exit(1)
+    True, _, False, False -> {
       list.each(results, fn(result) {
         case result.fatal_warnings {
           [] -> Nil

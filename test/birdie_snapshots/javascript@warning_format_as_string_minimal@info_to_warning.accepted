@@ -4,6 +4,6 @@ title: Javascript@warning_format_as_string_minimal@info_to_warning
 ---
 #(
   "missing-package",
-  "[33mmissing-package: info
+  "[92mmissing-package: info
 [0m[K",
 )

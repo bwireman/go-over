@@ -1,5 +1,5 @@
 ---
-version: 1.3.1
+version: 2.0.0
 title: Erlang@warning_format_as_string_minimal@retired_to_warning_other_none
 ---
 #(
@@ -13,6 +13,6 @@ title: Erlang@warning_format_as_string_minimal@retired_to_warning_other_none
     ),
     ReleaseRetirement(OtherReason, None),
   ),
-  "[31mpackage for warning tests-pre1.2.3-build: package-retired:unknown
+  "[36mpackage for warning tests-pre1.2.3-build: package-retired:unknown
 [0m[K",
 )

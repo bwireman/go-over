@@ -42,6 +42,9 @@ jobs:
           gleam-version: ${{ env.gleam }}
           rebar3-version: ${{ env.rebar }}
       - run: gleam test --target erlang
+      - run: gleam build --target erlang
+      - run: gleam run -m go_over -- --format sarif --local > go-over.sarif
+      - run: python3 -c "import json; d=json.load(open('go-over.sarif')); assert d['version']=='2.1.0' and d['runs']"
       - run: gleam run --target erlang -- --local --puller wget
       - run: gleam run --target erlang -- --local
 

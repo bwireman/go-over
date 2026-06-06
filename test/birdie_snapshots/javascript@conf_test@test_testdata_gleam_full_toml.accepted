@@ -16,6 +16,7 @@ Config(
   ignore_severity: ["critical", "high"],
   ignore_ids: ["a", "b"],
   ignore_dev_dependencies: True,
+  workspace_max_depth: 3,
   single_root: None,
   workspace_root: None,
 )

@@ -42,6 +42,7 @@ pub type Config {
     ignore_severity: List(String),
     ignore_ids: List(String),
     ignore_dev_dependencies: Bool,
+    workspace_max_depth: Int,
     single_root: Option(String),
     workspace_root: Option(String),
   )
@@ -51,7 +52,6 @@ pub type Flags {
   Flags(
     force: Bool,
     outdated: Bool,
-    ignore_indirect: Bool,
     global: Bool,
     local: Bool,
     verbose: Bool,
@@ -77,6 +77,7 @@ pub fn default_config() -> Config {
     ignore_severity: [],
     ignore_ids: [],
     ignore_dev_dependencies: False,
+    workspace_max_depth: 3,
     single_root: option.None,
     workspace_root: option.None,
   )
@@ -106,9 +107,12 @@ pub fn read_config(path: String) -> Config {
     tom.get_table(gleam, ["go-over"])
     |> result.unwrap(dict.new())
 
-  let cache =
-    tom.get_bool(go_over, ["cache"])
-    |> result.unwrap(True)
+  let force =
+    tom.get_bool(go_over, ["force"])
+    |> result.unwrap(False)
+  let workspace_max_depth =
+    tom.get_int(go_over, ["workspace_max_depth"])
+    |> result.unwrap(3)
   let outdated =
     tom.get_bool(go_over, ["outdated"])
     |> result.unwrap(False)
@@ -162,8 +166,7 @@ pub fn read_config(path: String) -> Config {
     dev_deps:,
     outdated:,
     ignore_indirect:,
-    force: !cache,
-    //read from flags only
+    force:,
     verbose: False,
     global:,
     puller:,
@@ -173,6 +176,7 @@ pub fn read_config(path: String) -> Config {
     ignore_severity:,
     ignore_ids:,
     ignore_dev_dependencies:,
+    workspace_max_depth:,
     single_root: option.None,
     workspace_root: option.None,
   )
@@ -500,7 +504,7 @@ pub fn merge_flags_and_config(
     dev_deps: cfg.dev_deps,
     force: flags.force || cfg.force,
     outdated: flags.outdated || cfg.outdated,
-    ignore_indirect: cfg.ignore_indirect || flags.ignore_indirect,
+    ignore_indirect: cfg.ignore_indirect,
     verbose: flags.verbose,
     allowed_licenses: cfg.allowed_licenses,
     puller: option.unwrap(flags.puller, cfg.puller),
@@ -510,9 +514,27 @@ pub fn merge_flags_and_config(
     ignore_severity: cfg.ignore_severity,
     ignore_ids: cfg.ignore_ids,
     ignore_dev_dependencies: cfg.ignore_dev_dependencies,
+    workspace_max_depth: cfg.workspace_max_depth,
     single_root: flags.single_root,
     workspace_root: flags.workspace_root,
   ))
+}
+
+pub fn validate_workspace_formats(
+  results: List(#(Format, String)),
+) -> Result(Nil, String) {
+  case results {
+    [] -> Ok(Nil)
+    [#(first, _), ..rest] -> {
+      case list.any(rest, fn(r) { r.0 != first }) {
+        True ->
+          Error(
+            "workspace projects have mismatched output formats; set format consistently or use --format",
+          )
+        False -> Ok(Nil)
+      }
+    }
+  }
 }
 
 fn take_named_opts(
@@ -553,7 +575,6 @@ fn clip_command() {
   clip.command({
     use force <- clip.parameter
     use outdated <- clip.parameter
-    use ignore_indirect <- clip.parameter
     use global <- clip.parameter
     use local <- clip.parameter
     use verbose <- clip.parameter
@@ -561,7 +582,6 @@ fn clip_command() {
     Flags(
       force:,
       outdated:,
-      ignore_indirect:,
       verbose:,
       format: option.None,
       global:,
@@ -578,10 +598,6 @@ fn clip_command() {
   |> clip.flag(flag.help(
     flag.new("outdated"),
     "[deprecated] Use `gleam deps outdated` to check for newer dependency versions",
-  ))
-  |> clip.flag(flag.help(
-    flag.new("ignore-indirect"),
-    "Ignore all warnings for indirect dependencies",
   ))
   |> clip.flag(flag.help(
     flag.new("global"),

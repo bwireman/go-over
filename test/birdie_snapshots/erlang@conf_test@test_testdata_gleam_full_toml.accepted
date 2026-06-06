@@ -16,6 +16,7 @@ Config(
   ["critical", "high"],
   ["a", "b"],
   True,
+  3,
   None,
   None,
 )

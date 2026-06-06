@@ -19,7 +19,7 @@ title: Erlang@warning_format_as_sarif@adv_to_warning
 "driver": 
 {
 "name": "go_over",
-"version": "3.4.0",
+"version": "4.0.0",
 "rules": 
 [
 
