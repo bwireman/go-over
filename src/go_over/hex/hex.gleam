@@ -41,7 +41,7 @@ pub fn decode_licenses(data: String) -> Result(List(String), json.DecodeError) {
   json.parse(data, decoder)
 }
 
-fn fetch_licenses(puller: puller.Puller, pkg: Package) -> List(String) {
+pub fn fetch_licenses(puller: puller.Puller, pkg: Package) -> List(String) {
   pkg
   |> core.package_licenses_path()
   |> cache.pull_if_not_cached(
@@ -67,10 +67,6 @@ pub type HexWarningSource {
   RejectedLicense(name: String)
 }
 
-pub fn package_licenses(puller: puller.Puller, pkg: Package) -> List(String) {
-  fetch_licenses(puller, pkg)
-}
-
 pub fn rejected_license_sources(
   licenses: List(String),
   allowed_licenses: List(String),
@@ -84,6 +80,6 @@ pub fn get_hex_info(
   pkg: Package,
   allowed_licenses: List(String),
 ) -> List(HexWarningSource) {
-  package_licenses(puller, pkg)
+  fetch_licenses(puller, pkg)
   |> rejected_license_sources(allowed_licenses)
 }

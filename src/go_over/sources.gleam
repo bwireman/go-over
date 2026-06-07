@@ -42,7 +42,7 @@ pub fn get_hex_warnings(
 
   list.fold(pkgs, #([], []), fn(acc, pkg) {
     let #(warnings, licenses) = acc
-    let pkg_licenses = hex.package_licenses(conf.puller, pkg)
+    let pkg_licenses = hex.fetch_licenses(conf.puller, pkg)
     let pkg_warnings =
       hex.rejected_license_sources(pkg_licenses, allowed_licenses)
       |> list.map(fn(source) {
