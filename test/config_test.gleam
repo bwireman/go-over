@@ -544,6 +544,11 @@ pub fn read_dev_dependencies_underscore_test() {
   assert list.contains(conf.dev_deps, "birdie")
 }
 
+pub fn read_workspace_max_depth_test() {
+  let conf = read_config("test/testdata/gleam/workspace_max_depth.toml")
+  assert conf.workspace_max_depth == 5
+}
+
 pub fn normalize_workspace_argv_test() {
   assert config.normalize_workspace_argv(["--workspace"])
     == ["--workspace", "."]
@@ -604,4 +609,64 @@ pub fn merge_root_and_workspace_error_test() {
     )
 
   assert msg == "cannot set --root and --workspace"
+}
+
+pub fn default_workspace_max_depth_test() {
+  assert empty_conf().workspace_max_depth == 3
+}
+
+pub fn validate_workspace_formats_empty_test() {
+  assert config.validate_workspace_formats([]) == Ok(Nil)
+}
+
+pub fn validate_workspace_formats_single_test() {
+  assert config.validate_workspace_formats([#(config.JSON, "only")]) == Ok(Nil)
+}
+
+pub fn validate_workspace_formats_three_matching_test() {
+  assert config.validate_workspace_formats([
+      #(config.Detailed, "a"),
+      #(config.Detailed, "b"),
+      #(config.Detailed, "c"),
+    ])
+    == Ok(Nil)
+}
+
+pub fn validate_workspace_formats_detailed_mismatch_test() {
+  let assert Error(msg) =
+    config.validate_workspace_formats([
+      #(config.Detailed, "a"),
+      #(config.Minimal, "b"),
+    ])
+
+  assert msg
+    == "workspace projects have mismatched output formats; set format consistently or use --format"
+}
+
+pub fn normalize_workspace_argv_noop_test() {
+  assert config.normalize_workspace_argv(["--root", "backend"])
+    == ["--root", "backend"]
+  assert config.normalize_workspace_argv([]) == []
+}
+
+pub fn parse_flags_workspace_default_path_test() {
+  let assert Ok(flags) = config.parse_flags(["--workspace"])
+
+  assert flags.workspace_root == option.Some(".")
+  assert flags.single_root == option.None
+}
+
+pub fn parse_flags_workspace_with_path_test() {
+  let assert Ok(flags) = config.parse_flags(["--workspace", "monorepo"])
+
+  assert flags.workspace_root == option.Some("monorepo")
+}
+
+pub fn spin_up_workspace_default_path_test() {
+  let assert Ok(conf) =
+    empty_conf()
+    |> config.spin_up(["--workspace"])
+
+  assert conf.workspace_root == option.Some(".")
+  assert conf.single_root == option.None
 }
