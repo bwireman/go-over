@@ -1,0 +1,22 @@
+---
+version: 2.0.0
+title: Erlang@conf_test@test/testdata/gleam/basic.toml
+---
+Config(
+  [],
+  False,
+  True,
+  True,
+  Detailed,
+  False,
+  True,
+  HTTPIE,
+  [],
+  ["a"],
+  ["b"],
+  ["c"],
+  False,
+  3,
+  None,
+  None,
+)

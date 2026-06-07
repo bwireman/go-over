@@ -1,0 +1,22 @@
+---
+version: 2.0.0
+title: Erlang@conf_test@test/testdata/gleam/empty.toml
+---
+Config(
+  [],
+  False,
+  False,
+  False,
+  Minimal,
+  False,
+  True,
+  Native,
+  [],
+  [],
+  [],
+  [],
+  False,
+  3,
+  None,
+  None,
+)

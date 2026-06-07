@@ -1,0 +1,13 @@
+---
+version: 2.0.0
+title: Javascript@decode_licenses@test/testdata/hex/full.json
+---
+#(
+  "{
+  "meta": {
+    "licenses": ["MIT"]
+  }
+}
+",
+  Ok(["MIT"]),
+)

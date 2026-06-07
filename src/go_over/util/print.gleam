@@ -34,6 +34,10 @@ pub fn format_low(msg: String) {
   shellout.style(msg <> "\n", with: shellout.color(["cyan"]), custom: [])
 }
 
+pub fn format_info(msg: String) {
+  shellout.style(msg <> "\n", with: shellout.color(["brightgreen"]), custom: [])
+}
+
 pub fn warning(msg: String) {
   msg
   |> format_warning()

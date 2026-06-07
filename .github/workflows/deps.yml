@@ -31,7 +31,11 @@ jobs:
           gleam-version: ${{ env.gleam }}
           rebar3-version: ${{ env.rebar }}
       - run: gleam build
-      - run: gleam run -m go_over -- --outdated --local
+      - run: gleam run -m go_over -- --format sarif --sarif-output go-over.sarif --local
+      - uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: go-over.sarif
+      - run: gleam run -m go_over -- --outdated
       # create an issue in the repo if there are
       # outdated or vulnerable dependencies
       - uses: jayqi/failed-build-issue-action@v1

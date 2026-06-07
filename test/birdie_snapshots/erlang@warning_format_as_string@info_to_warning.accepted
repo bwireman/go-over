@@ -1,0 +1,15 @@
+---
+version: 2.0.0
+title: Erlang@warning_format_as_string@info_to_warning
+---
+#(
+  "missing-package",
+  "[92mID: null
+Package: missing-package
+Version: null
+WarningReason: Info
+Dependency Type: Direct
+Severity: info
+Reason: Info: package 'missing-package' is not a dependency
+[0m[K",
+)

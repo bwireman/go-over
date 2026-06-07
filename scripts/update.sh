@@ -4,5 +4,5 @@ set -e
 cd "$(dirname "$0")/.."
 
 gleam update
-gleam run -- --outdated
+gleam run -- 
 npm upgrade --ignore-scripts

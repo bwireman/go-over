@@ -1,0 +1,21 @@
+---
+version: 2.0.0
+title: Erlang@warning_format_as_string_minimal@retired_to_warning_other
+---
+#(
+  #(
+    Package(
+      "package for warning tests",
+      SemVer(1, 2, 3, "pre", "build"),
+      "pre1.2.3-build",
+      True,
+      PackageSourceHex,
+    ),
+    ReleaseRetirement(
+      OtherReason,
+      Some("It's an example man"),
+    ),
+  ),
+  "[36mpackage for warning tests-pre1.2.3-build: package-retired:it's an example man
+[0m[K",
+)

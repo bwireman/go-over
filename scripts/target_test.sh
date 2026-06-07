@@ -31,14 +31,15 @@ else
 
     CMD="--target javascript --runtime $RUNTIME"
 fi
+# shellcheck disable=SC2086
+gleam run $CMD --  --help
 
 # shellcheck disable=SC2086
 gleam run $CMD -- --force --verbose --puller $PULLER
-rm -rf .go-over/outdated
 
 snooze 15
 # shellcheck disable=SC2086
-gleam run $CMD -- --outdated --puller wget --local
+gleam run $CMD --  --puller wget --local
 
 # shellcheck disable=SC2086
 gleam test $CMD

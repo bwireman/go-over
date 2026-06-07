@@ -1,26 +1,26 @@
 import gleam/hexpm.{type ReleaseRetirement}
-import gleam/json.{type Json, object, string}
+import gleam/json.{type Json, nullable, object, string}
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
 import go_over/advisories/advisories.{type Advisory}
 import go_over/hex/core
-import go_over/packages.{type Package}
+import go_over/packages.{type Package, PackageSourceGit}
 import go_over/util/print
 
 pub type WarningReasonCode {
   WarningReasonRetired
   WarningReasonVulnerable
-  WarningReasonOutdated
   WarningReasonRejectedLicense(name: String)
+  WarningReasonInfo
 }
 
 fn warning_reason_code_as_string(w: WarningReasonCode) -> String {
   case w {
     WarningReasonRetired -> "Retired"
     WarningReasonVulnerable -> "Vulnerable"
-    WarningReasonOutdated -> "Outdated"
     WarningReasonRejectedLicense(name) -> "Rejected License (" <> name <> ")"
+    WarningReasonInfo -> "Info"
   }
 }
 
@@ -30,12 +30,12 @@ pub type Severity {
   SeverityPackageRetiredDeprecated
   SeverityPackageRetiredRenamed
   SeverityPackageRetiredOtherReason(reason: String)
-  SeverityPackageOutdated
   SeverityRejectedLicense
   SeverityCritical
   SeverityHigh
   SeverityLow
   SeverityModerate
+  SeverityInfo
   SeverityUnknown(info: String)
 }
 
@@ -47,12 +47,12 @@ pub fn severity_as_string(s: Severity) -> String {
     SeverityPackageRetiredRenamed -> "package-retired:renamed"
     SeverityPackageRetiredOtherReason(reason) ->
       "package-retired:" <> string.lowercase(reason)
-    SeverityPackageOutdated -> "package-outdated"
     SeverityRejectedLicense -> "rejected-license"
     SeverityCritical -> "critical"
     SeverityHigh -> "high"
     SeverityLow -> "low"
     SeverityModerate -> "moderate"
+    SeverityInfo -> "info"
     SeverityUnknown(value) ->
       string.join(["unknown", string.lowercase(value)], "-")
   }
@@ -65,12 +65,12 @@ pub fn string_to_severity(s: String) -> Severity {
     "package-retired:deprecated" -> SeverityPackageRetiredDeprecated
     "package-retired:renamed" -> SeverityPackageRetiredRenamed
     "package-retired:" <> v -> SeverityPackageRetiredOtherReason(v)
-    "package-outdated" -> SeverityPackageOutdated
     "rejected-license" -> SeverityRejectedLicense
     "critical" -> SeverityCritical
     "high" -> SeverityHigh
     "low" -> SeverityLow
     "moderate" -> SeverityModerate
+    "info" -> SeverityInfo
     "unknown-" <> v -> SeverityUnknown(v)
     v -> SeverityUnknown(v)
   }
@@ -145,18 +145,6 @@ pub fn retired_to_warning(pkg: Package, ret: ReleaseRetirement) -> Warning {
   )
 }
 
-pub fn outdated_to_warning(pkg: Package, new_version: String) -> Warning {
-  Warning(
-    None,
-    pkg.name,
-    Some(pkg.version_raw),
-    "New Version: '" <> new_version <> "' exists",
-    WarningReasonOutdated,
-    SeverityPackageOutdated,
-    dep_code_from_bool(pkg.direct),
-  )
-}
-
 pub fn rejected_license_to_warning(pkg: Package, license: String) -> Warning {
   Warning(
     None,
@@ -167,6 +155,43 @@ pub fn rejected_license_to_warning(pkg: Package, license: String) -> Warning {
     SeverityRejectedLicense,
     dep_code_from_bool(pkg.direct),
   )
+}
+
+pub fn info_to_warning(target: String, reason: String) -> Warning {
+  Warning(
+    None,
+    target,
+    None,
+    reason,
+    WarningReasonInfo,
+    SeverityInfo,
+    DirectDep,
+  )
+}
+
+pub fn git_deps_to_warnings(pkgs: List(Package)) -> List(Warning) {
+  let git_names =
+    pkgs
+    |> list.filter(fn(p) { p.source == PackageSourceGit })
+    |> list.map(fn(p) { p.name })
+
+  case git_names {
+    [] -> []
+    names -> [
+      info_to_warning(
+        "git-dependencies",
+        "Info: git dependencies have limited support (retirement and license checks are not performed): "
+          <> string.join(names, ", "),
+      ),
+    ]
+  }
+}
+
+pub fn is_info(w: Warning) -> Bool {
+  case w.severity {
+    SeverityInfo -> True
+    _ -> False
+  }
 }
 
 pub fn format_as_string(w: Warning) -> String {
@@ -197,9 +222,9 @@ pub fn format_as_string_minimal(w: Warning) -> String {
 
 pub fn format_as_json(w: Warning) -> Json {
   object([
-    #("id", json.nullable(w.advisory_id, string)),
+    #("id", nullable(w.advisory_id, string)),
     #("package", string(w.package)),
-    #("version", json.nullable(w.version, string)),
+    #("version", nullable(w.version, string)),
     #(
       "warning_reason",
       string(warning_reason_code_as_string(w.warning_reason_code)),
@@ -217,10 +242,11 @@ fn color(w: Warning, str: String) {
     SeverityHigh | SeverityRejectedLicense -> print.format_high(str)
     SeverityModerate
     | SeverityPackageRetiredRenamed
-    | SeverityPackageRetiredDeprecated
-    | SeverityPackageOutdated -> print.format_moderate(str)
-    SeverityLow | SeverityPackageRetiredInvalid -> print.format_low(str)
-    SeverityUnknown(_) | SeverityPackageRetiredOtherReason(_) ->
-      print.format_warning(str)
+    | SeverityPackageRetiredDeprecated -> print.format_moderate(str)
+    SeverityLow
+    | SeverityPackageRetiredInvalid
+    | SeverityPackageRetiredOtherReason(_) -> print.format_low(str)
+    SeverityInfo -> print.format_info(str)
+    SeverityUnknown(_) -> print.format_warning(str)
   }
 }

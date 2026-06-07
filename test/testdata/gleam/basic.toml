@@ -1,5 +1,5 @@
 [go-over]
-cache = false
+force = true
 puller = "httpie"
 format = "detailed"
 

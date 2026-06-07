@@ -1,6 +1,5 @@
 {
   "meta": {
-    "licenses": ["foo", "BAR", "baz"]
-  },
-  "latest_stable_version": "2.1.0"
+    "licenses": ["MIT", "Apache-2.0"]
+  }
 }

@@ -1,0 +1,16 @@
+---
+version: 2.0.0
+title: Javascript@warning_format_as_json@git_deps_to_warnings
+---
+#(
+  "c",
+  "{
+	"id": null,
+	"package": "git-dependencies",
+	"version": null,
+	"warning_reason": "Info",
+	"dependency_type": "Direct",
+	"severity": "info",
+	"reason": "Info: git dependencies have limited support (retirement and license checks are not performed): c"
+}",
+)

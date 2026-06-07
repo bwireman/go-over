@@ -1,0 +1,22 @@
+---
+version: 1.2.6
+title: Javascript@spin_up_test@fake
+---
+#(
+  ["--fake"],
+  Config(
+    dev_deps: [],
+    ignore_indirect: False,
+    force: False,
+    fake: True,
+    format: Minimal,
+    verbose: False,
+    global: True,
+    puller: CURL,
+    allowed_licenses: [],
+    ignore_packages: [],
+    ignore_severity: [],
+    ignore_ids: [],
+    ignore_dev_dependencies: False,
+  ),
+)

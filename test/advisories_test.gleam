@@ -1,4 +1,4 @@
-import go_over/advisories/advisories.{check_for_advisories, read}
+import go_over/advisories/advisories.{check_for_advisories, fetch_all, read}
 import go_over/packages.{read_manifest}
 import go_over_test
 import simplifile
@@ -6,7 +6,7 @@ import simplifile
 pub fn check_for_advisories_test() {
   let assert [#(pkg, [adv1, adv2])] =
     read_manifest("test/testdata/manifest/known_vulnerable.toml")
-    |> check_for_advisories()
+    |> check_for_advisories(fetch_all())
 
   assert pkg.name == "phoenix"
   assert adv1.name == "phoenix"

@@ -1,0 +1,81 @@
+---
+version: 2.0.0
+title: Erlang@warning_format_as_sarif@info_to_warning
+---
+#(
+  Warning(
+    None,
+    "missing-package",
+    None,
+    "Info: package 'missing-package' is not a dependency",
+    WarningReasonInfo,
+    SeverityInfo,
+    DirectDep,
+  ),
+  "
+{
+"tool": 
+{
+"driver": 
+{
+"name": "go_over",
+"version": "4.0.0",
+"rules": 
+[
+
+{
+"id": "go-over/info:info",
+"shortDescription": 
+{
+"text": "go-over/info:info"
+}
+
+}
+
+]
+
+}
+
+}
+,
+"results": 
+[
+
+{
+"ruleId": "go-over/info:info",
+"level": "note",
+"message": 
+{
+"text": "missing-package: Info: package 'missing-package' is not a dependency"
+}
+,
+"locations": 
+[
+
+{
+"physicalLocation": 
+{
+"artifactLocation": 
+{
+"uri": "backend/manifest.toml"
+}
+,
+"region": 
+{
+"startLine": 1,
+"startColumn": 1
+}
+
+}
+
+}
+
+]
+
+}
+
+]
+
+}
+",
+)

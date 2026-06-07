@@ -1,0 +1,25 @@
+---
+version: 2.0.0
+title: Erlang@spin_up_test@format=minimal
+---
+#(
+  ["--format", "minimal"],
+  Config(
+    [],
+    False,
+    False,
+    False,
+    Minimal,
+    False,
+    True,
+    Native,
+    [],
+    [],
+    [],
+    [],
+    False,
+    3,
+    None,
+    None,
+  ),
+)

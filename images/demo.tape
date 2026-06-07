@@ -1,5 +1,5 @@
 Output images/demo.gif
-Set FontSize 14
+Set FontSize 12
 Set PlaybackSpeed 1.35
 Set TypingSpeed 75ms
 Set FontFamily 'JetBrains Mono'
@@ -9,7 +9,9 @@ Set BorderRadius 12
 
 # Setup
 Hide
-Type `rm -rf ~/.cache/go-over/ && clear`
+Type `rm -rf ~/.cache/go-over/deps/g* ~/.cache/go-over/package-licenses/g*`
+Enter
+Type `gleam build && clear`
 Enter
 Show
 
@@ -21,10 +23,10 @@ Sleep 10s
 Type clear
 Enter
 
-Type "# check for retired, vulnerable or outdated packages (and even filter their licenses)"
+Type "# check for retired or vulnerable packages (and even filter their licenses)"
 Enter
 Sleep 5s
-Type `gleam run -m go_over -- --outdated`
+Type `gleam run -m go_over`
 Enter
 Wait+Screen@50s /✅ No warnings found!/
 Sleep 3.5s

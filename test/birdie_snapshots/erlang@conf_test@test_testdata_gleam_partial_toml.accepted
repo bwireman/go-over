@@ -1,0 +1,22 @@
+---
+version: 2.0.0
+title: Erlang@conf_test@test/testdata/gleam/partial.toml
+---
+Config(
+  [],
+  False,
+  False,
+  False,
+  Minimal,
+  False,
+  True,
+  WGET,
+  [],
+  ["a", "b", "c"],
+  [],
+  [],
+  False,
+  3,
+  None,
+  None,
+)

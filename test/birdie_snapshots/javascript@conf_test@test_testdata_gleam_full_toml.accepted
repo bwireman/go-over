@@ -1,0 +1,22 @@
+---
+version: 2.0.0
+title: Javascript@conf_test@test/testdata/gleam/full.toml
+---
+Config(
+  dev_deps: ["c"],
+  outdated: False,
+  ignore_indirect: False,
+  force: False,
+  format: Minimal,
+  verbose: False,
+  global: True,
+  puller: CURL,
+  allowed_licenses: [],
+  ignore_packages: ["a", "b"],
+  ignore_severity: ["critical", "high"],
+  ignore_ids: ["a", "b"],
+  ignore_dev_dependencies: True,
+  workspace_max_depth: 3,
+  single_root: None,
+  workspace_root: None,
+)

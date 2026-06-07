@@ -1,0 +1,25 @@
+---
+version: 2.0.0
+title: Javascript@spin_up_test@format=detailed
+---
+#(
+  ["--format", "detailed"],
+  Config(
+    dev_deps: [],
+    outdated: False,
+    ignore_indirect: False,
+    force: False,
+    format: Detailed,
+    verbose: False,
+    global: True,
+    puller: CURL,
+    allowed_licenses: [],
+    ignore_packages: [],
+    ignore_severity: [],
+    ignore_ids: [],
+    ignore_dev_dependencies: False,
+    workspace_max_depth: 3,
+    single_root: None,
+    workspace_root: None,
+  ),
+)

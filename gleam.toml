@@ -1,5 +1,5 @@
 name = "go_over"
-version = "3.3.0"
+version = "4.0.0"
 licences = ["MIT"]
 repository = { type = "github", user = "bwireman", repo = "go-over" }
 description = "A tool to audit Erlang & Elixir dependencies, to make sure your Gleam ✨ projects really sparkle!"
@@ -51,15 +51,14 @@ actions = [
     { command = "./scripts/update.sh", kind = "binary" },
     { command = "./scripts/target_test.sh", kind = "binary", args = ["erlang"], files = [".erl", ".gleam", "manifest.toml", "gleam.toml"] },
     { command = "./scripts/target_test.sh", kind = "binary", args = ["javascript", "node"], files = [".mjs", ".js", ".gleam", "manifest.toml", "gleam.toml"] },
-    { command = "./scripts/target_test.sh", kind = "binary", args = ["javascript", "deno"], files = [".mjs", ".js", ".gleam", "manifest.toml", "gleam.toml"] },
-    { command = "./scripts/target_test.sh", kind = "binary", args = ["javascript", "bun"], files = [".mjs", ".js", ".gleam", "manifest.toml", "gleam.toml"] },
+    { command = "./scripts/target_test.sh", kind = "binary", args = ["javascript", "deno"], files = [".mjs", ".js", "manifest.toml", "gleam.toml"] },
+    { command = "./scripts/target_test.sh", kind = "binary", args = ["javascript", "bun"], files = [".mjs", ".js", "manifest.toml", "gleam.toml"] },
 ]
 
 [go-over]
-cache = true
+force = false
 global = true
 format = "minimal"
-outdated = false
 puller = "native"
 allowed_licenses = ["MIT", "Apache-2.0", "BSD 2-Clause", "WTFPL"]
 
