@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.0.0-rc2
+
+### Fixed
+
+- Vulnerability warnings were never emitted: `get_vulnerable_warnings` kept
+  packages with empty advisory lists instead of those with matches
+
 ## 4.0.0
 
 ### Added
