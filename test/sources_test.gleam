@@ -1,3 +1,4 @@
+import gleam/list
 import gleam/option.{None, Some}
 import gleamsver
 import go_over/config.{Config, Minimal}
@@ -6,7 +7,7 @@ import go_over/packages
 import go_over/sources
 import go_over/warning.{
   IndirectDep, Warning, WarningReasonOutdated, WarningReasonRejectedLicense,
-  WarningReasonRetired,
+  WarningReasonRetired, WarningReasonVulnerable,
 }
 
 const conf = Config(
@@ -111,4 +112,15 @@ pub fn get_outdated_test() {
       Config(..conf, puller: Mock("test/testdata/hex/outdated/up_to_date.json")),
     )
     == []
+}
+
+pub fn get_vulnerable_warnings_test() {
+  let pkgs =
+    packages.read_manifest("test/testdata/manifest/known_vulnerable.toml")
+
+  let warnings = sources.get_vulnerable_warnings(pkgs, conf)
+
+  assert list.any(warnings, fn(w) {
+    w.package == "phoenix" && w.warning_reason_code == WarningReasonVulnerable
+  })
 }
