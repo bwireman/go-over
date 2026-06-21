@@ -1,11 +1,13 @@
 import gleam/option.{None, Some}
 import gleamsver
+import go_over/advisories/advisories.{Advisory}
 import go_over/config.{Config, Minimal}
 import go_over/hex/puller.{Mock}
 import go_over/packages
 import go_over/sources
 import go_over/warning.{
-  IndirectDep, Warning, WarningReasonRejectedLicense, WarningReasonRetired,
+  IndirectDep, SeverityLow, Warning, WarningReasonRejectedLicense,
+  WarningReasonRetired, WarningReasonVulnerable,
 }
 
 const conf = Config(
@@ -94,4 +96,24 @@ pub fn get_rejected_license_test() {
     )
 
   assert warnings == []
+}
+
+pub fn get_vulnerable_warnings_test() {
+  let mirego_advisories = [
+    Advisory(
+      id: "GHSA-test",
+      name: "name",
+      severity: "low",
+      vulnerable_version_ranges: ["<= 1.1.1"],
+      description: "test advisory",
+    ),
+  ]
+
+  let assert [warning] =
+    sources.get_vulnerable_warnings(pkgs, conf, mirego_advisories)
+
+  assert warning.advisory_id == Some("GHSA-test")
+  assert warning.reason == "test advisory"
+  assert warning.severity == SeverityLow
+  assert warning.warning_reason_code == WarningReasonVulnerable
 }
